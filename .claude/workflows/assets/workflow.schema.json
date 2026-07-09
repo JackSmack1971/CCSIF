@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Project Claude Workflow",
+  "type": "object",
+  "required": [
+    "status",
+    "task"
+  ],
+  "properties": {
+    "status": {
+      "type": "string"
+    },
+    "task": {
+      "type": "string"
+    },
+    "steps": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "findings": {
+      "type": "array"
+    }
+  }
+}
