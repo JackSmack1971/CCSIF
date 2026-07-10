@@ -1,6 +1,6 @@
 ---
 name: api-contract-review
-description: Trigger when reviewing API contract changes, compatibility risk, schema drift, SDK or CLI surface changes, endpoint updates, event payload changes, or consumer migration impact. Use during PR review and release readiness to detect public API surfaces, classify breaking changes, verify tests/docs/changelogs/versioning, and produce a compatibility verdict with migration notes. NOT for implementing the API change or modifying contracts.
+description: Use when reviewing API contract changes for compatibility risk, schema drift, or breaking change classification before a PR merges or a release ships. Trigger on review this API change for breaking changes, check for schema drift, classify this endpoint or event payload change, assess consumer migration impact. NOT for implementing the API change or editing contracts directly; use the relevant service code changes instead. Requires verifying tests, docs, changelog, and version bump evidence before issuing a compatibility verdict.
 user-invocable: true
 context: fork
 agent: Explore

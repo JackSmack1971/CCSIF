@@ -1,6 +1,6 @@
 ---
 name: compiling-tribal-knowledge
-description: Use when compiling repository tribal knowledge into a root staging file before a documentation capture pass. Trigger on queries that say compile tribal knowledge, stage raw context for documentation, extract hidden module contracts, or document ownership and pitfalls before writing docs. NOT for writing final README or CONTRIBUTING content use generating-readmes or generating-contributing-guidelines instead. Distinct keywords staging schema, evidence-backed ownership, hidden module contracts, raw context, capture protocol.
+description: Use when compiling repository tribal knowledge into a root staging file before a documentation capture pass. Trigger on queries that say compile tribal knowledge, stage raw context for documentation, extract hidden module contracts, or document ownership and pitfalls before writing docs. NOT for writing final README or CONTRIBUTING content use generating-readmes or generating-contributing-guidelines instead. Requires writing the staged output to a root staging file before any documentation generation skill runs.
 disable-model-invocation: true
 context: fork
 agent: general-purpose

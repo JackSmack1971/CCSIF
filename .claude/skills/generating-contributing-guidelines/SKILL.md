@@ -1,6 +1,6 @@
 ---
 name: generating-contributing-guidelines
-description: Use when the user asks to generate, improve, audit, or update contribution guidelines, contributor onboarding, local setup instructions, issue-routing guidance, quality gates, or pull-request requirements for a codebase. Analyzes the repository deeply and creates or refreshes an evidence-backed CONTRIBUTING.md at the repository root. NOT for generating a README or SECURITY.md use generating-readmes or crafting-repository-security-policy instead. Distinct keywords contributor onboarding, issue-routing guidance, quality gates, pull-request requirements, evidence-backed inventory.
+description: Use when asked to generate, improve, audit, or update contribution guidelines, local setup instructions, or pull-request requirements for a codebase. Trigger on generate CONTRIBUTING.md, update contribution guidelines, audit pull-request requirements, document issue-routing guidance. NOT for generating a README or SECURITY.md; use generating-readmes or crafting-repository-security-policy instead. Requires grounding every claim in an evidence-backed repository inventory before writing CONTRIBUTING.md.
 compatibility: Requires Git and Python 3.9 or later.
 disable-model-invocation: true
 context: fork

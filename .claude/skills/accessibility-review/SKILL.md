@@ -1,6 +1,6 @@
 ---
 name: accessibility-review
-description: Trigger when asked for an accessibility review, a11y audit, WCAG assessment, keyboard navigation review, screen reader behavior review, semantic UI review, color contrast check, focus management audit, form accessibility review, or accessible design/documentation feedback. Use for reviewing UI code, docs, design artifacts, prototypes, and pull requests for accessibility risks and practical test recommendations.
+description: Use when asked for an accessibility review, a11y audit, WCAG assessment, or keyboard navigation and screen reader behavior review of UI code, docs, or a pull request. Trigger on accessibility review, a11y audit, WCAG assessment, keyboard navigation review, screen reader behavior check. NOT for a general visual design review with no accessibility criteria; use frontend-design instead. Requires citing WCAG-informed expectations and repository conventions for every reported risk.
 user-invocable: true
 context: fork
 agent: Explore

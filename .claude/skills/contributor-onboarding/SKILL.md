@@ -1,6 +1,6 @@
 ---
 name: contributor-onboarding
-description: Use when the user asks to onboard contributors, document first-time setup, create or audit a new developer guide, improve developer onboarding, or verify that repository onboarding material is complete. Guides agents to build or audit evidence-backed onboarding material covering repository purpose, architecture, setup, workflows, ownership discovery, safe first issues, tools, environment variables, services, troubleshooting, and fallback paths. Distinct trigger phrases: onboard contributors, first-time setup, new developer guide, developer onboarding.
+description: Use when asked to onboard new contributors, document first-time setup, create a new developer guide, or audit whether existing onboarding material is complete. Trigger on onboard contributors, document first-time setup, create a new developer guide, audit developer onboarding material. NOT for writing the full CONTRIBUTING.md governance document; use generating-contributing-guidelines instead. Requires citing verified setup commands, environment variables, and services from the repository rather than assumed defaults.
 compatibility: Requires Git and repository read access; documentation updates require repository write access.
 disable-model-invocation: true
 context: fork

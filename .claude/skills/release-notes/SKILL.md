@@ -1,6 +1,6 @@
 ---
 name: release-notes
-description: Generate release notes, update changelog entries, summarize this release, or draft upgrade notes from repository evidence. Use when asked to inspect commits, PR titles, labels, changed files, diffs, or issue metadata and turn them into user-facing release notes, maintainer-facing changelog entries, migration guidance, rollback guidance, and breaking-change analysis without overstating unsupported changes.
+description: Use when asked to generate release notes, update changelog entries, or draft upgrade and migration notes from repository evidence. Trigger on generate release notes, update the changelog, summarize this release, draft upgrade notes. NOT for assessing whether the repository is actually ready to release; use release-readiness instead. Requires grounding every entry in commits, PR titles, labels, or diffs without overstating unsupported changes.
 ---
 
 # Release Notes

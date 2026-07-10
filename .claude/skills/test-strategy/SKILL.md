@@ -1,6 +1,6 @@
 ---
 name: test-strategy
-description: Use when the user asks what tests should I run, create test plan, verify this change, testing strategy, or needs a focused verification plan for changed files/proposed work. Detects test frameworks and conventions, maps work to the narrowest meaningful commands, identifies unit/integration/end-to-end/contract/snapshot/smoke layers, recommends missing tests without over-testing, and separates local checks from CI/service/secret-dependent checks.
+description: Use when the user asks what tests to run, wants a test plan, or needs a focused verification strategy for changed files. Trigger on what tests should I run, create a test plan, verify this change, define a testing strategy. NOT for actually writing or running the test suite; use the repository's existing test commands instead. Requires separating local checks from CI, service, or secret-dependent checks in the recommendation.
 when_to_use: Use to produce an evidence-based test strategy and exact verification commands for a repository change.
 argument-hint: "(changed files, feature description, or optional focus area)"
 allowed-tools: Read, Grep, Glob, Bash

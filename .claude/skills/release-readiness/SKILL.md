@@ -1,6 +1,6 @@
 ---
 name: release-readiness
-description: Trigger on queries that ask whether a repository is ready to release, prepare a release readiness check, validate release notes, review release blockers, or summarize risk before tagging or publishing. Use for read-only pre-release assessment across changelog conventions, version files, merged PRs since the last release, test and migration evidence, dependency risk, breaking changes, and undocumented configuration changes. NOT for performing the release, bumping versions, creating tags, publishing packages, or merging pull requests. Distinct keywords release readiness verdict, last release comparison, merged PR inventory, blocker assessment, ready-with-risks.
+description: Use when asked whether a repository is ready to release and needing a read-only pre-release risk assessment. Trigger on is this ready to release, prepare a release readiness check, review release blockers, validate release notes before tagging. NOT for performing the release, bumping versions, creating tags, or merging pull requests; use git-automation instead. Requires an evidence-backed ready or ready-with-risks verdict without changing repository or remote state.
 user-invocable: true
 context: fork
 agent: Explore

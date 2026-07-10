@@ -1,6 +1,6 @@
 ---
 name: api-contract-docs
-description: Use when asked to document API surfaces, review API contracts against implementation, update OpenAPI or GraphQL schema docs, improve SDK docs, write CLI reference material, or identify undocumented public behavior. Trigger phrases include "document API", "review API contract", "OpenAPI", "GraphQL schema", "SDK docs", and "CLI reference".
+description: Use when asked to document API surfaces, write OpenAPI or GraphQL schema docs, produce SDK reference material, or record CLI reference documentation from verified implementation behavior. Trigger on document this API, write OpenAPI docs, update GraphQL schema docs, produce SDK or CLI reference material. NOT for assessing whether an API change is a breaking compatibility risk; use api-contract-review instead. Requires citing the actual endpoint, schema, or CLI implementation for every documented behavior.
 user-invocable: true
 context: fork
 agent: Explore

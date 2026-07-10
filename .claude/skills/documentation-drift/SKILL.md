@@ -1,6 +1,6 @@
 ---
 name: documentation-drift
-description: Use when asked to audit, compare, verify, or report drift between repository documentation and actual source-of-truth files, manifests, scripts, configuration, commands, environment variables, links, paths, architecture docs, SECURITY.md, CONTRIBUTING.md, README.md, or feature claims. Produces a PR-review-ready drift report with confirmed and inferred facts separated. NOT for rewriting an entire README, CONTRIBUTING.md, or SECURITY.md from scratch; use the dedicated generating skills for those tasks.
+description: Use when asked to audit or report drift between repository documentation and the actual source-of-truth files, manifests, or configuration. Trigger on audit documentation drift, verify README claims against the repo, check CONTRIBUTING or SECURITY doc accuracy, compare documented commands to real scripts. NOT for rewriting an entire README, CONTRIBUTING.md, or SECURITY.md from scratch; use generating-readmes, generating-contributing-guidelines, or crafting-repository-security-policy instead. Requires separating confirmed facts from inferred facts in the drift report.
 when_to_use: Use for documentation drift reviews that must compare written claims against current repository evidence and propose minimal documentation fixes.
 argument-hint: "[--audit-only] [--paths <doc-or-dir>...] [--fix]"
 allowed-tools: Read, Grep, Glob, Bash, Edit, Write
