@@ -1,6 +1,6 @@
 ---
 name: self-improve
-description: Analyzes structured execution traces, metrics, and current component state to generate evidence-backed, gated improvement proposals for CLAUDE.md, skills, hooks, or MCP configs. Use only when a self-improvement cycle or performance audit is explicitly requested via /self-improve. Never writes to production files.
+description: Trigger on queries that say run a self-improvement cycle, audit CLAUDE.md against traces, propose a gated skill or hook change, or analyze execution traces for recurring failures. Use only when a self-improvement cycle or performance audit is explicitly requested via /self-improve. Analyzes structured execution traces, metrics, and current component state to generate evidence-backed, gated improvement proposals for CLAUDE.md, skills, hooks, or MCP configs; it never writes to production files. NOT for an ad hoc code review or a 7-axes quality audit use code-review or 7axes-audit instead. Distinct keywords execution traces, gated improvement proposals, recurrence times reversibility scoring, rollback plan, constitution clause citation.
 disable-model-invocation: true
 allowed-tools: Read Grep Glob
 context: fork

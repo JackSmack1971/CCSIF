@@ -1,6 +1,7 @@
 ---
 name: fsv-verify
-description: Project-local Full State Verification workflow.
+description: Use when performing any write, mutation, external side effect, GitHub issue update, PR creation, label edit, or deployment action, to run the project-local Full State Verification protocol before and after the change. Trigger on queries that say verify this mutation, confirm the deploy took effect, check the PR state after merging, or run full state verification. Reads authoritative state before acting, performs exactly one intended operation, reads authoritative state again, diffs the expected delta, and halts on mismatch. NOT for read-only inspection with no mutation use plain Read or status commands instead. Distinct keywords authoritative state, expected delta, source of truth, mismatch halt, single intended operation.
+allowed-tools: Read, Bash, Grep, Glob
 ---
 
 # FSV Verify
@@ -14,6 +15,16 @@ Use for every write, mutation, external side effect, GitHub issue update, PR cre
 3. POST: read authoritative state again.
 4. DIFF: verify the exact expected delta.
 5. HALT: stop on mismatch.
+
+## Checklist
+
+- [ ] PRE: read authoritative state before acting.
+- [ ] ACT: perform exactly one intended operation.
+- [ ] POST: read authoritative state again.
+- [ ] DIFF: verify the exact expected delta.
+- [ ] HALT: stop and report on any mismatch.
+
+**Stop condition:** halt immediately when POST state does not match the expected DIFF; do not proceed to a second operation until the mismatch is resolved or explicitly accepted.
 
 ## Project Source-of-Truth Examples
 

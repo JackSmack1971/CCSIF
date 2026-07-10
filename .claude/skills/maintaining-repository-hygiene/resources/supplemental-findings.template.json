@@ -1,0 +1,44 @@
+{
+  "findings": [
+    {
+      "rule_id": "DOCS-SNAPSHOT-MISALIGNMENT",
+      "category": "documentation",
+      "severity": "medium",
+      "confidence": "high",
+      "title": "Align architecture documentation with the current implementation",
+      "summary": "Replace this template summary with a precise, evidence-backed mismatch.",
+      "evidence": [
+        {
+          "source": "docs/architecture.md",
+          "line": 1,
+          "observation": "Replace with the exact documented claim."
+        },
+        {
+          "source": "path/to/current/config",
+          "line": 1,
+          "observation": "Replace with the contradictory current implementation evidence."
+        }
+      ],
+      "remediation_key": "docs/architecture-snapshot-alignment",
+      "recommended_actions": [
+        "Update the documentation to describe the current evidence-backed architecture.",
+        "Add a durable validation or ownership mechanism that reduces recurrence."
+      ],
+      "acceptance_criteria": [
+        "Every changed claim is supported by the current repository snapshot.",
+        "Historical behavior is clearly labeled or moved to versioned historical documentation."
+      ],
+      "verification": [
+        "Compare the revised document with manifests, source entry points, CI, and deployment configuration.",
+        "Run the repository hygiene audit and confirm this finding no longer applies."
+      ],
+      "destructive": false,
+      "actionable": true,
+      "dependencies": [],
+      "non_goals": [
+        "Do not redesign the implementation solely to preserve stale documentation."
+      ],
+      "references": []
+    }
+  ]
+}

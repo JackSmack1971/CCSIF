@@ -1,0 +1,1147 @@
+{
+  "schema_version": "1.0",
+  "skills": [
+    {
+      "approx_tokens": 952,
+      "findings": [
+        {
+          "code": "missing-when-to-use",
+          "line": 4,
+          "message": "No when_to_use field found",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\7axes-audit\\SKILL.md",
+          "severity": "low",
+          "suggestion": "Add explicit trigger reinforcement when useful."
+        },
+        {
+          "code": "missing-arguments",
+          "line": 5,
+          "message": "No argument hint or argument mapping found",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\7axes-audit\\SKILL.md",
+          "severity": "low",
+          "suggestion": "Add argument-hint for CLI discoverability when applicable."
+        },
+        {
+          "code": "script-missing-cli-contract",
+          "line": null,
+          "message": "Script lacks obvious CLI usage or exit-code contract",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\7axes-audit\\scripts\\7axes\\feedback.py",
+          "severity": "medium",
+          "suggestion": "Document arguments, output, and exit codes."
+        },
+        {
+          "code": "script-missing-cli-contract",
+          "line": null,
+          "message": "Script lacks obvious CLI usage or exit-code contract",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\7axes-audit\\scripts\\7axes\\lib7axes.py",
+          "severity": "medium",
+          "suggestion": "Document arguments, output, and exit codes."
+        }
+      ],
+      "line_count": 79,
+      "metadata": {
+        "description_length": 675,
+        "git_root": "C:/workspaces/CCSIF",
+        "has_evals": true,
+        "has_scripts": true,
+        "linked_references": []
+      },
+      "name": "7axes-audit",
+      "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\7axes-audit\\SKILL.md",
+      "root": "C:\\workspaces\\CCSIF\\.claude\\skills",
+      "score": 78
+    },
+    {
+      "approx_tokens": 767,
+      "findings": [
+        {
+          "code": "missing-when-to-use",
+          "line": 4,
+          "message": "No when_to_use field found",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\7axes-reference\\SKILL.md",
+          "severity": "low",
+          "suggestion": "Add explicit trigger reinforcement when useful."
+        },
+        {
+          "code": "missing-arguments",
+          "line": 5,
+          "message": "No argument hint or argument mapping found",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\7axes-reference\\SKILL.md",
+          "severity": "low",
+          "suggestion": "Add argument-hint for CLI discoverability when applicable."
+        }
+      ],
+      "line_count": 75,
+      "metadata": {
+        "description_length": 525,
+        "git_root": "C:/workspaces/CCSIF",
+        "has_evals": true,
+        "has_scripts": false,
+        "linked_references": []
+      },
+      "name": "7axes-reference",
+      "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\7axes-reference\\SKILL.md",
+      "root": "C:\\workspaces\\CCSIF\\.claude\\skills",
+      "score": 94
+    },
+    {
+      "approx_tokens": 2080,
+      "findings": [
+        {
+          "code": "missing-when-to-use",
+          "line": 4,
+          "message": "No when_to_use field found",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\brainstorming-ux-features\\SKILL.md",
+          "severity": "low",
+          "suggestion": "Add explicit trigger reinforcement when useful."
+        },
+        {
+          "code": "missing-arguments",
+          "line": 5,
+          "message": "No argument hint or argument mapping found",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\brainstorming-ux-features\\SKILL.md",
+          "severity": "low",
+          "suggestion": "Add argument-hint for CLI discoverability when applicable."
+        }
+      ],
+      "line_count": 251,
+      "metadata": {
+        "description_length": 783,
+        "git_root": "C:/workspaces/CCSIF",
+        "has_evals": true,
+        "has_scripts": true,
+        "linked_references": []
+      },
+      "name": "brainstorming-ux-features",
+      "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\brainstorming-ux-features\\SKILL.md",
+      "root": "C:\\workspaces\\CCSIF\\.claude\\skills",
+      "score": 94
+    },
+    {
+      "approx_tokens": 1160,
+      "findings": [
+        {
+          "code": "missing-when-to-use",
+          "line": 4,
+          "message": "No when_to_use field found",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\claude-code-architecture-auditor\\SKILL.md",
+          "severity": "low",
+          "suggestion": "Add explicit trigger reinforcement when useful."
+        },
+        {
+          "code": "missing-arguments",
+          "line": 5,
+          "message": "No argument hint or argument mapping found",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\claude-code-architecture-auditor\\SKILL.md",
+          "severity": "low",
+          "suggestion": "Add argument-hint for CLI discoverability when applicable."
+        },
+        {
+          "code": "missing-toc",
+          "line": null,
+          "message": "SKILL.md exceeds 100 lines without a visible table of contents",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\claude-code-architecture-auditor\\SKILL.md",
+          "severity": "low",
+          "suggestion": "Add a compact ToC or compress below 100 lines."
+        }
+      ],
+      "line_count": 121,
+      "metadata": {
+        "description_length": 429,
+        "git_root": "C:/workspaces/CCSIF",
+        "has_evals": true,
+        "has_scripts": true,
+        "linked_references": []
+      },
+      "name": "auditing-ai-agent-config-architecture",
+      "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\claude-code-architecture-auditor\\SKILL.md",
+      "root": "C:\\workspaces\\CCSIF\\.claude\\skills",
+      "score": 91
+    },
+    {
+      "approx_tokens": 1583,
+      "findings": [
+        {
+          "code": "missing-when-to-use",
+          "line": 4,
+          "message": "No when_to_use field found",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\compiling-tribal-knowledge\\SKILL.md",
+          "severity": "low",
+          "suggestion": "Add explicit trigger reinforcement when useful."
+        },
+        {
+          "code": "missing-toc",
+          "line": null,
+          "message": "SKILL.md exceeds 100 lines without a visible table of contents",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\compiling-tribal-knowledge\\SKILL.md",
+          "severity": "low",
+          "suggestion": "Add a compact ToC or compress below 100 lines."
+        },
+        {
+          "code": "unlinked-reference",
+          "line": null,
+          "message": "Reference file is not directly linked from SKILL.md",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\compiling-tribal-knowledge\\references\\staging-schema.md",
+          "severity": "low",
+          "suggestion": "Link directly from SKILL.md or remove if obsolete."
+        },
+        {
+          "code": "reference-missing-toc",
+          "line": null,
+          "message": "Reference over 100 lines lacks table of contents",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\compiling-tribal-knowledge\\references\\staging-schema.md",
+          "severity": "medium",
+          "suggestion": "Add a ToC near the top."
+        }
+      ],
+      "line_count": 133,
+      "metadata": {
+        "description_length": 528,
+        "git_root": "C:/workspaces/CCSIF",
+        "has_evals": true,
+        "has_scripts": true,
+        "linked_references": []
+      },
+      "name": "compiling-tribal-knowledge",
+      "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\compiling-tribal-knowledge\\SKILL.md",
+      "root": "C:\\workspaces\\CCSIF\\.claude\\skills",
+      "score": 83
+    },
+    {
+      "approx_tokens": 2550,
+      "findings": [
+        {
+          "code": "missing-when-to-use",
+          "line": 4,
+          "message": "No when_to_use field found",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\crafting-repository-security-policy\\SKILL.md",
+          "severity": "low",
+          "suggestion": "Add explicit trigger reinforcement when useful."
+        },
+        {
+          "code": "missing-arguments",
+          "line": 5,
+          "message": "No argument hint or argument mapping found",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\crafting-repository-security-policy\\SKILL.md",
+          "severity": "low",
+          "suggestion": "Add argument-hint for CLI discoverability when applicable."
+        }
+      ],
+      "line_count": 283,
+      "metadata": {
+        "description_length": 780,
+        "git_root": "C:/workspaces/CCSIF",
+        "has_evals": true,
+        "has_scripts": true,
+        "linked_references": [
+          "references/evaluations.md",
+          "references/policy-template.md",
+          "references/repository-analysis.md",
+          "references/security-policy-design.md"
+        ]
+      },
+      "name": "crafting-repository-security-policy",
+      "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\crafting-repository-security-policy\\SKILL.md",
+      "root": "C:\\workspaces\\CCSIF\\.claude\\skills",
+      "score": 94
+    },
+    {
+      "approx_tokens": 322,
+      "findings": [
+        {
+          "code": "missing-when-to-use",
+          "line": 4,
+          "message": "No when_to_use field found",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\dependency-audit\\SKILL.md",
+          "severity": "low",
+          "suggestion": "Add explicit trigger reinforcement when useful."
+        },
+        {
+          "code": "missing-arguments",
+          "line": 5,
+          "message": "No argument hint or argument mapping found",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\dependency-audit\\SKILL.md",
+          "severity": "low",
+          "suggestion": "Add argument-hint for CLI discoverability when applicable."
+        },
+        {
+          "code": "unlinked-reference",
+          "line": null,
+          "message": "Reference file is not directly linked from SKILL.md",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\dependency-audit\\references\\audit-template.md",
+          "severity": "low",
+          "suggestion": "Link directly from SKILL.md or remove if obsolete."
+        },
+        {
+          "code": "script-missing-cli-contract",
+          "line": null,
+          "message": "Script lacks obvious CLI usage or exit-code contract",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\dependency-audit\\scripts\\list_manifests.py",
+          "severity": "medium",
+          "suggestion": "Document arguments, output, and exit codes."
+        }
+      ],
+      "line_count": 31,
+      "metadata": {
+        "description_length": 732,
+        "git_root": "C:/workspaces/CCSIF",
+        "has_evals": true,
+        "has_scripts": true,
+        "linked_references": []
+      },
+      "name": "dependency-audit",
+      "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\dependency-audit\\SKILL.md",
+      "root": "C:\\workspaces\\CCSIF\\.claude\\skills",
+      "score": 83
+    },
+    {
+      "approx_tokens": 1294,
+      "findings": [
+        {
+          "code": "missing-when-to-use",
+          "line": 4,
+          "message": "No when_to_use field found",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\disambiguating-skill-descriptions\\SKILL.md",
+          "severity": "low",
+          "suggestion": "Add explicit trigger reinforcement when useful."
+        },
+        {
+          "code": "missing-toc",
+          "line": null,
+          "message": "SKILL.md exceeds 100 lines without a visible table of contents",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\disambiguating-skill-descriptions\\SKILL.md",
+          "severity": "low",
+          "suggestion": "Add a compact ToC or compress below 100 lines."
+        },
+        {
+          "code": "unlinked-reference",
+          "line": null,
+          "message": "Reference file is not directly linked from SKILL.md",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\disambiguating-skill-descriptions\\references\\description-plan-schema.md",
+          "severity": "low",
+          "suggestion": "Link directly from SKILL.md or remove if obsolete."
+        },
+        {
+          "code": "unlinked-reference",
+          "line": null,
+          "message": "Reference file is not directly linked from SKILL.md",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\disambiguating-skill-descriptions\\references\\description-standard.md",
+          "severity": "low",
+          "suggestion": "Link directly from SKILL.md or remove if obsolete."
+        }
+      ],
+      "line_count": 185,
+      "metadata": {
+        "description_length": 534,
+        "git_root": "C:/workspaces/CCSIF",
+        "has_evals": true,
+        "has_scripts": true,
+        "linked_references": []
+      },
+      "name": "disambiguating-skill-descriptions",
+      "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\disambiguating-skill-descriptions\\SKILL.md",
+      "root": "C:\\workspaces\\CCSIF\\.claude\\skills",
+      "score": 88
+    },
+    {
+      "approx_tokens": 365,
+      "findings": [
+        {
+          "code": "missing-when-to-use",
+          "line": 4,
+          "message": "No when_to_use field found",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\fsv-verify\\SKILL.md",
+          "severity": "low",
+          "suggestion": "Add explicit trigger reinforcement when useful."
+        },
+        {
+          "code": "missing-arguments",
+          "line": 5,
+          "message": "No argument hint or argument mapping found",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\fsv-verify\\SKILL.md",
+          "severity": "low",
+          "suggestion": "Add argument-hint for CLI discoverability when applicable."
+        },
+        {
+          "code": "unlinked-reference",
+          "line": null,
+          "message": "Reference file is not directly linked from SKILL.md",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\fsv-verify\\references\\fsv-checklist.md",
+          "severity": "low",
+          "suggestion": "Link directly from SKILL.md or remove if obsolete."
+        }
+      ],
+      "line_count": 34,
+      "metadata": {
+        "description_length": 732,
+        "git_root": "C:/workspaces/CCSIF",
+        "has_evals": true,
+        "has_scripts": true,
+        "linked_references": []
+      },
+      "name": "fsv-verify",
+      "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\fsv-verify\\SKILL.md",
+      "root": "C:\\workspaces\\CCSIF\\.claude\\skills",
+      "score": 91
+    },
+    {
+      "approx_tokens": 1797,
+      "findings": [
+        {
+          "code": "missing-toc",
+          "line": null,
+          "message": "SKILL.md exceeds 100 lines without a visible table of contents",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\generate-codeowners\\SKILL.md",
+          "severity": "low",
+          "suggestion": "Add a compact ToC or compress below 100 lines."
+        },
+        {
+          "code": "unlinked-reference",
+          "line": null,
+          "message": "Reference file is not directly linked from SKILL.md",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\generate-codeowners\\references\\design-policy.md",
+          "severity": "low",
+          "suggestion": "Link directly from SKILL.md or remove if obsolete."
+        },
+        {
+          "code": "reference-missing-toc",
+          "line": null,
+          "message": "Reference over 100 lines lacks table of contents",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\generate-codeowners\\references\\design-policy.md",
+          "severity": "medium",
+          "suggestion": "Add a ToC near the top."
+        },
+        {
+          "code": "unlinked-reference",
+          "line": null,
+          "message": "Reference file is not directly linked from SKILL.md",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\generate-codeowners\\references\\hook-guidance.md",
+          "severity": "low",
+          "suggestion": "Link directly from SKILL.md or remove if obsolete."
+        },
+        {
+          "code": "unlinked-reference",
+          "line": null,
+          "message": "Reference file is not directly linked from SKILL.md",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\generate-codeowners\\references\\ownership-plan-schema.md",
+          "severity": "low",
+          "suggestion": "Link directly from SKILL.md or remove if obsolete."
+        },
+        {
+          "code": "script-missing-cli-contract",
+          "line": null,
+          "message": "Script lacks obvious CLI usage or exit-code contract",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\generate-codeowners\\scripts\\codeowners_common.py",
+          "severity": "medium",
+          "suggestion": "Document arguments, output, and exit codes."
+        },
+        {
+          "code": "script-missing-cli-contract",
+          "line": null,
+          "message": "Script lacks obvious CLI usage or exit-code contract",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\generate-codeowners\\scripts\\hook_guard.py",
+          "severity": "medium",
+          "suggestion": "Document arguments, output, and exit codes."
+        },
+        {
+          "code": "script-missing-cli-contract",
+          "line": null,
+          "message": "Script lacks obvious CLI usage or exit-code contract",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\generate-codeowners\\scripts\\run_python.sh",
+          "severity": "medium",
+          "suggestion": "Document arguments, output, and exit codes."
+        },
+        {
+          "code": "script-missing-cli-contract",
+          "line": null,
+          "message": "Script lacks obvious CLI usage or exit-code contract",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\generate-codeowners\\scripts\\self_test.py",
+          "severity": "medium",
+          "suggestion": "Document arguments, output, and exit codes."
+        }
+      ],
+      "line_count": 153,
+      "metadata": {
+        "description_length": 707,
+        "git_root": "C:/workspaces/CCSIF",
+        "has_evals": true,
+        "has_scripts": true,
+        "linked_references": []
+      },
+      "name": "generate-codeowners",
+      "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\generate-codeowners\\SKILL.md",
+      "root": "C:\\workspaces\\CCSIF\\.claude\\skills",
+      "score": 48
+    },
+    {
+      "approx_tokens": 1566,
+      "findings": [
+        {
+          "code": "missing-when-to-use",
+          "line": 4,
+          "message": "No when_to_use field found",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\generating-contributing-guidelines\\SKILL.md",
+          "severity": "low",
+          "suggestion": "Add explicit trigger reinforcement when useful."
+        },
+        {
+          "code": "missing-toc",
+          "line": null,
+          "message": "SKILL.md exceeds 100 lines without a visible table of contents",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\generating-contributing-guidelines\\SKILL.md",
+          "severity": "low",
+          "suggestion": "Add a compact ToC or compress below 100 lines."
+        },
+        {
+          "code": "unlinked-reference",
+          "line": null,
+          "message": "Reference file is not directly linked from SKILL.md",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\generating-contributing-guidelines\\references\\contributing-blueprint.md",
+          "severity": "low",
+          "suggestion": "Link directly from SKILL.md or remove if obsolete."
+        },
+        {
+          "code": "unlinked-reference",
+          "line": null,
+          "message": "Reference file is not directly linked from SKILL.md",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\generating-contributing-guidelines\\references\\evidence-policy.md",
+          "severity": "low",
+          "suggestion": "Link directly from SKILL.md or remove if obsolete."
+        },
+        {
+          "code": "unlinked-reference",
+          "line": null,
+          "message": "Reference file is not directly linked from SKILL.md",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\generating-contributing-guidelines\\references\\hook-guidance.md",
+          "severity": "low",
+          "suggestion": "Link directly from SKILL.md or remove if obsolete."
+        }
+      ],
+      "line_count": 145,
+      "metadata": {
+        "description_length": 584,
+        "git_root": "C:/workspaces/CCSIF",
+        "has_evals": true,
+        "has_scripts": true,
+        "linked_references": []
+      },
+      "name": "generating-contributing-guidelines",
+      "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\generating-contributing-guidelines\\SKILL.md",
+      "root": "C:\\workspaces\\CCSIF\\.claude\\skills",
+      "score": 85
+    },
+    {
+      "approx_tokens": 1157,
+      "findings": [
+        {
+          "code": "frontmatter-parse-warning",
+          "line": 10,
+          "message": "Unparsed frontmatter line: audit-only:",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\generating-readmes\\SKILL.md",
+          "severity": "medium",
+          "suggestion": "Use simple key: value or YAML list syntax."
+        },
+        {
+          "code": "frontmatter-parse-warning",
+          "line": 11,
+          "message": "Unparsed frontmatter line: description: Inspect the repository, score the current README, and report the up",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\generating-readmes\\SKILL.md",
+          "severity": "medium",
+          "suggestion": "Use simple key: value or YAML list syntax."
+        },
+        {
+          "code": "frontmatter-parse-warning",
+          "line": 12,
+          "message": "Unparsed frontmatter line: no-write:",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\generating-readmes\\SKILL.md",
+          "severity": "medium",
+          "suggestion": "Use simple key: value or YAML list syntax."
+        },
+        {
+          "code": "frontmatter-parse-warning",
+          "line": 13,
+          "message": "Unparsed frontmatter line: description: Generate the proposed README content in the response instead of wri",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\generating-readmes\\SKILL.md",
+          "severity": "medium",
+          "suggestion": "Use simple key: value or YAML list syntax."
+        },
+        {
+          "code": "frontmatter-parse-warning",
+          "line": 14,
+          "message": "Unparsed frontmatter line: output:",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\generating-readmes\\SKILL.md",
+          "severity": "medium",
+          "suggestion": "Use simple key: value or YAML list syntax."
+        },
+        {
+          "code": "frontmatter-parse-warning",
+          "line": 15,
+          "message": "Unparsed frontmatter line: description: Project-relative README path to create or update. Defaults to READM",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\generating-readmes\\SKILL.md",
+          "severity": "medium",
+          "suggestion": "Use simple key: value or YAML list syntax."
+        },
+        {
+          "code": "missing-toc",
+          "line": null,
+          "message": "SKILL.md exceeds 100 lines without a visible table of contents",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\generating-readmes\\SKILL.md",
+          "severity": "low",
+          "suggestion": "Add a compact ToC or compress below 100 lines."
+        },
+        {
+          "code": "unlinked-reference",
+          "line": null,
+          "message": "Reference file is not directly linked from SKILL.md",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\generating-readmes\\references\\hook-guidance.md",
+          "severity": "low",
+          "suggestion": "Link directly from SKILL.md or remove if obsolete."
+        },
+        {
+          "code": "unlinked-reference",
+          "line": null,
+          "message": "Reference file is not directly linked from SKILL.md",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\generating-readmes\\references\\readme-blueprint.md",
+          "severity": "low",
+          "suggestion": "Link directly from SKILL.md or remove if obsolete."
+        }
+      ],
+      "line_count": 101,
+      "metadata": {
+        "description_length": 574,
+        "git_root": "C:/workspaces/CCSIF",
+        "has_evals": true,
+        "has_scripts": true,
+        "linked_references": []
+      },
+      "name": "generating-readmes",
+      "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\generating-readmes\\SKILL.md",
+      "root": "C:\\workspaces\\CCSIF\\.claude\\skills",
+      "score": 43
+    },
+    {
+      "approx_tokens": 906,
+      "findings": [
+        {
+          "code": "missing-when-to-use",
+          "line": 4,
+          "message": "No when_to_use field found",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\git-automation\\SKILL.md",
+          "severity": "low",
+          "suggestion": "Add explicit trigger reinforcement when useful."
+        },
+        {
+          "code": "missing-arguments",
+          "line": 5,
+          "message": "No argument hint or argument mapping found",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\git-automation\\SKILL.md",
+          "severity": "low",
+          "suggestion": "Add argument-hint for CLI discoverability when applicable."
+        }
+      ],
+      "line_count": 61,
+      "metadata": {
+        "description_length": 685,
+        "git_root": "C:/workspaces/CCSIF",
+        "has_evals": true,
+        "has_scripts": false,
+        "linked_references": [
+          "references/git-functions.md"
+        ]
+      },
+      "name": "git-automation",
+      "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\git-automation\\SKILL.md",
+      "root": "C:\\workspaces\\CCSIF\\.claude\\skills",
+      "score": 94
+    },
+    {
+      "approx_tokens": 3053,
+      "findings": [
+        {
+          "code": "missing-when-to-use",
+          "line": 4,
+          "message": "No when_to_use field found",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\maintaining-repository-hygiene\\SKILL.md",
+          "severity": "low",
+          "suggestion": "Add explicit trigger reinforcement when useful."
+        },
+        {
+          "code": "missing-arguments",
+          "line": 5,
+          "message": "No argument hint or argument mapping found",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\maintaining-repository-hygiene\\SKILL.md",
+          "severity": "low",
+          "suggestion": "Add argument-hint for CLI discoverability when applicable."
+        },
+        {
+          "code": "skill-long",
+          "line": null,
+          "message": "SKILL.md has 431 lines; consider compression",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\maintaining-repository-hygiene\\SKILL.md",
+          "severity": "medium",
+          "suggestion": "Move examples and edge cases to references."
+        },
+        {
+          "code": "script-missing-cli-contract",
+          "line": null,
+          "message": "Script lacks obvious CLI usage or exit-code contract",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\maintaining-repository-hygiene\\scripts\\audit_repository.py",
+          "severity": "medium",
+          "suggestion": "Document arguments, output, and exit codes."
+        },
+        {
+          "code": "script-missing-cli-contract",
+          "line": null,
+          "message": "Script lacks obvious CLI usage or exit-code contract",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\maintaining-repository-hygiene\\scripts\\hygiene_core.py",
+          "severity": "medium",
+          "suggestion": "Document arguments, output, and exit codes."
+        }
+      ],
+      "line_count": 431,
+      "metadata": {
+        "description_length": 912,
+        "git_root": "C:/workspaces/CCSIF",
+        "has_evals": true,
+        "has_scripts": true,
+        "linked_references": [
+          "references/audit-rubric.md",
+          "references/issue-contract.md",
+          "references/portability-security.md"
+        ]
+      },
+      "name": "maintaining-repository-hygiene",
+      "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\maintaining-repository-hygiene\\SKILL.md",
+      "root": "C:\\workspaces\\CCSIF\\.claude\\skills",
+      "score": 70
+    },
+    {
+      "approx_tokens": 1649,
+      "findings": [
+        {
+          "code": "missing-toc",
+          "line": null,
+          "message": "SKILL.md exceeds 100 lines without a visible table of contents",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\optimize-github-operations\\SKILL.md",
+          "severity": "low",
+          "suggestion": "Add a compact ToC or compress below 100 lines."
+        },
+        {
+          "code": "unlinked-reference",
+          "line": null,
+          "message": "Reference file is not directly linked from SKILL.md",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\optimize-github-operations\\references\\hook-governance.md",
+          "severity": "low",
+          "suggestion": "Link directly from SKILL.md or remove if obsolete."
+        },
+        {
+          "code": "unlinked-reference",
+          "line": null,
+          "message": "Reference file is not directly linked from SKILL.md",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\optimize-github-operations\\references\\optimization-contract.md",
+          "severity": "low",
+          "suggestion": "Link directly from SKILL.md or remove if obsolete."
+        },
+        {
+          "code": "reference-missing-toc",
+          "line": null,
+          "message": "Reference over 100 lines lacks table of contents",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\optimize-github-operations\\references\\optimization-contract.md",
+          "severity": "medium",
+          "suggestion": "Add a ToC near the top."
+        },
+        {
+          "code": "script-missing-cli-contract",
+          "line": null,
+          "message": "Script lacks obvious CLI usage or exit-code contract",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\optimize-github-operations\\scripts\\hook_guard.py",
+          "severity": "medium",
+          "suggestion": "Document arguments, output, and exit codes."
+        },
+        {
+          "code": "script-missing-cli-contract",
+          "line": null,
+          "message": "Script lacks obvious CLI usage or exit-code contract",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\optimize-github-operations\\scripts\\hook_post_write.py",
+          "severity": "medium",
+          "suggestion": "Document arguments, output, and exit codes."
+        },
+        {
+          "code": "script-missing-cli-contract",
+          "line": null,
+          "message": "Script lacks obvious CLI usage or exit-code contract",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\optimize-github-operations\\scripts\\hook_stop_verify.py",
+          "severity": "medium",
+          "suggestion": "Document arguments, output, and exit codes."
+        }
+      ],
+      "line_count": 155,
+      "metadata": {
+        "description_length": 656,
+        "git_root": "C:/workspaces/CCSIF",
+        "has_evals": true,
+        "has_scripts": true,
+        "linked_references": []
+      },
+      "name": "optimize-github-operations",
+      "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\optimize-github-operations\\SKILL.md",
+      "root": "C:\\workspaces\\CCSIF\\.claude\\skills",
+      "score": 59
+    },
+    {
+      "approx_tokens": 1717,
+      "findings": [
+        {
+          "code": "frontmatter-parse-warning",
+          "line": 11,
+          "message": "Unparsed frontmatter line: description: GitHub pull request number or URL.",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\pr-triage\\SKILL.md",
+          "severity": "medium",
+          "suggestion": "Use simple key: value or YAML list syntax."
+        },
+        {
+          "code": "frontmatter-parse-warning",
+          "line": 12,
+          "message": "Unparsed frontmatter line: required: true",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\pr-triage\\SKILL.md",
+          "severity": "medium",
+          "suggestion": "Use simple key: value or YAML list syntax."
+        },
+        {
+          "code": "frontmatter-parse-warning",
+          "line": 14,
+          "message": "Unparsed frontmatter line: description: Report format; markdown or json. Defaults to markdown.",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\pr-triage\\SKILL.md",
+          "severity": "medium",
+          "suggestion": "Use simple key: value or YAML list syntax."
+        },
+        {
+          "code": "frontmatter-parse-warning",
+          "line": 15,
+          "message": "Unparsed frontmatter line: required: false",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\pr-triage\\SKILL.md",
+          "severity": "medium",
+          "suggestion": "Use simple key: value or YAML list syntax."
+        },
+        {
+          "code": "frontmatter-parse-warning",
+          "line": 17,
+          "message": "Unparsed frontmatter line: description: Treat missing documented contribution requirements as blocking.",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\pr-triage\\SKILL.md",
+          "severity": "medium",
+          "suggestion": "Use simple key: value or YAML list syntax."
+        },
+        {
+          "code": "frontmatter-parse-warning",
+          "line": 18,
+          "message": "Unparsed frontmatter line: required: false",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\pr-triage\\SKILL.md",
+          "severity": "medium",
+          "suggestion": "Use simple key: value or YAML list syntax."
+        },
+        {
+          "code": "missing-when-to-use",
+          "line": 4,
+          "message": "No when_to_use field found",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\pr-triage\\SKILL.md",
+          "severity": "low",
+          "suggestion": "Add explicit trigger reinforcement when useful."
+        },
+        {
+          "code": "missing-toc",
+          "line": null,
+          "message": "SKILL.md exceeds 100 lines without a visible table of contents",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\pr-triage\\SKILL.md",
+          "severity": "low",
+          "suggestion": "Add a compact ToC or compress below 100 lines."
+        },
+        {
+          "code": "unlinked-reference",
+          "line": null,
+          "message": "Reference file is not directly linked from SKILL.md",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\pr-triage\\references\\output-contract.md",
+          "severity": "low",
+          "suggestion": "Link directly from SKILL.md or remove if obsolete."
+        },
+        {
+          "code": "reference-missing-toc",
+          "line": null,
+          "message": "Reference over 100 lines lacks table of contents",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\pr-triage\\references\\output-contract.md",
+          "severity": "medium",
+          "suggestion": "Add a ToC near the top."
+        },
+        {
+          "code": "unlinked-reference",
+          "line": null,
+          "message": "Reference file is not directly linked from SKILL.md",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\pr-triage\\references\\triage-rubric.md",
+          "severity": "low",
+          "suggestion": "Link directly from SKILL.md or remove if obsolete."
+        }
+      ],
+      "line_count": 174,
+      "metadata": {
+        "description_length": 723,
+        "git_root": "C:/workspaces/CCSIF",
+        "has_evals": true,
+        "has_scripts": false,
+        "linked_references": []
+      },
+      "name": "pr-triage",
+      "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\pr-triage\\SKILL.md",
+      "root": "C:\\workspaces\\CCSIF\\.claude\\skills",
+      "score": 32
+    },
+    {
+      "approx_tokens": 1059,
+      "findings": [
+        {
+          "code": "frontmatter-parse-warning",
+          "line": 19,
+          "message": "Unparsed frontmatter line: PreToolUse:",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\purging-token-dead-weight\\SKILL.md",
+          "severity": "medium",
+          "suggestion": "Use simple key: value or YAML list syntax."
+        },
+        {
+          "code": "frontmatter-parse-warning",
+          "line": 20,
+          "message": "Unparsed frontmatter line: - matcher: \"Bash\"",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\purging-token-dead-weight\\SKILL.md",
+          "severity": "medium",
+          "suggestion": "Use simple key: value or YAML list syntax."
+        },
+        {
+          "code": "frontmatter-parse-warning",
+          "line": 21,
+          "message": "Unparsed frontmatter line: hooks:",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\purging-token-dead-weight\\SKILL.md",
+          "severity": "medium",
+          "suggestion": "Use simple key: value or YAML list syntax."
+        },
+        {
+          "code": "frontmatter-parse-warning",
+          "line": 22,
+          "message": "Unparsed frontmatter line: - type: command",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\purging-token-dead-weight\\SKILL.md",
+          "severity": "medium",
+          "suggestion": "Use simple key: value or YAML list syntax."
+        },
+        {
+          "code": "frontmatter-parse-warning",
+          "line": 23,
+          "message": "Unparsed frontmatter line: command: \"python \\\"${CLAUDE_SKILL_DIR}/scripts/hook_guard.py\\\"\"",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\purging-token-dead-weight\\SKILL.md",
+          "severity": "medium",
+          "suggestion": "Use simple key: value or YAML list syntax."
+        },
+        {
+          "code": "frontmatter-parse-warning",
+          "line": 24,
+          "message": "Unparsed frontmatter line: timeout: 10",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\purging-token-dead-weight\\SKILL.md",
+          "severity": "medium",
+          "suggestion": "Use simple key: value or YAML list syntax."
+        },
+        {
+          "code": "missing-toc",
+          "line": null,
+          "message": "SKILL.md exceeds 100 lines without a visible table of contents",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\purging-token-dead-weight\\SKILL.md",
+          "severity": "low",
+          "suggestion": "Add a compact ToC or compress below 100 lines."
+        },
+        {
+          "code": "unlinked-reference",
+          "line": null,
+          "message": "Reference file is not directly linked from SKILL.md",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\purging-token-dead-weight\\references\\policy.md",
+          "severity": "low",
+          "suggestion": "Link directly from SKILL.md or remove if obsolete."
+        },
+        {
+          "code": "script-missing-cli-contract",
+          "line": null,
+          "message": "Script lacks obvious CLI usage or exit-code contract",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\purging-token-dead-weight\\scripts\\hook_guard.py",
+          "severity": "medium",
+          "suggestion": "Document arguments, output, and exit codes."
+        }
+      ],
+      "line_count": 102,
+      "metadata": {
+        "description_length": 705,
+        "git_root": "C:/workspaces/CCSIF",
+        "has_evals": true,
+        "has_scripts": true,
+        "linked_references": []
+      },
+      "name": "purging-token-dead-weight",
+      "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\purging-token-dead-weight\\SKILL.md",
+      "root": "C:\\workspaces\\CCSIF\\.claude\\skills",
+      "score": 38
+    },
+    {
+      "approx_tokens": 322,
+      "findings": [
+        {
+          "code": "missing-when-to-use",
+          "line": 4,
+          "message": "No when_to_use field found",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\repo-audit\\SKILL.md",
+          "severity": "low",
+          "suggestion": "Add explicit trigger reinforcement when useful."
+        },
+        {
+          "code": "missing-arguments",
+          "line": 5,
+          "message": "No argument hint or argument mapping found",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\repo-audit\\SKILL.md",
+          "severity": "low",
+          "suggestion": "Add argument-hint for CLI discoverability when applicable."
+        }
+      ],
+      "line_count": 29,
+      "metadata": {
+        "description_length": 768,
+        "git_root": "C:/workspaces/CCSIF",
+        "has_evals": true,
+        "has_scripts": false,
+        "linked_references": []
+      },
+      "name": "repo-audit",
+      "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\repo-audit\\SKILL.md",
+      "root": "C:\\workspaces\\CCSIF\\.claude\\skills",
+      "score": 94
+    },
+    {
+      "approx_tokens": 1691,
+      "findings": [
+        {
+          "code": "missing-when-to-use",
+          "line": 4,
+          "message": "No when_to_use field found",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\self-improve\\SKILL.md",
+          "severity": "low",
+          "suggestion": "Add explicit trigger reinforcement when useful."
+        },
+        {
+          "code": "missing-toc",
+          "line": null,
+          "message": "SKILL.md exceeds 100 lines without a visible table of contents",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\self-improve\\SKILL.md",
+          "severity": "low",
+          "suggestion": "Add a compact ToC or compress below 100 lines."
+        },
+        {
+          "code": "unlinked-reference",
+          "line": null,
+          "message": "Reference file is not directly linked from SKILL.md",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\self-improve\\references\\input-discovery.md",
+          "severity": "low",
+          "suggestion": "Link directly from SKILL.md or remove if obsolete."
+        },
+        {
+          "code": "reference-missing-toc",
+          "line": null,
+          "message": "Reference over 100 lines lacks table of contents",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\self-improve\\references\\input-discovery.md",
+          "severity": "medium",
+          "suggestion": "Add a ToC near the top."
+        },
+        {
+          "code": "unlinked-reference",
+          "line": null,
+          "message": "Reference file is not directly linked from SKILL.md",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\self-improve\\references\\kpi-defaults.md",
+          "severity": "low",
+          "suggestion": "Link directly from SKILL.md or remove if obsolete."
+        },
+        {
+          "code": "unlinked-reference",
+          "line": null,
+          "message": "Reference file is not directly linked from SKILL.md",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\self-improve\\references\\proposal-schema.md",
+          "severity": "low",
+          "suggestion": "Link directly from SKILL.md or remove if obsolete."
+        }
+      ],
+      "line_count": 137,
+      "metadata": {
+        "description_length": 743,
+        "git_root": "C:/workspaces/CCSIF",
+        "has_evals": true,
+        "has_scripts": false,
+        "linked_references": []
+      },
+      "name": "self-improve",
+      "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\self-improve\\SKILL.md",
+      "root": "C:\\workspaces\\CCSIF\\.claude\\skills",
+      "score": 77
+    },
+    {
+      "approx_tokens": 1371,
+      "findings": [],
+      "line_count": 187,
+      "metadata": {
+        "description_length": 463,
+        "git_root": "C:/workspaces/CCSIF",
+        "has_evals": true,
+        "has_scripts": true,
+        "linked_references": [
+          "references/audit-rubric.md",
+          "references/commit-policy.md",
+          "references/fix-policy.md"
+        ]
+      },
+      "name": "skill-auditor",
+      "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\skill-auditor\\SKILL.md",
+      "root": "C:\\workspaces\\CCSIF\\.claude\\skills",
+      "score": 100
+    },
+    {
+      "approx_tokens": 371,
+      "findings": [
+        {
+          "code": "missing-when-to-use",
+          "line": 4,
+          "message": "No when_to_use field found",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\stack-detection\\SKILL.md",
+          "severity": "low",
+          "suggestion": "Add explicit trigger reinforcement when useful."
+        },
+        {
+          "code": "missing-arguments",
+          "line": 5,
+          "message": "No argument hint or argument mapping found",
+          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\stack-detection\\SKILL.md",
+          "severity": "low",
+          "suggestion": "Add argument-hint for CLI discoverability when applicable."
+        }
+      ],
+      "line_count": 46,
+      "metadata": {
+        "description_length": 714,
+        "git_root": "C:/workspaces/CCSIF",
+        "has_evals": true,
+        "has_scripts": false,
+        "linked_references": []
+      },
+      "name": "stack-detection",
+      "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\stack-detection\\SKILL.md",
+      "root": "C:\\workspaces\\CCSIF\\.claude\\skills",
+      "score": 94
+    }
+  ],
+  "summary": {
+    "corpus_score": 77.62,
+    "findings_by_severity": {
+      "high": 0,
+      "low": 58,
+      "medium": 37
+    },
+    "include_user": false,
+    "root": "C:\\workspaces\\CCSIF\\.claude\\skills",
+    "skills_audited": 21
+  }
+}
