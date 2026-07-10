@@ -1,6 +1,6 @@
 ---
 name: pr-triage
-description: Trigger on queries that say triage this pull request, evaluate PR scope and completeness, check for duplicate or spam PRs, or assign PR priority and category. Use through /pr-triage before review or merge routing when a PR needs an evidence-backed triage disposition without changing repository or GitHub state. Evaluates one GitHub pull request for project scope, contribution completeness, duplication or spam, missing information, priority, and category. NOT for actually merging, commenting on, or editing a pull request use gh pr directly or a maintainer action instead. Distinct keywords triage disposition, blocking versus advisory follow-up, duplicate and spam classification, decision precedence, read-only triage.
+description: Use when evaluating one GitHub pull request for scope, completeness, duplication, or priority without changing repository state. Trigger on triage this pull request, evaluate PR scope and completeness, check for duplicate or spam PRs, assign PR priority and category. NOT for actually merging, commenting on, or editing a pull request; use gh pr directly or a maintainer action instead. Requires producing a read-only triage disposition with no repository or GitHub state changes.
 disable-model-invocation: true
 user-invocable: true
 context: fork

@@ -1,6 +1,6 @@
 ---
 name: purging-token-dead-weight
-description: Trigger on queries that say purge token dead weight, clean up generated build artifacts, align our gitignore rules, or reclaim context from dependency trees. Use manually when repository context is polluted by generated or low-signal files. Audits and safely purges generated workspace dead weight, aligns repository ignore files, and establishes Claude Code read-deny rules for dependency trees, build outputs, logs, large fixtures, mock datasets, and minified assets. NOT for deleting tracked source files or general repository cleanup use maintaining-repository-hygiene instead. Distinct keywords managed marker blocks, read-deny rules, generated artifact deletion, reclaimed bytes, confirmation token.
+description: Use when repository context is polluted by generated or low-signal files that waste search or context capacity. Trigger on purge token dead weight, clean up generated build artifacts, align our gitignore rules, reclaim context from dependency trees. NOT for deleting tracked source files or general repository cleanup; use maintaining-repository-hygiene instead. Requires an explicit confirmation token before deleting any generated artifact in apply mode.
 when_to_use: Run before large repository analysis, after major builds, or when dependency trees and generated artifacts are consuming search or context capacity.
 disable-model-invocation: true
 user-invocable: true

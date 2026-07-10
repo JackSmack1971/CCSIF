@@ -1,6 +1,6 @@
 ---
 name: migration-safety
-description: Use when reviewing database migrations, schema changes, data backfills, or migration rollout safety. Detects migration frameworks and directories such as Rails, Django, Prisma, Alembic, Knex, Flyway, Liquibase, and raw SQL, then evaluates reversibility, lock risk, destructive operations, deploy sequencing, backward compatibility, expand/contract rollout options, risk rating, and rollback readiness. Database migrations are a protected area: do not create, edit, run, apply, revert, or regenerate migrations without explicit user approval.
+description: Use when reviewing database migrations, schema changes, or data backfills before merge, deploy, or rollback across Rails, Django, Prisma, Alembic, Knex, Flyway, or Liquibase. Trigger on is this migration safe to deploy, check migration rollback readiness, detect migration framework and lock risk, review schema or data backfill safety. NOT for a lightweight expand backfill contract classification checklist without framework detection; use database-migration-review instead. Requires explicit user approval before creating, editing, applying, reverting, or regenerating any migration or running a migration command.
 user-invocable: true
 context: fork
 agent: Explore

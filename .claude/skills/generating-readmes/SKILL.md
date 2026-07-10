@@ -1,6 +1,6 @@
 ---
 name: generating-readmes
-description: Use when asked to generate, improve, rewrite, audit, or verify a README, quickstart, project overview, command center, repo documentation, or maintainer guide. Creates or upgrades repository README.md files as grounded operational manuals, marking uncertain claims and never inventing badges, commands, URLs, or roadmap commitments. NOT for CONTRIBUTING.md or SECURITY.md content use generating-contributing-guidelines or crafting-repository-security-policy instead. Distinct keywords operational manual, trust contract, audit-only mode, evidence inventory, inferred claims.
+description: Use when asked to generate, improve, rewrite, audit, or verify a README, quickstart, or project overview as a grounded operational manual. Trigger on generate a README, rewrite our README, audit README accuracy, verify quickstart commands work. NOT for CONTRIBUTING.md or SECURITY.md content; use generating-contributing-guidelines or crafting-repository-security-policy instead. Requires marking uncertain claims and never inventing badges, commands, URLs, or roadmap commitments.
 when_to_use: Use for repository README work that must be grounded in real files, commands, configuration, CI, governance, and contribution evidence. Do not use for generic marketing copy unrelated to a code repository.
 context: fork
 agent: Explore

@@ -1,6 +1,6 @@
 ---
 name: observability-audit
-description: Trigger when asked to audit observability, review logs, assess diagnostics coverage, evaluate production debugging readiness, inspect telemetry, or statically review logging, metrics, tracing, health checks, alerts, runbooks, and telemetry privacy risks.
+description: Use when asked to audit observability, review logging and metrics coverage, or assess production debugging readiness from static code and configuration. Trigger on audit observability, review our logs, assess diagnostics coverage, evaluate production debugging readiness. NOT for a live incident investigation with real logs and timelines; use incident-response instead. Requires grounding every finding in code, configuration, deployment manifests, or documentation rather than assumed runtime behavior.
 when_to_use: Use for static observability and operability reviews of codebases, services, libraries, infrastructure definitions, or deployment configuration. Trigger phrases include “audit observability”, “review logs”, “diagnostics coverage”, and “production debugging”.
 argument-hint: "[target path or service]"
 allowed-tools: Read, Grep, Glob, Bash

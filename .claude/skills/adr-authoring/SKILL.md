@@ -1,6 +1,6 @@
 ---
 name: adr-authoring
-description: Use when asked to write, update, or review Architecture Decision Records or design decision logs. Trigger phrases include "write ADR", "architecture decision", "record decision", and "design rationale".
+description: Use when asked to write, update, or review an Architecture Decision Record or design decision log grounded in repository evidence. Trigger on write ADR, record an architecture decision, document design rationale, update an existing ADR. NOT for implementing the decided change or general documentation edits; use generating-readmes or generating-contributing-guidelines instead. Requires citing the specific commits, code, or discussion that justify the recorded decision.
 user-invocable: true
 context: fork
 agent: Explore

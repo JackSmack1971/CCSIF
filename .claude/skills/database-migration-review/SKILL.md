@@ -1,6 +1,6 @@
 ---
 name: database-migration-review
-description: Audit database migration safety, ordering, reversibility, compatibility, online migration risks, index strategy, constraints, rollback plans, and ORM/schema drift. Use when asked to “review migration”, “database schema change”, “ORM migration”, “migration safety”, or to assess SQL, schema, or ORM changes before deployment.
+description: Use when asked to review a database migration, schema change, or ORM migration for safety before merge or deployment. Trigger on review migration, database schema change, ORM migration change, assess SQL migration before deployment. NOT for a framework-detecting protected-area gate that blocks running migration commands outright; use migration-safety instead. Requires classifying each migration operation as expand, backfill, contract, destructive, or index-only before recommending deployment sequencing.
 ---
 
 # Database Migration Review

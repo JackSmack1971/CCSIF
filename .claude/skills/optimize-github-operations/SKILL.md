@@ -1,6 +1,6 @@
 ---
 name: optimize-github-operations
-description: Use when the user explicitly asks to review, standardize, repair, or optimize the .github folder. Trigger on queries that say audit our github governance, standardize our PR template, optimize the dot-github folder, or repair CODEOWNERS routing. Audits and optimizes a repository's .github governance files, pull-request evidence contracts, specialized PR templates, CODEOWNERS routing, and PR-body validation workflow. NOT for ordinary feature implementation, general CI debugging, or issue triage use pr-triage instead. Distinct keywords PR evidence contract, specialized PR templates, PR-body validation workflow, governance repair, preview apply modes.
+description: Use when asked to review, standardize, repair, or optimize the .github governance folder including PR templates and CODEOWNERS routing. Trigger on audit our github governance, standardize our PR template, optimize the dot-github folder, repair CODEOWNERS routing. NOT for ordinary feature implementation, general CI debugging, or issue triage; use pr-triage instead. Requires running in preview mode before applying any governance change in apply mode.
 when_to_use: Run manually before changing repository governance or pull-request infrastructure. Do not use for ordinary feature implementation, general CI debugging, or issue triage.
 disable-model-invocation: true
 argument-hint: "[preview|apply] [auto|default|security|release|migration|all]"

@@ -1,6 +1,6 @@
 ---
 name: incident-response
-description: Use when the user mentions an incident, production regression, rollback plan, outage analysis, postmortem, post-incident review, service degradation, customer-impacting bug, or suspected production issue. Helps agents reconstruct timelines from logs, commits, deploy records, and issue/PR references; assess blast radius and user impact; distinguish confirmed facts from hypotheses; propose safe rollback, roll-forward, or mitigation options; draft status updates and post-incident notes; create prevention follow-up issue stubs; and preserve evidence without destructive commands.
+description: Use when the user mentions a suspected or confirmed production incident, outage, rollback plan, or postmortem. Trigger on we have an incident, production regression happened, draft a postmortem, plan a safe rollback. NOT for routine bug triage with no production impact; use pr-triage or repo-audit instead. Requires preserving evidence, citing sources, and avoiding destructive or state-changing commands unless explicitly approved.
 ---
 
 # Incident Response

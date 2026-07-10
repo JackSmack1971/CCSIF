@@ -1,6 +1,6 @@
 ---
 name: ci-cd-audit
-description: Use when the user asks to audit CI, review workflow security, check deployment pipeline, validate GitHub Actions, inspect GitLab CI, review CircleCI config, audit Azure Pipelines, or compare CI checks against repository requirements. Guides static inspection of CI/CD workflow files for trigger safety, secret and permission boundaries, OIDC, cache safety, verification coverage, deployment gates, rollback readiness, and missing required checks. NOT for editing CI/CD files unless the user explicitly requests implementation after the audit.
+description: Use when asked to audit CI or deployment pipeline security across GitHub Actions, GitLab CI, CircleCI, or Azure Pipelines and compare configured checks against repository requirements. Trigger on audit our CI, review workflow security, check deployment pipeline, validate GitHub Actions or GitLab CI config. NOT for producing one filed issue per finding with file and job level remediation; use cicd-workflow-audit instead. Requires treating CI/CD deployment workflows as protected and reporting findings without editing them unless explicitly requested.
 when_to_use: Use for read-only static CI/CD security and coverage audits across GitHub Actions, GitLab CI, CircleCI, Azure Pipelines, and equivalent workflow systems.
 argument-hint: "[optional CI provider, workflow path, or audit focus]"
 allowed-tools: Read, Grep, Glob, Bash

@@ -1,6 +1,6 @@
 ---
 name: skill-auditor
-description: Use when auditing and improving a local Claude Code skill corpus under .claude/skills or ~/.claude/skills. Trigger on queries that say audit all skills, improve skill corpus, fix SKILL.md metadata, validate skill descriptions, commit skill updates. NOT for reviewing application code or PR diffs use code review or repository hygiene skills instead. Distinct keywords skill corpus, frontmatter, progressive disclosure, evals.json, overtriggering, undertriggering.
+description: Use when auditing and improving a local Claude Code skill corpus under .claude/skills or ~/.claude/skills. Trigger on queries that say audit all skills, improve skill corpus, fix SKILL.md metadata, validate skill descriptions, commit skill updates. NOT for reviewing application code or PR diffs use code review or repository hygiene skills instead. Requires validating SKILL.md frontmatter and evals.json before committing any skill corpus change.
 when_to_use: Trigger when the user asks to audit, lint, repair, modernize, optimize, validate, benchmark, or commit changes across local Claude Code Agent Skills.
 argument-hint: "[--root PATH] [--include-user] [--fix] [--commit] [--message TEXT]"
 arguments:

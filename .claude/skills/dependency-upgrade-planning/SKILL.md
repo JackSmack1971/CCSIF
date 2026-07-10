@@ -1,6 +1,6 @@
 ---
 name: dependency-upgrade-planning
-description: Use when planning dependency upgrades without applying them. Builds on dependency-audit findings to read manifests and lockfiles in read-only mode, group available upgrades by ecosystem, risk, semantic-version impact, and runtime criticality, identify breaking-change research and migration-guide checkpoints, recommend low-blast-radius upgrade batches, and define verification commands plus rollback steps. NOT for editing manifests, lockfiles, package-manager outputs, or applying upgrades unless the user explicitly asks for implementation outside planning mode.
+description: Use when planning dependency upgrades from existing dependency-audit findings without applying them. Trigger on plan our dependency upgrades, group upgrades by risk and ecosystem, recommend a low-blast-radius upgrade batch, define upgrade verification steps. NOT for editing manifests, lockfiles, or actually applying upgrades; use the repository's package manager directly instead. Requires reading manifests, lockfiles, and prior dependency-audit findings before proposing an upgrade batch.
 allowed-tools: Read, Grep, Glob, Bash
 when_to_use: Use to create a dependency upgrade plan from manifests, lockfiles, and dependency-audit findings without modifying dependency files.
 argument-hint: "[--from-audit PATH] [--ecosystem npm|python|ruby|go|rust|java|dotnet|php|mixed] [--security-first]"
