@@ -1,3 +1,8 @@
+---
+paths:
+  - "**/*"
+---
+
 # Surgical Density
 
 ## Governing Order
@@ -30,7 +35,7 @@
 ## Verification and Diff Control
 
 - Run the narrowest existing check capable of detecting failure: focused test first, then type check, build, linter, or broader suite as required by the change.
-- Add an externally observable behavior test when non-trivial behavior changes and existing coverage cannot detect regression.
+- Add an externally observable behavior test when non-trivial behavior changes and existing coverage is insufficient to detect regression.
 - Review `git diff --check`, `git diff --stat`, and the complete relevant diff before completion when Git is available.
 - Remove each added line, file, abstraction, dependency, fixture, mock, or comment that lacks a direct acceptance-criteria or correctness mapping.
 - Report a check as passed only when its executed command returns a successful result; otherwise state the exact unverified scope or failure.

@@ -1,7 +1,7 @@
 ---
 name: architecture
 description: Architecture boundaries and dependency direction.
-globs:
+paths:
   - "src/**/*.ts"
   - "src/**/*.tsx"
   - "app/**/*.ts"
@@ -11,6 +11,6 @@ globs:
 # Architecture Rules
 
 - Preserve existing module boundaries.
-- Do not introduce cross-layer imports without documenting the dependency direction.
+- Document the dependency direction before introducing any cross-layer import.
 - Keep domain logic independent from transport, UI, and persistence details.
 - Add integration tests when changing cross-boundary behavior.

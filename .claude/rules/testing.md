@@ -1,7 +1,7 @@
 ---
 name: testing
 description: Testing expectations for source changes.
-globs:
+paths:
   - "src/**"
   - "test/**"
   - "tests/**"
@@ -14,4 +14,4 @@ globs:
 - Start with the smallest test that proves the behavior.
 - Add regression tests for confirmed bugs.
 - Keep tests deterministic.
-- Avoid mocking the source of truth when the purpose is state verification.
+- Exercise the real source of truth directly when the test's purpose is state verification.

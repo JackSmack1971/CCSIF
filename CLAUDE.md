@@ -9,9 +9,9 @@ All self-modifications must be:
 - Scoped to the minimum change that addresses the observed issue
 - Reviewed against Protected Areas (production config, secrets, auth, payments, CI/CD, database migrations)
 
-Keep changes small and reviewable.  
-Do not mutate production code during audit-only tasks.  
-Verify real source-of-truth state after any write or external action.
+- Keep changes small and reviewable.
+- Keep audit-only tasks read-only: report findings without editing production code.
+- Verify real source-of-truth state after any write or external action.
 
 Tier rules:
 
@@ -44,10 +44,14 @@ npm run lint
 npm run typecheck
 ```
 
+## Read First
+
+Read one matching existing file in a path-scoped area before creating a new file there, so the relevant `.claude/rules/*.md` guidance loads before the write.
+
 ## Engineering Rules
 
 - Keep changes small and reviewable.
-- Do not mutate production code during audit-only tasks.
+- Keep audit-only tasks read-only: report findings without editing production code.
 - Prefer repository conventions over generic patterns.
 - Update tests and docs with behavior changes.
 - Verify real source-of-truth state after any write or external action.
