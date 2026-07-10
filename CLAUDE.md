@@ -1,3 +1,25 @@
+<!-- CONSTITUTION:START -->
+
+# Constitution (Immutable)
+
+All self-modifications must be:
+
+- Evidence-driven from traces/metrics only
+- Git-tracked with clear rollback path
+- Scoped to the minimum change that addresses the observed issue
+- Reviewed against Protected Areas (production config, secrets, auth, payments, CI/CD, database migrations)
+
+Keep changes small and reviewable.  
+Do not mutate production code during audit-only tasks.  
+Verify real source-of-truth state after any write or external action.
+
+Tier rules:
+
+- Tier 1 changes require explicit human approval before apply.
+- Tier 2 changes may auto-apply only after passing automated validation.
+  
+  <!-- CONSTITUTION:END -->
+
 # Project Claude Instructions
 
 ## Project Summary

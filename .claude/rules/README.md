@@ -1,3 +1,3 @@
 # rules
 
-Scaffold directory for Claude Code `project-root/your-project/.claude/rules`.
+Scaffold directory for Claude Code `workspaces/CCSIF/.claude/rules`.

@@ -1,0 +1,70 @@
+{
+  "$schema": "https://example.invalid/schemas/claude-code-project-settings.schema.json",
+  "version": 1,
+  "description": "Shared project Claude Code settings. Commit only team-safe values.",
+  "permissions": {
+    "mode": "ask",
+    "allow": [
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log --oneline -20)",
+      "Bash(npm test:*)",
+      "Bash(npm run lint:*)",
+      "Bash(npm run typecheck:*)"
+    ],
+    "deny": [
+      "Bash(git push --force:*)",
+      "Bash(git reset --hard:*)",
+      "Bash(rm -rf:*)",
+      "Bash(terraform destroy:*)",
+      "Bash(kubectl delete:*)"
+    ]
+  },
+  "tools": {
+    "shell": {
+      "enabled": true,
+      "timeoutSeconds": 120
+    },
+    "git": {
+      "protectBranches": [
+        "main",
+        "master"
+      ],
+      "requireStatusBeforeCommit": true
+    }
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "",
+        "hooks": [
+          { "type": "command", "command": "bash .claude/hooks/session-start.sh" }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "",
+        "hooks": [
+          { "type": "command", "command": "bash .claude/hooks/pre-tool-use.sh" }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "",
+        "hooks": [
+          { "type": "command", "command": "bash .claude/hooks/post-tool-use.sh" }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          { "type": "command", "command": "bash .claude/hooks/stop.sh" }
+        ]
+      }
+    ]
+  }
+}
