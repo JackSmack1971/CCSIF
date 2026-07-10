@@ -23,57 +23,33 @@
       "title": "Rule file exceeds 50-line target"
     },
     {
-      "axis": "MCP governance",
-      "evidence": "No allowedMcpServers, deniedMcpServers, or allowManagedMcpServersOnly key found.",
-      "id": "CCA-003",
-      "line": null,
-      "path": ".claude/settings.json",
-      "recommendation": "Add explicit MCP server governance when external tools are used.",
-      "severity": "medium",
-      "stop_condition": "Settings define MCP access policy or document that the project uses no MCP servers.",
-      "title": "MCP governance settings not detected"
-    },
-    {
       "axis": "security boundaries",
       "evidence": "disableSkillShellExecution is not true.",
-      "id": "CCA-004",
+      "id": "CCA-003",
       "line": null,
       "path": ".claude/settings.json",
       "recommendation": "Set disableSkillShellExecution true in managed or project settings when inline shell in skills is outside policy.",
       "severity": "low",
       "stop_condition": "Policy is explicit in settings or documented as intentionally permissive.",
       "title": "Skill shell execution is not explicitly disabled"
-    },
-    {
-      "axis": "memory hygiene",
-      "evidence": "No .claude/projects or .claude/memory ignore pattern found.",
-      "id": "CCA-005",
-      "line": null,
-      "path": ".gitignore",
-      "recommendation": "Exclude accidental local Claude memory paths if this repository stores any local memory artifacts.",
-      "severity": "low",
-      "stop_condition": "Gitignore covers local memory artifacts or repository confirms none are created inside project root.",
-      "title": "No local Claude memory ignore pattern detected"
     }
   ],
-  "generated_at": "2026-07-09T23:03:02",
+  "generated_at": "2026-07-10T07:22:06",
   "repo": "C:\\workspaces\\CCSIF",
   "schema": "claude-code-architecture-audit-v1",
   "summary": {
     "axes": {
-      "MCP governance": 1,
       "context budget": 2,
-      "memory hygiene": 1,
       "security boundaries": 1
     },
     "counts": {
       "critical": 0,
       "high": 0,
       "info": 0,
-      "low": 2,
-      "medium": 3
+      "low": 1,
+      "medium": 2
     },
     "status": "partial",
-    "total": 5
+    "total": 3
   }
 }

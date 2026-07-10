@@ -1,46 +1,52 @@
 # Claude Code Architecture Improvement Plan
 
 Repository: `C:\workspaces\CCSIF`
-Source audit: `.claude/audits/claude-code-architecture-audit.json` / `.md` (deterministic, 25 findings, status FAIL)
-Plan generated: 2026-07-09 (manual review layered on top of the deterministic scan)
+Source audit: `.claude/audits/claude-code-architecture-audit.json` / `.md` (deterministic, 5 findings, status PARTIAL)
+Plan generated: 2026-07-10
 
-## Executive Summary
+This supersedes the 2026-07-09 plan (25 findings, FAIL). That plan's critical/high items — the untracked self-modifying rule file, empty hook placeholders, missing path scoping, negative-phrasing rewrites, missing decision log — were resolved in commit `5d25b74`. The audit now shows **0 critical / 0 high**, meeting this skill's stop condition on its own. The 5 remaining findings are medium/low polish items.
 
-Status: **FAIL** — 1 critical (manual finding, not caught by the scanner), 2 high (scanner) + 1 high (manual), 21 medium, 2 low.
+## Goal
 
-The repository has a reasonable settings/hook/rule skeleton, but three things need a human decision before any edit:
-
-1. An **untracked, unconditionally-loaded rule file** contains self-modifying operational instructions (commit `.claude/`, restructure rules, prune memory) dressed up as an empirical whitepaper with 2026-dated citations. It is not yet part of git history — this is the highest-leverage finding.
-2. **`PreToolUse` and `Stop` hooks are empty placeholders.** Every "Tier 1 requires human approval" / "Protected Areas" / "verify before claiming success" statement in `CLAUDE.md` currently exists only as prose — nothing blocks a destructive command or a false success claim.
-3. Most rule files under `.claude/rules/` have **no `paths:` frontmatter**, so they load unconditionally on every turn rather than only when relevant files are touched.
+Resolve the 5 medium/low findings without weakening security-governance rule content or breaking existing skill script execution.
 
 ## Ranked Findings
 
-| # | Severity | Axis | File | Evidence | Fix | Stop condition |
-|---|---|---|---|---|---|---|
-| M-1 | **Critical** (manual) | untrusted control-plane content | `.claude/rules/System Architecture and Empirically Grounded Self-Improvement in Claude Code v2.1.206.md` | Untracked (`git status` shows `??`). 204 lines / ~7k+ words, no `paths:` frontmatter (loads every turn). Contains a "June 2026 Modular Migration Protocol" instructing the agent to autonomously restructure `.claude/`, trim `CLAUDE.md`, and **commit the `.claude/` directory to version control** as part of self-improvement — i.e. operational instructions embedded in what reads as a citation-heavy research document, sitting in the same trust tier as your hand-authored rules. | Decide: delete, or move to `.claude/docs/` (non-auto-loaded reference, no longer injected) and strip the autonomous-commit/self-restructure directives so any control-plane change still routes through the existing approval gates in `operating-constitution.md` and `control-plane.md`. | File is either removed, or lives outside auto-loaded rule paths and contains no unreviewed self-modification instructions. |
-| M-2 | **High** (manual) | verification / security boundaries | `.claude/hooks/pre-tool-use.sh`, `.claude/hooks/stop.sh` | Both are stub scripts — `pre-tool-use.sh` has no deny logic (just a comment: "Placeholder: implement repo-specific deny checks here"); `stop.sh` has no verification command (just a comment: "Placeholder: final session checks"). `CLAUDE.md`'s constitution ("Tier 1 changes require explicit human approval," "Protected Areas") and the audit SOP's High-severity rule ("Destructive-operation policy exists only as markdown prose") both apply directly. | Implement real deny checks in `pre-tool-use.sh` for the CLAUDE.md Protected Areas (prod config, secrets, migrations, auth, payments, CI/CD) and a real verification command in `stop.sh` (e.g. `git status --short` plus the repo's actual test/lint/typecheck commands once they're defined). This is a security-sensitive change — needs explicit scope agreement before editing. | `pre-tool-use.sh` exits 2 / denies on a synthetic Protected-Area write attempt; `stop.sh` runs an actual check and blocks on a synthetic failure. |
-| CCA-001 | High | path-scoped rules | `CLAUDE.md` | No Read First guidance detected. | Add a short "Read First" line: read one existing matching file in a path-scoped area before creating new files there, so path-scoped rules actually get injected before writes. | Root manifest contains explicit Read First guidance. |
-| CCA-008 | High | context budget | (same file as M-1) | 204 lines, far above the 50-line rule-file budget. | Resolved by the M-1 decision. | Rule file is below 50 lines or moved out of active rules. |
-| CCA-002/004/005/006/007/009/010 | Medium | path-scoped rules | `architecture.md`, `constitutional-agent-engineering-rules.md`, `README.md`, `security.md`, `surgical-density.md`, `testing.md`, and M-1's file | No `paths:` key. | For each: either add precise `paths:` globs (e.g. `security.md` → `["**/*"]` only if truly global, otherwise scope to relevant dirs) or add an explicit one-line "intentionally global" label so the audit script and future readers know it's a deliberate choice, not an oversight. `constitutional-agent-engineering-rules.md` explicitly documents itself as unscoped-by-design ("no YAML path-scoping frontmatter") — that one is likely fine to label global rather than scope. | Every rule file has either `paths:` frontmatter or an explicit global-scope label. |
-| CCA-011 | Medium | MCP governance | `.claude/settings.json` | No `allowedMcpServers`/`deniedMcpServers`/`allowManagedMcpServersOnly`. | Add explicit MCP governance keys once the project's actual MCP usage is known (session shows several `claude_ai_*` connectors available — confirm which are sanctioned for this repo). | Settings define MCP policy or document "no MCP servers used." |
-| CCA-013/014/015/016/017/018/019/020/021/022/023 | Medium | linguistic architecture | `CLAUDE.md` + 9 rule files | Negative phrasing ("Do not...", "Never...", "Avoid...") in operational rules. | Rewrite each flagged line as an affirmative imperative with a measurable completion criterion (see audit table for exact lines). Batch this as one mechanical pass across the 10 files. | Each replacement line states the desired action plus a verification condition. |
-| CCA-024 | Medium | metacognitive improvement | `.claude/docs/decision-log.md` | Missing. | Create `.claude/docs/decision-log.md`; log this audit's decisions (M-1 disposition, hook implementation) as the first entries. | File exists with dated, evidence-backed entries. |
-| CCA-012 | Low | security boundaries | `.claude/settings.json` | `disableSkillShellExecution` not set to `true`. | Set explicitly (`true` or `false`) so the policy is intentional rather than implicit. | Key present with a documented choice. |
-| CCA-025 | Low | memory hygiene | `.gitignore` | No `.claude/projects`/`.claude/memory` pattern. | Not applicable as-is — auto-memory lives at `~/.claude/projects/<hash>/memory/`, outside the repo. Add a pattern only if this project ever writes memory artifacts inside the repo root. | Confirmed no in-repo memory writes, or pattern added. |
+| ID | Severity | Axis | File | Evidence | Fix | Stop condition |
+| --- | --- | --- | --- | --- | --- | --- |
+| CCA-001 | Medium | context budget | `.claude/rules/constitutional-agent-engineering-rules.md` | 73 lines (generic target ≤50) | The file **self-documents** an 80-line compaction threshold under "Context Dilution" mitigation ("Decompose only if total line count exceeds 80"); it currently sits at 73/80. It is also a project-local copy of the user's global ruleset — trimming to the generic 50-line target risks losing precision-tuned security language and diverging from the canonical global copy at `~/.claude/rules/`. | Rule file is at or below 50 lines **or** documented as intentionally under its own declared threshold |
+| CCA-002 | Medium | context budget | `.claude/rules/surgical-density.md` | 55 lines (target ≤50) | 5 lines over; every bullet is a distinct, load-bearing instruction with no obvious redundant pair to merge without loss. `paths: ["**/*"]` marks it as deliberately global. | Rule file is at or below 50 lines or documented as intentionally global |
+| CCA-003 | Medium | MCP governance | `.claude/settings.json` | No `allowedMcpServers`, `deniedMcpServers`, or `allowManagedMcpServersOnly` key; no `.mcp.json` in the repo | Add an explicit policy block documenting that this project authorizes no MCP servers (none configured today) | Settings define MCP access policy or document that the project uses no MCP servers |
+| CCA-004 | Low | security boundaries | `.claude/settings.json` | `disableSkillShellExecution` is not `true` | **Not recommended to auto-apply.** Most of this repo's skill corpus (skill-auditor, changelog-updater, generate-codeowners, maintaining-repository-hygiene, and others) executes Python/Bash scripts as their core mechanism. This key's exact scope (blocks inline shell prose in SKILL.md vs. blocks all skill-invoked Bash tool calls) is not verified against current Claude Code docs; setting it blind risks breaking the corpus this session already audited and fixed. | Policy is explicit in settings or documented as intentionally permissive |
+| CCA-005 | Low | memory hygiene | `.gitignore` | No `.claude/projects` or `.claude/memory` ignore pattern | Confirmed: this repo does not currently create either directory (session memory lives at `~/.claude/projects/<hash>/memory/`, outside the repo). Add the pattern anyway as cheap, zero-risk defensive hygiene. | Gitignore covers local memory artifacts, or repo confirms none are created inside project root |
 
-## Proposed Execution Order
+## Proposed Edits
 
-1. **M-1 decision** (blocks everything else touching context budget/path-scoping for that file).
-2. **M-2** hook implementation — security-sensitive, isolate for explicit approval, smallest diff per script.
-3. CCA-001 Read First line in `CLAUDE.md` (one line, low risk).
-4. CCA-002/004–010 paths frontmatter / global labels (mechanical, low risk, one commit per file or batched).
-5. CCA-013–023 linguistic rewrites (mechanical, low risk, mirror existing tone).
-6. CCA-024 decision log creation.
-7. CCA-011, CCA-012, CCA-025 (settings tweaks — confirm actual MCP usage before writing CCA-011; ask before choosing `disableSkillShellExecution` value since it changes skill behavior).
+| File | Change | Risk |
+| --- | --- | --- |
+| `.gitignore` | Add `.claude/memory/` and `.claude/projects/` ignore patterns | None — purely additive, no directory exists today |
+| `.claude/settings.json` | Add an explicit MCP policy block stating no servers are authorized | Low — additive documentation, no behavior change |
+| `.claude/settings.json` | Set `disableSkillShellExecution: true` | **High** — unverified blast radius against the active skill corpus |
+| `.claude/rules/constitutional-agent-engineering-rules.md` | Trim to ≤50 lines | Medium — risks security-language precision loss and drift from the global canonical copy |
+| `.claude/rules/surgical-density.md` | Trim to ≤50 lines | Low-medium — no clean 5-line cut without dropping a distinct rule |
 
-## Explicit Approval Needed Before Editing
+## Approval Needed
 
-- Disposition of M-1's file (delete vs. relocate vs. keep-and-trim).
-- Content of the `pre-tool-use.sh` deny list and `stop.sh` verification command (M-2) — these are security-sensitive and currently unimplemented, not regressions, so scope must be agreed rather than assumed.
-- Whether to proceed with the full mechanical batch (frontmatter + linguistic rewrites) in one pass or file-by-file.
+- [ ] `disableSkillShellExecution: true` (CCA-004) — recommend **not applying** without first verifying exact semantics; high risk of breaking the skill corpus
+- [ ] MCP governance block in `settings.json` (CCA-003) — permission-adjacent file edit
+- [ ] Trimming `constitutional-agent-engineering-rules.md` (CCA-001) — rewriting security-governance prose
+- [ ] Trimming `surgical-density.md` (CCA-002) — rewriting operational-governance prose
+
+## Not gated (safe to apply directly)
+
+- `.gitignore` memory-path additions (CCA-005) — purely additive, no behavior change
+
+## Validation
+
+- [ ] Run audit script again after any approved edit
+- [ ] Run repository-native verification (none defined beyond the skill corpus's own scripts; no build/test manifest exists at the repo root)
+- [ ] Compare before and after findings
+
+## Semantic observation (not a scored finding)
+
+`constitutional-agent-engineering-rules.md` explicitly instructs "Place this file at `~/.claude/rules/...` with no YAML path-scoping header," yet it is committed inside this project's `.claude/rules/` with a `paths: ["**/*"]` header — a self-referential placement inconsistency. This is a maintainer decision (keep both copies, or de-duplicate in favor of the global one) outside this audit's automated scoring, so it is not in the edit list above.

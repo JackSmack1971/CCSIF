@@ -8,6 +8,10 @@ CLAUDE.local.md
 .claude/traces/*.jsonl
 .codex/traces/*.jsonl
 
+# Local Claude Code memory artifacts, if ever created inside the repo root
+.claude/memory/
+.claude/projects/
+
 # Secrets
 .env
 .env.*
