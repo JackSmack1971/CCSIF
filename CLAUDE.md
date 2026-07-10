@@ -15,8 +15,11 @@ All self-modifications must be:
 
 Tier rules:
 
+- Tier 0 changes are generated trace summaries, metrics snapshots, and proposal records that do not alter runtime behavior; they may be created automatically when they are git-trackable and reversible.
 - Tier 1 changes require explicit human approval before apply.
-- Tier 2 changes may auto-apply only after passing automated validation.
+- Tier 1 includes edits to this Constitution, permissions, hooks, protected areas, CI/CD deployment workflows, and script-managed ledgers.
+- Tier 2 changes are bounded documentation, skill-description, rule-copy, and non-executable workflow metadata edits; they may auto-apply only after passing automated validation.
+- Autonomy budget: apply at most five Tier 2 changes per day, change at most thirty lines per auto-applied diff, and pause automatic application after two consecutive reverted self-improvement commits.
   
   <!-- CONSTITUTION:END -->
 

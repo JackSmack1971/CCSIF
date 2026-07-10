@@ -4,8 +4,9 @@
 /*
  * Deterministic PreToolUse guard for CLAUDE.md's "Protected Areas"
  * (production config, secrets, database migrations, auth, payment/trading
- * logic, CI/CD deployment workflows). Invoked by pre-tool-use.sh with the
- * Claude Code PreToolUse JSON payload on stdin.
+ * logic, CI/CD deployment workflows) and the repo control-plane invariants
+ * identified by the self-improvement roadmap. Invoked by pre-tool-use.sh
+ * with the Claude Code PreToolUse JSON payload on stdin.
  *
  * Exit 2 + a reason on stderr blocks the tool call (Claude Code PreToolUse
  * contract). Exit 0 allows it.
@@ -21,6 +22,26 @@
  */
 
 const PROTECTED_AREAS = [
+  {
+    label: 'constitution',
+    re: /(^|[\\/])CLAUDE\.md$/i,
+  },
+  {
+    label: 'control-plane settings',
+    re: /(^|[\\/])\.claude[\\/]settings(\.local)?\.json$/i,
+  },
+  {
+    label: 'control-plane hooks',
+    re: /(^|[\\/])\.claude[\\/]hooks[\\/]/i,
+  },
+  {
+    label: '7axes script-managed ledger',
+    re: /(^|[\\/])\.7axes[\\/](ledger\.jsonl|calibration\.json)$/i,
+  },
+  {
+    label: 'self-improvement registry',
+    re: /(^|[\\/])\.claude[\\/]pending[\\/](registry|session-state)[^\\/]*\.jsonl?$/i,
+  },
   {
     label: 'secrets/credentials',
     re: /(^|[\\/])(\.env(\..+)?|[^\\/]*\.pem|[^\\/]*\.key|[^\\/]*credentials[^\\/]*|[^\\/]*service-account[^\\/]*)$/i,
@@ -84,7 +105,8 @@ function checkBashTool(toolInput) {
   // only lines up against a single path-shaped token, not a full sentence.
   const tokens = cmd.split(/\s+/);
   for (const token of tokens) {
-    const hit = matchProtectedArea(token.replace(/^[>|]+/, ''));
+    const cleaned = token.replace(/^[>|]+/, '').replace(/^['"]|['"]$/g, '');
+    const hit = matchProtectedArea(cleaned);
     if (hit) return hit;
   }
   return null;
