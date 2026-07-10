@@ -58,7 +58,7 @@ Cannot produce qualifying proposals without this input.
 
 5. **Score and rank.** Apply the scoring rubric in `references/kpi-defaults.md`. Carry forward only issues with recurrence ≥ 2 OR a single `critical` failure (data loss, security bypass, Constitution violation, unauthorized external call). Rank by score descending.
 
-6. **Draft proposals.** Produce 1–3 proposals strictly using the format in [references/proposal-schema.md](references/proposal-schema.md). Each proposal must: quote exact trace evidence with file and entry index; quote the exact verbatim Constitution clause it respects; include a syntactically valid unified diff or before/after block; state expected KPI delta with reasoning; and include a rollback plan.
+6. **Draft proposals.** Produce 1–3 proposals strictly using the format in [references/proposal-schema.md](references/proposal-schema.md). Each proposal must: classify its Constitution tier; quote exact trace evidence with file and entry index; quote the exact verbatim Constitution clause it respects; include a syntactically valid unified diff or before/after block; state expected KPI delta with reasoning; and include a rollback plan. If a deterministic runner requests artifacts, also write the machine-readable JSON shape described by the schema to `.claude/pending/proposals-<run-id>.json`.
 
 7. **Verify Constitution compliance.** For every proposed diff, confirm the change does not contradict any Constitution clause. If a conflict exists, discard the proposal and note the conflict inline.
 
@@ -76,7 +76,8 @@ Cannot produce qualifying proposals without this input.
 
 After generating all proposals, confirm before emitting:
 
-- [ ] Every proposal contains all eight required fields from `references/proposal-schema.md`
+- [ ] Every proposal contains all nine required fields from `references/proposal-schema.md`
+- [ ] Every proposal includes a Tier field that matches the Constitution tier table
 - [ ] Every diff block opens with `---`, `+++`, and at least one `@@` hunk header
 - [ ] The Constitution clause in each proposal is a verbatim substring of the extracted Constitution text
 - [ ] Proposal count ≤ 3

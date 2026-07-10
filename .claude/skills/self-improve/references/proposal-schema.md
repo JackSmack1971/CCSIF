@@ -2,11 +2,15 @@
 
 Every `/self-improve` output must use exactly this format. No conversational text outside proposal blocks and the no-qualifying-improvement message.
 
+When a downstream runner requests machine-readable output, emit the same proposals as JSON to `.claude/pending/proposals-<run-id>.json` using the fields below plus `proposal_id`, `tier`, `score`, `status`, and `created_at`. Human-readable Markdown remains the default interactive output; the JSON artifact is for deterministic validation and application.
+
 ---
 
 ## PROPOSAL [N] of [TOTAL]
 
 **Component**: `CLAUDE.md` | `skill:<name>` | `hook:<name>` | `mcp:<tool>`
+
+**Tier**: `Tier 0` | `Tier 1` | `Tier 2` — classify according to the Constitution tier table. Tier 1 proposals are review-only and must not be auto-applied.
 
 **Evidence**: Quote the exact trace entry or metric. Include the file name and entry index or line number. Maximum 5 lines of quoted trace text per proposal.
 
@@ -42,13 +46,14 @@ Every `/self-improve` output must use exactly this format. No conversational tex
 A proposal is emittable only if ALL of the following are true:
 
 1. `Component` is one of the four declared types.
-2. `Evidence` contains at least one direct trace quote with a location identifier (file + entry index or line).
-3. `Constitution Clause` is a verbatim substring of the extracted Constitution text — not paraphrased.
-4. `Proposed Change` is a valid unified diff: contains `---`, `+++`, and at least one `@@ ... @@` hunk header.
-5. `KPI Impact` names a specific KPI, states direction, and gives a magnitude estimate with reasoning.
-6. `Reversibility` provides a concrete rollback path.
-7. `Risk` is present and explicitly reasoned (not omitted).
-8. `Verification` names an observable, repeatable check.
+2. `Tier` is present and matches the Constitution tier table.
+3. `Evidence` contains at least one direct trace quote with a location identifier (file + entry index or line).
+4. `Constitution Clause` is a verbatim substring of the extracted Constitution text — not paraphrased.
+5. `Proposed Change` is a valid unified diff: contains `---`, `+++`, and at least one `@@ ... @@` hunk header.
+6. `KPI Impact` names a specific KPI, states direction, and gives a magnitude estimate with reasoning.
+7. `Reversibility` provides a concrete rollback path.
+8. `Risk` is present and explicitly reasoned (not omitted).
+9. `Verification` names an observable, repeatable check.
 
 If any rule fails, fix that field before emitting. Do not emit invalid proposals.
 

@@ -1,6 +1,6 @@
 ---
 paths:
-  - ".claude/skills/healing-test-failures/SKILL.md"
+  - "**/*"
 ---
 # Failure Escalation Protocol
 

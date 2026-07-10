@@ -9,5 +9,5 @@ if command -v node >/dev/null 2>&1; then
   exit "$status"
 fi
 
-echo "[project-hook] PreToolUse: node unavailable, Protected Area guard skipped (fails open)" >&2
-exit 0
+echo "[project-hook] PreToolUse: blocked — node unavailable, Protected Area guard cannot run" >&2
+exit 2
