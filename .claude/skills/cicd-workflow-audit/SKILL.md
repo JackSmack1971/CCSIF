@@ -11,6 +11,13 @@ disallowed-tools: Write, Edit
 
 Audit repository pipeline definitions for safe triggers, least privilege, deployment gates, secret exposure, supply-chain controls, and expected verification coverage. Treat CI/CD deployment workflows as a protected area: keep audit-only work read-only, report findings instead of editing workflows, and require explicit human approval before applying any Tier 1 change to deployment workflows, permissions, hooks, secrets, or other protected configuration.
 
+## Contents
+
+- [Scope](#scope)
+- [Protected-Area Rules](#protected-area-rules)
+- [Workflow](#workflow)
+- [Stop Conditions](#stop-conditions)
+
 ## Scope
 
 Inspect CI/CD definitions from any provider present, including:

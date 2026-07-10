@@ -1,9 +1,20 @@
 ---
 name: database-migration-review
 description: Use when asked to review a database migration, schema change, or ORM migration for safety before merge or deployment. Trigger on review migration, database schema change, ORM migration change, assess SQL migration before deployment. NOT for a framework-detecting protected-area gate that blocks running migration commands outright; use migration-safety instead. Requires classifying each migration operation as expand, backfill, contract, destructive, or index-only before recommending deployment sequencing.
+when_to_use: Use before a database migration, schema change, or ORM-generated migration merges or deploys, when a read-only expand/backfill/contract/destructive/index-only risk classification is needed rather than a framework-detection gate.
+argument-hint: "[MIGRATION_PATH|PR_NUMBER_OR_URL|BASE..HEAD]"
+allowed-tools: "Read Grep Glob Bash(git rev-parse:*) Bash(git status:*) Bash(git diff:*) Bash(git show:*) Bash(git log:*)"
 ---
 
 # Database Migration Review
+
+## Contents
+
+- [Operating mode: audit first](#operating-mode-audit-first)
+- [Review workflow](#review-workflow)
+- [Checklist](#checklist)
+- [Output format](#output-format)
+- [Completion Gate](#completion-gate)
 
 ## Operating mode: audit first
 
@@ -24,6 +35,16 @@ Treat database migrations as protected areas. Default to review, risk identifica
 6. Recommend validation commands, staging checks, explain plans, and deployment sequencing.
 
 ## Checklist
+
+- [ ] Classify each operation as expand, backfill, contract, destructive, data-only, index-only, or constraint-only.
+- [ ] Review ordering and reversibility.
+- [ ] Review backward and forward compatibility across old/new app and schema combinations.
+- [ ] Review backfills, locking, long-running operations, and online safety.
+- [ ] Review index creation and query-plan impact.
+- [ ] Review nullability, defaults, constraints, and referential integrity.
+- [ ] Review rollback plans and backup assumptions.
+- [ ] Review ORM model and schema drift.
+- [ ] Produce findings using the Output format with severity, evidence, risk, and recommendation for each.
 
 ### 1. Ordering and reversibility
 
@@ -94,3 +115,7 @@ Provide review findings in priority order:
 - **Recommendation**: give the safest next step, including whether explicit approval is required before mutation.
 
 End with an explicit approval gate when changes to migrations are requested or implied: “Migration files are protected; I will not modify them unless you explicitly approve the proposed mutation.”
+
+## Completion Gate
+
+Do not report the review complete until every Checklist item is covered and every finding has severity, area, evidence, risk, and recommendation. Stop and ask instead of guessing when the migration framework, database engine, or deployment topology cannot be determined from repository evidence. Never mutate migration files, generated schema snapshots, or ORM-generated artifacts without explicit user approval of the exact change.

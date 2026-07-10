@@ -8,6 +8,14 @@ allowed-tools: Read, Grep, Glob, Bash
 
 # Test Strategy
 
+## Contents
+
+- [Trigger Text](#trigger-text)
+- [Workflow](#workflow)
+- [Checklist](#checklist)
+- [Output Format](#output-format)
+- [Guardrails](#guardrails)
+
 Help agents choose the smallest meaningful verification for a change. Ground every recommendation in manifests, config, CI, docs, existing tests, and file layout. If evidence is incomplete, label assumptions instead of inventing frameworks, services, or commands.
 
 ## Trigger Text
@@ -81,6 +89,15 @@ For every command, classify it as:
 - **CI-only:** depends on CI matrix, deployment credentials, hosted services, protected runners, or unavailable infrastructure.
 
 State setup prerequisites and expected failure mode when a command cannot be run locally.
+
+## Checklist
+
+- [ ] Detect frameworks and test conventions from manifests, config, and file layout.
+- [ ] Identify which test layers are already present or needed.
+- [ ] Map changed files or proposed work to the narrowest meaningful command.
+- [ ] Recommend missing tests only for behavior that could break unnoticed.
+- [ ] Classify every command as local, local-with-services, secrets-required, or CI-only.
+- [ ] Produce the plan using the Output Format section, with exact commands and expected evidence.
 
 ## Output Format
 

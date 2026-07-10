@@ -8,6 +8,16 @@ allowed-tools: Read, Grep, Glob, Bash
 
 # CI/CD Audit
 
+## Contents
+
+- [Trigger Text](#trigger-text)
+- [Audit Inputs](#audit-inputs)
+- [Procedure](#procedure)
+- [Checklist](#checklist)
+- [Finding Standards](#finding-standards)
+- [Output Format](#output-format)
+- [Completion Gate](#completion-gate)
+
 Perform a static, evidence-driven inspection of repository CI/CD configuration. Keep the audit read-only unless the user explicitly asks for remediation after findings are reported.
 
 ## Trigger Text
@@ -78,6 +88,17 @@ Do not read local secret files such as `.env`, credential stores, private keys, 
    - Flag missing required checks, stale docs, renamed jobs, orphaned workflows, and checks present in docs but absent from CI configuration.
    - If branch protection or required status checks are only configured remotely, state that they require platform verification.
 
+## Checklist
+
+- [ ] Establish scope and inventory workflow files, jobs, and providers.
+- [ ] Review trigger safety (`pull_request_target`, fork paths, dispatch events).
+- [ ] Review permissions, secrets, environments, and OIDC trust boundaries.
+- [ ] Evaluate build, test, lint, and typecheck coverage against manifests.
+- [ ] Review cache, dependency, action, and artifact safety.
+- [ ] Review deployment approvals, protected environments, and rollback hooks.
+- [ ] Compare configured checks with repository-documented required checks.
+- [ ] Produce the report using the Output Format section, marking unverifiable platform settings explicitly.
+
 ## Finding Standards
 
 For each finding, include:
@@ -127,3 +148,7 @@ Return a concise report in this structure:
 ```
 
 If no findings are confirmed, say so and list any unverified platform settings or repository assumptions that still need human confirmation.
+
+## Completion Gate
+
+Do not report the audit complete until every Checklist item is covered in the output and every finding has evidence, risk, recommendation, and verification fields. Stop and report as read-only findings, without editing any workflow file, unless the user has explicitly asked for remediation — CI/CD deployment workflows are a protected area.

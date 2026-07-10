@@ -1,4 +1,352 @@
 {
-  "actions": [],
+  "actions": [
+    {
+      "path": "/home/user/CCSIF/.claude/skills/accessibility-review/VERIFICATION.md",
+      "reason": "Verification log is missing. Placeholder is explicit and does not claim tests passed.",
+      "safe": true,
+      "type": "create_verification_placeholder"
+    },
+    {
+      "path": "/home/user/CCSIF/.claude/skills/accessibility-review/evals/evals.json",
+      "reason": "Evals are missing. Placeholder marks evaluation design as pending.",
+      "safe": true,
+      "type": "create_evals_placeholder"
+    },
+    {
+      "finding_codes": [
+        "missing-checklist"
+      ],
+      "path": "/home/user/CCSIF/.claude/skills/accessibility-review/SKILL.md",
+      "reason": "Requires domain intent preservation and should be edited by Claude after reading the skill.",
+      "safe": false,
+      "type": "manual_semantic_repair_required"
+    },
+    {
+      "path": "/home/user/CCSIF/.claude/skills/adr-authoring/VERIFICATION.md",
+      "reason": "Verification log is missing. Placeholder is explicit and does not claim tests passed.",
+      "safe": true,
+      "type": "create_verification_placeholder"
+    },
+    {
+      "path": "/home/user/CCSIF/.claude/skills/adr-authoring/evals/evals.json",
+      "reason": "Evals are missing. Placeholder marks evaluation design as pending.",
+      "safe": true,
+      "type": "create_evals_placeholder"
+    },
+    {
+      "path": "/home/user/CCSIF/.claude/skills/api-contract-docs/VERIFICATION.md",
+      "reason": "Verification log is missing. Placeholder is explicit and does not claim tests passed.",
+      "safe": true,
+      "type": "create_verification_placeholder"
+    },
+    {
+      "path": "/home/user/CCSIF/.claude/skills/api-contract-docs/evals/evals.json",
+      "reason": "Evals are missing. Placeholder marks evaluation design as pending.",
+      "safe": true,
+      "type": "create_evals_placeholder"
+    },
+    {
+      "finding_codes": [
+        "description-trigger-patterns"
+      ],
+      "path": "/home/user/CCSIF/.claude/skills/api-contract-docs/SKILL.md",
+      "reason": "Requires domain intent preservation and should be edited by Claude after reading the skill.",
+      "safe": false,
+      "type": "manual_semantic_repair_required"
+    },
+    {
+      "path": "/home/user/CCSIF/.claude/skills/api-contract-review/VERIFICATION.md",
+      "reason": "Verification log is missing. Placeholder is explicit and does not claim tests passed.",
+      "safe": true,
+      "type": "create_verification_placeholder"
+    },
+    {
+      "path": "/home/user/CCSIF/.claude/skills/api-contract-review/evals/evals.json",
+      "reason": "Evals are missing. Placeholder marks evaluation design as pending.",
+      "safe": true,
+      "type": "create_evals_placeholder"
+    },
+    {
+      "finding_codes": [
+        "description-trigger-patterns"
+      ],
+      "path": "/home/user/CCSIF/.claude/skills/api-contract-review/SKILL.md",
+      "reason": "Requires domain intent preservation and should be edited by Claude after reading the skill.",
+      "safe": false,
+      "type": "manual_semantic_repair_required"
+    },
+    {
+      "path": "/home/user/CCSIF/.claude/skills/ci-cd-audit/VERIFICATION.md",
+      "reason": "Verification log is missing. Placeholder is explicit and does not claim tests passed.",
+      "safe": true,
+      "type": "create_verification_placeholder"
+    },
+    {
+      "path": "/home/user/CCSIF/.claude/skills/ci-cd-audit/evals/evals.json",
+      "reason": "Evals are missing. Placeholder marks evaluation design as pending.",
+      "safe": true,
+      "type": "create_evals_placeholder"
+    },
+    {
+      "finding_codes": [
+        "missing-checklist"
+      ],
+      "path": "/home/user/CCSIF/.claude/skills/ci-cd-audit/SKILL.md",
+      "reason": "Requires domain intent preservation and should be edited by Claude after reading the skill.",
+      "safe": false,
+      "type": "manual_semantic_repair_required"
+    },
+    {
+      "path": "/home/user/CCSIF/.claude/skills/cicd-workflow-audit/VERIFICATION.md",
+      "reason": "Verification log is missing. Placeholder is explicit and does not claim tests passed.",
+      "safe": true,
+      "type": "create_verification_placeholder"
+    },
+    {
+      "path": "/home/user/CCSIF/.claude/skills/cicd-workflow-audit/evals/evals.json",
+      "reason": "Evals are missing. Placeholder marks evaluation design as pending.",
+      "safe": true,
+      "type": "create_evals_placeholder"
+    },
+    {
+      "path": "/home/user/CCSIF/.claude/skills/contributor-onboarding/VERIFICATION.md",
+      "reason": "Verification log is missing. Placeholder is explicit and does not claim tests passed.",
+      "safe": true,
+      "type": "create_verification_placeholder"
+    },
+    {
+      "path": "/home/user/CCSIF/.claude/skills/contributor-onboarding/evals/evals.json",
+      "reason": "Evals are missing. Placeholder marks evaluation design as pending.",
+      "safe": true,
+      "type": "create_evals_placeholder"
+    },
+    {
+      "path": "/home/user/CCSIF/.claude/skills/database-migration-review/VERIFICATION.md",
+      "reason": "Verification log is missing. Placeholder is explicit and does not claim tests passed.",
+      "safe": true,
+      "type": "create_verification_placeholder"
+    },
+    {
+      "path": "/home/user/CCSIF/.claude/skills/database-migration-review/evals/evals.json",
+      "reason": "Evals are missing. Placeholder marks evaluation design as pending.",
+      "safe": true,
+      "type": "create_evals_placeholder"
+    },
+    {
+      "finding_codes": [
+        "missing-checklist",
+        "missing-tool-boundaries"
+      ],
+      "path": "/home/user/CCSIF/.claude/skills/database-migration-review/SKILL.md",
+      "reason": "Requires domain intent preservation and should be edited by Claude after reading the skill.",
+      "safe": false,
+      "type": "manual_semantic_repair_required"
+    },
+    {
+      "path": "/home/user/CCSIF/.claude/skills/dependency-upgrade-planning/VERIFICATION.md",
+      "reason": "Verification log is missing. Placeholder is explicit and does not claim tests passed.",
+      "safe": true,
+      "type": "create_verification_placeholder"
+    },
+    {
+      "path": "/home/user/CCSIF/.claude/skills/dependency-upgrade-planning/evals/evals.json",
+      "reason": "Evals are missing. Placeholder marks evaluation design as pending.",
+      "safe": true,
+      "type": "create_evals_placeholder"
+    },
+    {
+      "finding_codes": [
+        "missing-checklist"
+      ],
+      "path": "/home/user/CCSIF/.claude/skills/dependency-upgrade-planning/SKILL.md",
+      "reason": "Requires domain intent preservation and should be edited by Claude after reading the skill.",
+      "safe": false,
+      "type": "manual_semantic_repair_required"
+    },
+    {
+      "path": "/home/user/CCSIF/.claude/skills/documentation-drift/VERIFICATION.md",
+      "reason": "Verification log is missing. Placeholder is explicit and does not claim tests passed.",
+      "safe": true,
+      "type": "create_verification_placeholder"
+    },
+    {
+      "path": "/home/user/CCSIF/.claude/skills/documentation-drift/evals/evals.json",
+      "reason": "Evals are missing. Placeholder marks evaluation design as pending.",
+      "safe": true,
+      "type": "create_evals_placeholder"
+    },
+    {
+      "finding_codes": [
+        "description-trigger-patterns"
+      ],
+      "path": "/home/user/CCSIF/.claude/skills/documentation-drift/SKILL.md",
+      "reason": "Requires domain intent preservation and should be edited by Claude after reading the skill.",
+      "safe": false,
+      "type": "manual_semantic_repair_required"
+    },
+    {
+      "finding_codes": [
+        "description-trigger-patterns"
+      ],
+      "path": "/home/user/CCSIF/.claude/skills/fsv-verify/SKILL.md",
+      "reason": "Requires domain intent preservation and should be edited by Claude after reading the skill.",
+      "safe": false,
+      "type": "manual_semantic_repair_required"
+    },
+    {
+      "path": "/home/user/CCSIF/.claude/skills/incident-response/VERIFICATION.md",
+      "reason": "Verification log is missing. Placeholder is explicit and does not claim tests passed.",
+      "safe": true,
+      "type": "create_verification_placeholder"
+    },
+    {
+      "path": "/home/user/CCSIF/.claude/skills/incident-response/evals/evals.json",
+      "reason": "Evals are missing. Placeholder marks evaluation design as pending.",
+      "safe": true,
+      "type": "create_evals_placeholder"
+    },
+    {
+      "finding_codes": [
+        "missing-tool-boundaries"
+      ],
+      "path": "/home/user/CCSIF/.claude/skills/incident-response/SKILL.md",
+      "reason": "Requires domain intent preservation and should be edited by Claude after reading the skill.",
+      "safe": false,
+      "type": "manual_semantic_repair_required"
+    },
+    {
+      "path": "/home/user/CCSIF/.claude/skills/migration-safety/VERIFICATION.md",
+      "reason": "Verification log is missing. Placeholder is explicit and does not claim tests passed.",
+      "safe": true,
+      "type": "create_verification_placeholder"
+    },
+    {
+      "path": "/home/user/CCSIF/.claude/skills/migration-safety/evals/evals.json",
+      "reason": "Evals are missing. Placeholder marks evaluation design as pending.",
+      "safe": true,
+      "type": "create_evals_placeholder"
+    },
+    {
+      "finding_codes": [
+        "missing-checklist"
+      ],
+      "path": "/home/user/CCSIF/.claude/skills/migration-safety/SKILL.md",
+      "reason": "Requires domain intent preservation and should be edited by Claude after reading the skill.",
+      "safe": false,
+      "type": "manual_semantic_repair_required"
+    },
+    {
+      "path": "/home/user/CCSIF/.claude/skills/observability-audit/VERIFICATION.md",
+      "reason": "Verification log is missing. Placeholder is explicit and does not claim tests passed.",
+      "safe": true,
+      "type": "create_verification_placeholder"
+    },
+    {
+      "path": "/home/user/CCSIF/.claude/skills/observability-audit/evals/evals.json",
+      "reason": "Evals are missing. Placeholder marks evaluation design as pending.",
+      "safe": true,
+      "type": "create_evals_placeholder"
+    },
+    {
+      "finding_codes": [
+        "missing-checklist"
+      ],
+      "path": "/home/user/CCSIF/.claude/skills/observability-audit/SKILL.md",
+      "reason": "Requires domain intent preservation and should be edited by Claude after reading the skill.",
+      "safe": false,
+      "type": "manual_semantic_repair_required"
+    },
+    {
+      "finding_codes": [
+        "description-trigger-patterns"
+      ],
+      "path": "/home/user/CCSIF/.claude/skills/pr-triage/SKILL.md",
+      "reason": "Requires domain intent preservation and should be edited by Claude after reading the skill.",
+      "safe": false,
+      "type": "manual_semantic_repair_required"
+    },
+    {
+      "finding_codes": [
+        "description-trigger-patterns"
+      ],
+      "path": "/home/user/CCSIF/.claude/skills/purging-token-dead-weight/SKILL.md",
+      "reason": "Requires domain intent preservation and should be edited by Claude after reading the skill.",
+      "safe": false,
+      "type": "manual_semantic_repair_required"
+    },
+    {
+      "path": "/home/user/CCSIF/.claude/skills/release-notes/VERIFICATION.md",
+      "reason": "Verification log is missing. Placeholder is explicit and does not claim tests passed.",
+      "safe": true,
+      "type": "create_verification_placeholder"
+    },
+    {
+      "path": "/home/user/CCSIF/.claude/skills/release-notes/evals/evals.json",
+      "reason": "Evals are missing. Placeholder marks evaluation design as pending.",
+      "safe": true,
+      "type": "create_evals_placeholder"
+    },
+    {
+      "finding_codes": [
+        "missing-checklist",
+        "missing-tool-boundaries"
+      ],
+      "path": "/home/user/CCSIF/.claude/skills/release-notes/SKILL.md",
+      "reason": "Requires domain intent preservation and should be edited by Claude after reading the skill.",
+      "safe": false,
+      "type": "manual_semantic_repair_required"
+    },
+    {
+      "path": "/home/user/CCSIF/.claude/skills/release-readiness/VERIFICATION.md",
+      "reason": "Verification log is missing. Placeholder is explicit and does not claim tests passed.",
+      "safe": true,
+      "type": "create_verification_placeholder"
+    },
+    {
+      "path": "/home/user/CCSIF/.claude/skills/release-readiness/evals/evals.json",
+      "reason": "Evals are missing. Placeholder marks evaluation design as pending.",
+      "safe": true,
+      "type": "create_evals_placeholder"
+    },
+    {
+      "finding_codes": [
+        "description-trigger-patterns"
+      ],
+      "path": "/home/user/CCSIF/.claude/skills/release-readiness/SKILL.md",
+      "reason": "Requires domain intent preservation and should be edited by Claude after reading the skill.",
+      "safe": false,
+      "type": "manual_semantic_repair_required"
+    },
+    {
+      "finding_codes": [
+        "description-trigger-patterns"
+      ],
+      "path": "/home/user/CCSIF/.claude/skills/stack-detection/SKILL.md",
+      "reason": "Requires domain intent preservation and should be edited by Claude after reading the skill.",
+      "safe": false,
+      "type": "manual_semantic_repair_required"
+    },
+    {
+      "path": "/home/user/CCSIF/.claude/skills/test-strategy/VERIFICATION.md",
+      "reason": "Verification log is missing. Placeholder is explicit and does not claim tests passed.",
+      "safe": true,
+      "type": "create_verification_placeholder"
+    },
+    {
+      "path": "/home/user/CCSIF/.claude/skills/test-strategy/evals/evals.json",
+      "reason": "Evals are missing. Placeholder marks evaluation design as pending.",
+      "safe": true,
+      "type": "create_evals_placeholder"
+    },
+    {
+      "finding_codes": [
+        "missing-checklist"
+      ],
+      "path": "/home/user/CCSIF/.claude/skills/test-strategy/SKILL.md",
+      "reason": "Requires domain intent preservation and should be edited by Claude after reading the skill.",
+      "safe": false,
+      "type": "manual_semantic_repair_required"
+    }
+  ],
   "schema_version": "1.0"
 }

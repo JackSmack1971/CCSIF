@@ -8,6 +8,14 @@ allowed-tools: Read, Grep, Glob, Bash
 
 # Observability Audit Skill
 
+## Contents
+
+- [Review workflow](#review-workflow)
+- [Checklist](#checklist)
+- [Output format](#output-format)
+- [Review heuristics](#review-heuristics)
+- [Completion Gate](#completion-gate)
+
 Use this skill to perform a static review of how well a system can be understood, debugged, and operated in production from its telemetry and diagnostic surfaces. Focus on evidence in code, configuration, deployment manifests, documentation, and tests. Do not assume runtime behavior unless it is directly supported by the implementation.
 
 ## Review workflow
@@ -59,6 +67,17 @@ Use this skill to perform a static review of how well a system can be understood
    - Check whether redaction is centralized, tested, and applied before telemetry emission.
    - Flag high-cardinality or user-controlled telemetry fields that can create privacy, cost, or denial-of-service risks.
 
+## Checklist
+
+- [ ] Map production entry points and identify existing telemetry conventions.
+- [ ] Evaluate logging consistency and safety.
+- [ ] Evaluate metrics coverage.
+- [ ] Evaluate distributed tracing.
+- [ ] Evaluate health, readiness, and startup diagnostics.
+- [ ] Evaluate alertability and operator experience.
+- [ ] Evaluate telemetry privacy and secret leakage.
+- [ ] Produce the report using the Output format sections below, citing evidence for every claim.
+
 ## Output format
 
 Produce a concise but evidence-backed report using exactly these sections:
@@ -93,3 +112,7 @@ Produce a concise but evidence-backed report using exactly these sections:
 - Distinguish user-caused errors from system failures so alerts do not page on expected behavior.
 - Consider both synchronous request paths and asynchronous/background paths.
 - If the system uses a vendor or framework convention, verify that custom code preserves context propagation and safe fields.
+
+## Completion Gate
+
+Do not report the audit complete until every Checklist item is covered and every finding in Blind spots and High-risk diagnostic gaps cites a concrete file, operation, or configuration source. Stop and state the gap explicitly instead of inferring runtime behavior when evidence is unavailable.

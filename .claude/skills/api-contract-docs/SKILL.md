@@ -11,6 +11,16 @@ allowed-tools: "Read Grep Glob Bash(git rev-parse:*) Bash(git status:*) Bash(git
 
 # API Contract Documentation
 
+## Contents
+
+- [Purpose](#purpose)
+- [Triggers](#triggers)
+- [Inputs](#inputs)
+- [Procedure](#procedure)
+- [Contract test recommendations](#contract-test-recommendations)
+- [Safety and boundaries](#safety-and-boundaries)
+- [Verification checklist](#verification-checklist)
+
 ## Purpose
 
 Create or review documentation for public API contracts by comparing consumer-facing examples with implementation behavior. Focus on what external users can call, configure, import, execute, or rely on, and produce either concise documentation patches or evidence-backed review findings.

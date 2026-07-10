@@ -9,6 +9,19 @@ disallowed-tools: Write, Edit
 
 # Dependency Upgrade Planning
 
+## Contents
+
+- [Inputs](#inputs)
+- [Read-only manifest and lockfile rules](#read-only-manifest-and-lockfile-rules)
+- [Upgrade grouping model](#upgrade-grouping-model)
+- [Breaking-change research and migration checkpoints](#breaking-change-research-and-migration-checkpoints)
+- [Batch recommendation strategy](#batch-recommendation-strategy)
+- [Verification planning](#verification-planning)
+- [Rollback planning](#rollback-planning)
+- [Checklist](#checklist)
+- [Output format](#output-format)
+- [Stop conditions](#stop-conditions)
+
 Plan dependency upgrades with minimal blast radius. This skill is the planning companion to [`dependency-audit`](../dependency-audit/SKILL.md): use the audit skill first when the repository has not yet been assessed for vulnerable, deprecated, duplicated, abandoned, or risky dependencies.
 
 Planning mode is **read-only by default**. Do not edit manifests, lockfiles, generated dependency files, package-manager metadata, vendored dependencies, or CI configuration unless the user explicitly changes the task from planning to implementation.
@@ -108,6 +121,17 @@ For each batch, define rollback steps before implementation:
 - Define production rollback actions for runtime-critical dependencies, including feature flag disablement, deployment rollback, canary abort, service restart, or image rollback.
 - Define post-rollback verification commands and smoke tests.
 - Call out irreversible or difficult rollbacks, such as database/client protocol changes, runtime major upgrades, or lockfile resolver migrations.
+
+## Checklist
+
+- [ ] Load prior `dependency-audit` findings via `--from-audit`, or inspect manifests/lockfiles directly if none were provided.
+- [ ] Enumerate dependency files and ecosystems using read-only commands only.
+- [ ] Group every candidate upgrade by ecosystem, risk, semantic-version impact, and runtime criticality.
+- [ ] Define breaking-change research checkpoints for each medium-or-higher risk upgrade.
+- [ ] Recommend batches that minimize blast radius, with explicit stop/go criteria between batches.
+- [ ] Define verification commands for each batch, labeled required, recommended, or blocked/manual.
+- [ ] Define rollback steps for each batch.
+- [ ] Produce the plan using the Output format sections, or stop per Stop conditions.
 
 ## Output format
 
