@@ -1,176 +1,324 @@
 ---
 name: incident-response
-description: Use when responding to suspected or confirmed repository, application, dependency, release, data, or supply-chain incidents. Trigger on queries that say incident response, triage breach, secret leak, production outage, vulnerable dependency emergency, broken release, data exposure, or supply-chain compromise. Guides non-destructive classification, evidence preservation without secret disclosure, containment and rollback planning, communications, and follow-up links to security policy, dependency audit, release readiness, and repository hygiene skills. Requires human approval before credential rotation, deploy changes, destructive cleanup, user notification, regulator contact, or public disclosure.
+description: Use when the user mentions an incident, production regression, rollback plan, outage analysis, postmortem, post-incident review, service degradation, customer-impacting bug, or suspected production issue. Helps agents reconstruct timelines from logs, commits, deploy records, and issue/PR references; assess blast radius and user impact; distinguish confirmed facts from hypotheses; propose safe rollback, roll-forward, or mitigation options; draft status updates and post-incident notes; create prevention follow-up issue stubs; and preserve evidence without destructive commands.
 ---
 
 # Incident Response
 
-## Operating principles
+Use this skill for suspected or confirmed incidents, including production regressions, outages, rollback planning, outage analysis, and postmortems. Operate in evidence-preserving mode: prefer read-only commands, cite sources, and avoid destructive or state-changing actions unless the user explicitly approves them.
 
-Use this skill to coordinate the first safe pass of incident response. Default to read-only, reversible, and evidence-preserving work until a responsible human approves a risky action.
+## Core safety rules
 
-- Protect people, data, service availability, and evidence in that order.
-- Preserve facts and uncertainty separately; label assumptions as `unconfirmed`.
-- Never print, paste, summarize, or reformat secrets. Refer to secret locations by path, key name, line range, hash prefix, or finding ID only.
-- Do not rotate credentials, revoke tokens, delete files, rewrite history, deploy, roll back, notify customers, contact regulators, or publish statements without explicit human approval.
-- Prefer preparing commands and decision records over executing risky commands.
-- Maintain a timestamped incident log with who observed what, source links, decisions, approvals, and next owner.
+- Preserve evidence before changing anything.
+- Do not run destructive commands such as `rm`, `git reset --hard`, `git clean`, force-pushes, migration rollbacks, database writes, deploys, restarts, queue purges, or secret rotations unless explicitly requested and approved.
+- Do not overwrite logs, truncate files, delete artifacts, rewrite history, or close issues/PRs as part of investigation.
+- Keep secrets, customer data, tokens, internal hostnames, and sensitive identifiers out of summaries. Redact with markers such as `[REDACTED_SECRET]` or `[REDACTED_CUSTOMER_DATA]`.
+- Separate confirmed facts from hypotheses. Never present an inference as a fact.
+- Include timestamps with time zones whenever possible.
+- Prefer reversible mitigations: feature flags, traffic shifts, config toggles, read-only validation, or narrowly scoped hotfixes.
 
-## 1. Classify the incident
+## Activation triggers
 
-Create a concise incident header:
+Use this skill when requests include or imply:
 
-```markdown
-Incident ID: INC-YYYYMMDD-slug
-Status: suspected | confirmed | contained | monitoring | closed
-Severity: critical | high | medium | low | unknown
-Type: secret leak | dependency vulnerability | production outage | data exposure | broken release | supply-chain compromise
-Start time: observed timestamp and timezone
-Current commander: human owner or `unassigned`
-Systems affected: known list or `unknown`
-Approval required before risky action: yes
-```
+- `incident`
+- `production regression`
+- `rollback plan`
+- `outage analysis`
+- `postmortem`
+- `post-incident review`
+- `service degradation`
+- `customer impact`
+- `root cause analysis`
+- `mitigation plan`
 
-Classify by primary type, then add secondary tags when needed:
+## Incident workspace
 
-- **Secret leak:** credentials, tokens, keys, certificates, session material, signing keys, or private configuration may be exposed in code, logs, artifacts, issues, chat, CI output, packages, or history.
-- **Dependency vulnerability:** a direct or transitive dependency, container image, runtime, action, package manager, or lockfile includes a known vulnerability, malicious package, typosquat, abandoned component, or unsafe install behavior.
-- **Production outage:** users, jobs, APIs, infrastructure, data pipelines, or operational workflows are unavailable, degraded, timing out, corrupting output, or breaching SLOs.
-- **Data exposure:** personal, confidential, regulated, tenant, internal, or customer data may have been disclosed, logged, exported, mispermissioned, committed, cached, or sent to the wrong audience.
-- **Broken release:** a recent release, migration, config change, feature flag, artifact, package, or documentation update introduced incorrect behavior, compatibility breakage, missing assets, failed install, or failed deploy.
-- **Supply-chain compromise:** build, release, dependency, CI, package publishing, maintainer account, webhook, artifact signature, registry, or repository trust boundary may be compromised.
-
-If multiple types apply, choose the type with the highest immediate risk as primary and list the rest under `Related risks`.
-
-## 2. Preserve evidence without exposing secrets
-
-Before containment work, capture enough evidence to reconstruct the event without spreading sensitive content.
-
-Safe evidence to collect:
-
-- Timestamps, commit SHAs, release versions, package versions, lockfile names, CI run IDs, issue or PR IDs, deployment IDs, alert IDs, affected endpoints, and non-sensitive error codes.
-- File paths, symbol names, redacted line ranges, secret scanners' finding IDs, and cryptographic hashes of sensitive artifacts when needed.
-- Screenshots or logs only after redacting secrets, tokens, customer data, and internal-only identifiers that are not necessary for triage.
-
-Evidence rules:
-
-1. Record where evidence is stored and who can access it.
-2. Use redaction markers such as `[REDACTED_SECRET]`, `[REDACTED_CUSTOMER_DATA]`, and `[REDACTED_INTERNAL_HOST]`.
-3. Do not copy secrets into the incident log, pull requests, issues, prompts, shell history, or public trackers.
-4. Do not delete leaked material, purge logs, force-push, or rotate credentials yet unless a human approves a containment plan.
-5. When a command might print sensitive data, prepare the command for human review or pipe it through a narrow redaction workflow approved by the incident owner.
-
-## 3. Identify containment and rollback options
-
-Draft a containment matrix before acting:
+Create or maintain an incident working note with this structure:
 
 ```markdown
-Option:
-Incident type addressed:
-Expected benefit:
-Risk / blast radius:
-Requires human approval: yes/no
-Rollback path:
-Verification signal:
-Owner:
-Deadline:
+# Incident: <short title>
+
+Incident ID: INC-YYYYMMDD-<slug>
+Status: investigating | mitigated | monitoring | resolved | closed
+Severity: SEV-1 | SEV-2 | SEV-3 | SEV-4 | unknown
+Started: <timestamp and timezone, or unknown>
+Detected: <timestamp and timezone>
+Incident commander / owner: <name/team or unknown>
+Affected systems: <known systems or unknown>
+Primary user impact: <summary or unknown>
+Current mitigation: <none | summary>
+Next update due: <timestamp/channel>
+
+## Confirmed facts
+- [timestamp] Fact — source: <log/deploy/commit/issue/PR/monitoring link>
+
+## Hypotheses
+- Hypothesis — evidence for: ...; evidence against: ...; confidence: low/medium/high; validation step: ...
+
+## Open questions
+- Question — owner: ...; next step: ...
+
+## Decisions
+- [timestamp] Decision — owner/approver: ...; reason: ...; rollback path: ...
 ```
 
-Default containment guidance by type:
+## 1. Capture the incident timeline
 
-- **Secret leak:** identify affected credentials and consumers; prepare rotation, revocation, history purge, cache purge, and downstream notification plans. Execute only after human approval because rotation can break production.
-- **Dependency vulnerability:** identify affected manifests, lockfiles, images, workflows, packages, and deploy artifacts; prepare version pin, upgrade, mitigation flag, or temporary disablement options. Do not upgrade or redeploy without approval.
-- **Production outage:** identify current impact and last known good state; prepare feature flag disablement, traffic shift, rollback, config revert, queue pause, or scaling options. Do not deploy, restart, or change traffic without approval.
-- **Data exposure:** identify data categories, audiences, time window, access paths, and legal/privacy owner; prepare access restriction, token/session invalidation, log retention, and disclosure decision points. Do not notify externally without approval.
-- **Broken release:** identify release artifact, commit range, migration state, and compatibility impact; prepare rollback, hotfix, deprecation notice, package yank, or docs correction. Do not yank, republish, or roll back without approval.
-- **Supply-chain compromise:** identify trust boundary, affected identities, build provenance, package signatures, CI secrets, and distributed artifacts; prepare build freeze, account lockdown, key rotation, artifact revocation, and provenance rebuild. Require explicit approval for each action.
+Build a timeline from all available non-destructive sources. Use the most authoritative source for each event and record uncertainty explicitly.
 
-For every proposed action, include a verification step that confirms containment worked without relying only on command exit status.
+Recommended sources:
 
-## 4. Communication templates
+- Application, platform, API gateway, worker, queue, database, CDN, and load balancer logs.
+- Monitoring alerts, SLO burn alerts, traces, dashboards, incident pages, and on-call notes.
+- Git commits, merge commits, tags, release branches, and diff ranges.
+- CI/CD runs, deploy records, release notes, feature-flag changes, infrastructure changes, migrations, and config changes.
+- Issue, PR, ticket, chat, customer support, and status page references.
 
-Keep communications factual, concise, and audience-aware. Do not speculate, assign blame, expose secrets, identify customers, or promise timelines that have not been approved.
+Timeline format:
+
+```markdown
+| Time (UTC/local) | Event | Source | Confidence | Notes |
+| --- | --- | --- | --- | --- |
+| 2026-07-10 14:03 UTC | Error rate alert fired for checkout API | alert ABC-123 | confirmed | Initial detection |
+| 2026-07-10 13:41 UTC | Deploy d-456 completed | deploy record | confirmed | Candidate change window |
+| unknown | First affected user request | logs pending | hypothesis | Need log query |
+```
+
+Guidelines:
+
+1. Start with detection time, then work backward to the last known good state and forward through mitigation.
+2. Correlate deploys and commits with symptom onset, but label correlation as a hypothesis until validated.
+3. Include issue/PR IDs, commit SHAs, deploy IDs, alert IDs, and log query references rather than copying sensitive raw logs.
+4. Preserve original timestamps and add normalized UTC times when useful.
+5. Keep a list of missing sources and owners for retrieval.
+
+## 2. Identify likely blast radius and user impact
+
+Assess impact from both system and user perspectives. Avoid minimizing unknowns.
+
+Blast radius checklist:
+
+- Affected products, services, APIs, jobs, regions, tenants, customer segments, platforms, or versions.
+- Impacted user journeys such as login, checkout, signup, billing, search, ingestion, exports, notifications, or admin workflows.
+- Data correctness risks: loss, duplication, corruption, stale reads, incorrect permissions, or delayed processing.
+- Availability and performance risks: errors, latency, timeouts, queue backlog, saturation, or partial degradation.
+- Security/privacy risks: unauthorized access, data exposure, secret leakage, audit-log gaps, or compliance triggers.
+- Dependency and downstream effects: consumers, integrations, webhooks, reports, analytics, support, and SLAs.
+
+Use this impact summary:
+
+```markdown
+## Impact assessment
+
+Confirmed impact:
+- <who/what is affected, evidence source, time window>
+
+Likely impact:
+- <hypothesis, why it is plausible, validation needed>
+
+Not currently affected:
+- <scope ruled out, evidence source>
+
+Unknowns:
+- <impact question, owner, next evidence source>
+
+Estimated scale:
+- Users/accounts/requests/jobs affected: <number or unknown>
+- Time window: <start/end or unknown>
+- Regions/environments: <list or unknown>
+- Severity rationale: <brief explanation>
+```
+
+## 3. Separate confirmed facts from hypotheses
+
+Maintain distinct sections for facts, hypotheses, and unknowns throughout the response.
+
+- **Confirmed fact:** directly supported by a cited log entry, deploy record, commit, metric, issue/PR, monitoring event, or user report.
+- **Hypothesis:** plausible explanation or suspected cause that still needs validation.
+- **Unknown:** important information not yet available.
+
+Recommended language:
+
+- Say: “Confirmed: deploy `d-456` completed at 13:41 UTC.”
+- Say: “Hypothesis: deploy `d-456` introduced the regression because errors began shortly afterward.”
+- Do not say: “Deploy `d-456` caused the outage” until validation confirms causality.
+
+Hypothesis tracker:
+
+```markdown
+| Hypothesis | Evidence for | Evidence against | Confidence | Validation step | Owner |
+| --- | --- | --- | --- | --- | --- |
+```
+
+## 4. Propose safe rollback, roll-forward, or mitigation options
+
+Offer options with risks and verification, not a single irreversible action. Clearly mark any action requiring human approval.
+
+Option template:
+
+```markdown
+### Option: <rollback | roll-forward | mitigation> — <short name>
+
+Description: <what would change>
+Expected benefit: <impact reduction>
+Risks / tradeoffs: <customer, data, operational, security risks>
+Prerequisites: <backups, migration state, approvals, owners, runbooks>
+Human approval required: yes/no
+Evidence preserved before action: yes/no
+Rollback path for this option: <how to undo>
+Verification signals:
+- <metric/log/check/user journey>
+Decision deadline: <timestamp or condition>
+Recommended when: <conditions>
+Avoid when: <conditions>
+```
+
+Safe option patterns:
+
+- **Rollback:** revert to last known good artifact, config, feature flag state, dependency version, or release. Check database migration compatibility and artifact availability first.
+- **Roll-forward:** apply a narrow fix when rollback is riskier, unavailable, or would worsen data compatibility. Keep the diff minimal and verification explicit.
+- **Mitigation:** disable a feature flag, shed load, pause a job, isolate a tenant, adjust traffic, rate-limit, increase capacity, or add a temporary guardrail.
+- **No-change monitoring:** valid only when impact has stopped and evidence supports stability; define monitoring duration and exit criteria.
+
+## 5. Draft status updates and post-incident review notes
+
+Keep communications factual, concise, and audience-appropriate. Do not assign blame or overstate certainty.
 
 ### Internal status update
 
 ```markdown
-Subject: [INCIDENT][SEVERITY][TYPE] Short title
+Subject: [INCIDENT][<severity>] <short title>
 
-Current status: suspected | confirmed | contained | monitoring
-Impact: who/what is affected; use `unknown` where needed
-Known facts:
-- Fact with evidence reference
-- Fact with evidence reference
-
+Status: investigating | mitigated | monitoring | resolved
+Impact: <confirmed impact; unknowns explicit>
+Timeline highlights:
+- <timestamp> <event> — source: <reference>
+Confirmed facts:
+- <fact with source>
+Current hypotheses:
+- <hypothesis with validation step>
 Actions taken:
-- Read-only or approved action, timestamp, owner
-
+- <read-only or approved action, owner, timestamp>
 Decisions needed:
-- Approval requested, risk, deadline
-
-Next update: timestamp and channel
-Incident commander: name/team
+- <approval requested, risk, deadline>
+Next update: <timestamp and channel>
+Owner: <incident commander/team>
 ```
 
-### Executive summary
+### External/customer-safe holding update
+
+Use only after approval from the appropriate incident, support, legal, communications, or security owner.
 
 ```markdown
-Summary: One paragraph describing business/user impact and current state.
-Risk: critical/high/medium/low and why.
-Containment: completed, pending approval, or not started.
-Customer/data exposure: yes/no/unknown; privacy/legal owner if applicable.
-Decision requests: approvals needed for rotation, deploy, rollback, disclosure, or other risky work.
-Next milestone: timestamp.
+We are investigating an issue affecting <service/scope>. We are working to understand impact and mitigate the issue. We will provide the next update by <time> through <approved channel>.
 ```
 
-### External holding statement
-
-Use only after human approval from the appropriate incident, legal, communications, and security owners.
+### Post-incident review notes
 
 ```markdown
-We are investigating an issue affecting [service/product/scope]. Our team is working to understand impact and will provide updates through [approved channel]. We will share additional information when it is verified.
+# Post-Incident Review: <incident title>
+
+Summary:
+- <what happened, user impact, duration, current state>
+
+Timeline:
+- <key events with timestamps and sources>
+
+Impact:
+- <confirmed user/system/data impact>
+
+Root cause:
+- Confirmed root cause: <if known>
+- Contributing factors: <if known>
+- Ruled-out causes: <if useful>
+
+Detection:
+- How detected:
+- What worked:
+- What did not work:
+
+Response:
+- Mitigations attempted:
+- Rollback/roll-forward decisions:
+- Communication notes:
+
+Prevention follow-ups:
+- <issue links or stubs>
+
+Open questions:
+- <owner and due date>
 ```
 
-### Post-incident follow-up issue
+## 6. Generate follow-up issue stubs for prevention work
+
+Create issue stubs that are actionable, owned, and verifiable. Separate prevention from cleanup and observability improvements.
+
+Issue stub template:
 
 ```markdown
-Title: Follow-up from INC-YYYYMMDD-slug: action summary
+Title: [INC follow-up] <prevent recurrence or improve detection>
 
-Context:
-- Incident type and confirmed facts
-- Link to private incident record, if permitted
+Linked incident: INC-YYYYMMDD-<slug>
+Category: prevention | detection | response | documentation | cleanup
+Priority: P0 | P1 | P2 | P3
+Owner: <team/person or unassigned>
 
-Required work:
-- Specific remediation task
+Problem:
+- <confirmed gap from incident>
 
-Skill / owner routing:
-- Security policy: policy update, disclosure process, reporting channel, or credential handling
-- Dependency audit: vulnerable package, lockfile drift, package provenance, install behavior
-- Release readiness: release gate, rollback drill, migration safety, artifact validation
-- Repository hygiene: stale config, branch protection, CODEOWNERS, CI governance, documentation drift
+Proposed work:
+- <specific change>
 
-Verification:
-- Command, check, review, or monitoring signal proving completion
+Acceptance criteria:
+- [ ] <verifiable outcome>
+- [ ] <test, dashboard, runbook, alert, or review evidence>
 
-Safety:
-- Human approval required before any destructive, deploy, credential, or public action
+Verification plan:
+- <command, check, monitor, drill, or review>
+
+Safety notes:
+- <migration, rollout, rollback, data, security, or operational considerations>
 ```
 
-## 5. Link follow-up work to related skills
+Common prevention themes:
 
-Route durable remediation to the narrowest appropriate skill or workflow:
+- Add or tune alerts for the failed signal.
+- Add regression tests, contract tests, canaries, health checks, or synthetic checks.
+- Improve feature flag, rollback, migration, or deploy safety.
+- Add runbooks, ownership, dashboards, or support macros.
+- Improve data validation, idempotency, rate limits, permissions, or audit logging.
+- Add CI/CD gates for release readiness and production-change review.
 
-- Use **crafting-repository-security-policy** for SECURITY.md updates, vulnerability disclosure instructions, supported versions, safe harbor language, reporting contacts, credential handling, and incident escalation policy.
-- Use **dependency-audit** for package manifests, lockfiles, vulnerable dependencies, abandoned packages, postinstall scripts, native extensions, CI install behavior, and supply-chain dependency risk.
-- Use **release-readiness** for release gates, rollback readiness, migration checks, versioning, artifact verification, changelog quality, and deployment readiness. If this skill is absent, create an issue requesting a release-readiness review rather than inventing a workflow.
-- Use **maintaining-repository-hygiene** for CODEOWNERS, branch protection, repository settings, stale worktrees, CI governance, community health files, ignored/generated artifacts, labels, and documentation rot.
+## 7. Preserve evidence without destructive commands
+
+When investigating, favor commands and workflows that read state and write only to a new notes file or artifact location.
+
+Preferred read-only examples:
+
+```bash
+git status --short
+git log --oneline --decorate --max-count=50
+git show --stat --summary <sha>
+git diff --stat <before>..<after>
+git branch --show-current
+```
+
+Evidence-preservation checklist:
+
+- Record command, timestamp, working directory, and relevant output summary.
+- Save references to logs, dashboards, issues, PRs, deploys, and commits rather than copying sensitive raw data.
+- If raw evidence must be captured, store it in the approved private location and note access controls.
+- Redact secrets and sensitive data before sharing with agents or external systems.
+- Avoid commands that mutate state, erase history, rotate credentials, alter deployments, purge queues, rewrite logs, or delete files.
+- If a destructive action is proposed, write the exact command as a proposal, list risks, and wait for explicit approval.
 
 ## Completion checklist
 
-- [ ] Incident type, severity, status, affected systems, and unknowns recorded.
-- [ ] Evidence preserved with secrets and sensitive data redacted.
-- [ ] Immediate containment and rollback options documented with risks, approvals, owners, and verification signals.
-- [ ] Internal update drafted and approval-required decisions highlighted.
-- [ ] External statement drafted only as a proposed template, not published.
-- [ ] Follow-up issues or tasks routed to security policy, dependency audit, release readiness, and/or repository hygiene as applicable.
-- [ ] No risky action was taken without explicit human approval.
+- [ ] Timeline includes logs, commits, deploy records, and issue/PR references where available.
+- [ ] Blast radius and user impact are summarized with confirmed, likely, not affected, and unknown sections.
+- [ ] Confirmed facts are separated from hypotheses and open questions.
+- [ ] Rollback, roll-forward, and mitigation options include risks, approvals, rollback paths, and verification signals.
+- [ ] Internal status update and post-incident review notes are drafted.
+- [ ] Follow-up prevention issue stubs are generated with acceptance criteria and verification plans.
+- [ ] Evidence was preserved without destructive commands or sensitive data disclosure.
