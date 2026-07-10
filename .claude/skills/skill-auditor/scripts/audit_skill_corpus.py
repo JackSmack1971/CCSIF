@@ -187,7 +187,7 @@ def audit_skill(skill_md: Path, corpus_root: Path) -> SkillAudit:
         trigger_hits = len(re.findall(r"\b(audit|create|generate|fix|validate|review|update|commit|convert|analyze|summarize|plan|rewrite|optimize|merge|package|deploy|test)\b", desc.lower()))
         quoted_hits = len(re.findall(r"['\"]([^'\"]{3,80})['\"]", desc))
         comma_patterns = 0
-        m = re.search(r"Trigger(?:s| on queries that)?(?:\s+on queries that)?\s+(?:say|says|include|contains?)\s+(.+?)(?:\.\s+NOT|\.\s+Not|$)", desc, re.I)
+        m = re.search(r"Trigger(?:s)?\s+on\s+(?:queries that\s+(?:say|says|include|contains?)\s+)?(.+?)(?:\.\s+NOT|\.\s+Not|$)", desc, re.I)
         if m:
             comma_patterns = len([p for p in re.split(r",|;|\bor\b", m.group(1)) if p.strip()])
         patterns = max(quoted_hits, comma_patterns, trigger_hits)

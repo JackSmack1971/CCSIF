@@ -11,6 +11,16 @@ allowed-tools: "Read Grep Glob Bash(git rev-parse:*) Bash(git status:*) Bash(git
 
 # ADR Authoring
 
+## Contents
+
+- [Purpose](#purpose)
+- [Triggers](#triggers)
+- [Inputs](#inputs)
+- [Procedure](#procedure)
+- [Output guidance](#output-guidance)
+- [Verification checklist](#verification-checklist)
+- [Completion Gate](#completion-gate)
+
 ## Purpose
 
 Create or update Architecture Decision Records (ADRs) that preserve design rationale in the repository's existing decision-log style. Keep each ADR concise, traceable to repository evidence, and explicit about uncertainty. Do not invent historical motivation or conclusions that are not supported by code, documentation, tests, issues, pull requests, or local Git history.
@@ -183,3 +193,10 @@ Before finishing, confirm that:
 - [ ] Each substantive rationale is backed by repository evidence or marked as inferred or unresolved.
 - [ ] Related issues, PRs, docs, code paths, tests, and prior ADRs were linked where available.
 - [ ] The ADR is concise and avoids generic or speculative architecture prose.
+
+## Completion Gate
+
+Do not report the ADR complete until every item in the Verification checklist is checked. Stop and produce a findings report instead of a completed ADR when:
+
+- The decision, outcome, or status cannot be determined from repository evidence, issues, PRs, or user-provided context.
+- The requested decision conflicts with an existing, still-canonical ADR and the user has not clarified supersession.

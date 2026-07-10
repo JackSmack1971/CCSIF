@@ -1,5 +1,13 @@
 # Proposal Schema
 
+## Contents
+
+- [PROPOSAL [N] of [TOTAL]](#proposal-n-of-total)
+- [Validation Rules](#validation-rules)
+- [No-Qualifying-Improvement Message](#no-qualifying-improvement-message)
+- [Deferred Issues Appendix](#deferred-issues-appendix)
+- [Scoring Reference](#scoring-reference)
+
 Every `/self-improve` output must use exactly this format. No conversational text outside proposal blocks and the no-qualifying-improvement message.
 
 When a downstream runner requests machine-readable output, emit the same proposals as JSON to `.claude/pending/proposals-<run-id>.json` using the fields below plus `proposal_id`, `tier`, `score`, `status`, and `created_at`. Human-readable Markdown remains the default interactive output; the JSON artifact is for deterministic validation and application.

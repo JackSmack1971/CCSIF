@@ -12,6 +12,16 @@ disallowed-tools: "Write Edit Bash(rails db:migrate:*) Bash(rails db:rollback:*)
 
 # Migration Safety
 
+## Contents
+
+- [Purpose](#purpose)
+- [Protected-area rules](#protected-area-rules)
+- [Inputs](#inputs)
+- [Procedure](#procedure)
+- [Checklist](#checklist)
+- [Output format](#output-format)
+- [Stop conditions](#stop-conditions)
+
 ## Purpose
 
 Review database migration safety before code review, merge, or deployment. Identify migration frameworks, schema/data change risks, application compatibility issues, rollout sequencing requirements, and rollback readiness.
@@ -131,6 +141,17 @@ Always include a rollback checklist. Cover:
 - How to disable feature flags or revert application code safely.
 - Validation queries or application checks to confirm rollback success.
 - Owner, approval, and communication requirements for production rollback.
+
+## Checklist
+
+- [ ] Establish repository and diff context.
+- [ ] Detect migration directories and frameworks in use.
+- [ ] Review migration content for reversibility, lock risk, backfills, indexes, and destructive operations.
+- [ ] Check application/schema backward compatibility across rolling deploy states.
+- [ ] Recommend expand/contract rollout patterns for risky or incompatible changes.
+- [ ] Produce an overall and per-finding risk rating.
+- [ ] Produce a rollback checklist.
+- [ ] Produce the report using the Output format sections, or stop per Stop conditions.
 
 ## Output format
 

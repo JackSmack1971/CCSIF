@@ -218,6 +218,8 @@ Before completion:
 4. Confirm the coverage checklist is satisfied or that omissions are explicitly justified.
 5. Confirm `git status --short` shows only expected changes.
 
+**Completion gate:** do not report the task complete until steps 1-5 above have run and the onboarding coverage checklist is satisfied or its omissions are justified. Stop and report instead of writing files when required setup evidence (clean-clone path, verification command, ownership/rules discovery path) cannot be found in the repository.
+
 ## Completion report
 
 Return a concise report containing:

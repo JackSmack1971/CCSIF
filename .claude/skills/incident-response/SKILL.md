@@ -1,9 +1,27 @@
 ---
 name: incident-response
 description: Use when the user mentions a suspected or confirmed production incident, outage, rollback plan, or postmortem. Trigger on we have an incident, production regression happened, draft a postmortem, plan a safe rollback. NOT for routine bug triage with no production impact; use pr-triage or repo-audit instead. Requires preserving evidence, citing sources, and avoiding destructive or state-changing commands unless explicitly approved.
+when_to_use: Use when investigating a suspected or confirmed production incident, drafting a postmortem, or planning a rollback, not for routine bug triage with no production impact.
+argument-hint: "[INCIDENT_SUMMARY|LOG_OR_ALERT_REFERENCE]"
+allowed-tools: "Read Grep Glob Write Bash(git status:*) Bash(git log:*) Bash(git show:*) Bash(git diff:*) Bash(git branch:*)"
 ---
 
 # Incident Response
+
+## Contents
+
+- [Core safety rules](#core-safety-rules)
+- [Activation triggers](#activation-triggers)
+- [Incident workspace](#incident-workspace)
+- [1. Capture the incident timeline](#1-capture-the-incident-timeline)
+- [2. Identify likely blast radius and user impact](#2-identify-likely-blast-radius-and-user-impact)
+- [3. Separate confirmed facts from hypotheses](#3-separate-confirmed-facts-from-hypotheses)
+- [4. Propose safe rollback, roll-forward, or mitigation options](#4-propose-safe-rollback-roll-forward-or-mitigation-options)
+- [5. Draft status updates and post-incident review notes](#5-draft-status-updates-and-post-incident-review-notes)
+- [6. Generate follow-up issue stubs for prevention work](#6-generate-follow-up-issue-stubs-for-prevention-work)
+- [7. Preserve evidence without destructive commands](#7-preserve-evidence-without-destructive-commands)
+- [Completion checklist](#completion-checklist)
+- [Completion Gate](#completion-gate)
 
 Use this skill for suspected or confirmed incidents, including production regressions, outages, rollback planning, outage analysis, and postmortems. Operate in evidence-preserving mode: prefer read-only commands, cite sources, and avoid destructive or state-changing actions unless the user explicitly approves them.
 
@@ -321,4 +339,8 @@ Evidence-preservation checklist:
 - [ ] Rollback, roll-forward, and mitigation options include risks, approvals, rollback paths, and verification signals.
 - [ ] Internal status update and post-incident review notes are drafted.
 - [ ] Follow-up prevention issue stubs are generated with acceptance criteria and verification plans.
+
+## Completion Gate
+
+Do not report the response or postmortem complete until every item in the Completion checklist is satisfied. Stop before running any command that mutates state, rotates credentials, alters deployments, or rewrites history; propose the exact command and wait for explicit approval instead.
 - [ ] Evidence was preserved without destructive commands or sensitive data disclosure.

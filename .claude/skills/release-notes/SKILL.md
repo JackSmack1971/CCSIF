@@ -1,9 +1,22 @@
 ---
 name: release-notes
 description: Use when asked to generate release notes, update changelog entries, or draft upgrade and migration notes from repository evidence. Trigger on generate release notes, update the changelog, summarize this release, draft upgrade notes. NOT for assessing whether the repository is actually ready to release; use release-readiness instead. Requires grounding every entry in commits, PR titles, labels, or diffs without overstating unsupported changes.
+when_to_use: Use when a release, tag, or merged range needs user-facing release notes or maintainer changelog entries drafted from commits, PR metadata, and diffs, not for judging whether the repository is ready to ship.
+argument-hint: "[RANGE|TAG|MILESTONE] [--changelog-path PATH]"
+allowed-tools: "Read Grep Glob Bash(git log:*) Bash(git diff:*) Bash(git show:*) Bash(git tag:*) Bash(git describe:*) Bash(gh pr list:*) Bash(gh pr view:*) Bash(gh release view:*) Edit Write"
 ---
 
 # Release Notes
+
+## Contents
+
+- [Workflow](#workflow)
+- [Checklist](#checklist)
+- [Evidence Checklist](#evidence-checklist)
+- [Breaking-Change Heuristics](#breaking-change-heuristics)
+- [Output Guidance](#output-guidance)
+- [Rollback and Upgrade Guidance](#rollback-and-upgrade-guidance)
+- [Accuracy Rules](#accuracy-rules)
 
 ## Workflow
 
@@ -21,6 +34,16 @@ description: Use when asked to generate release notes, update changelog entries,
 5. **Draft outputs.** Produce both user-facing release notes and maintainer-facing changelog entries when requested or useful.
 6. **Add operational guidance.** Include upgrade and rollback guidance when the diff indicates migrations, config changes, deployment steps, dependency upgrades, or risky behavior changes.
 7. **Calibrate claims.** Avoid overstating changes not supported by diff evidence. Use cautious language for inferred impact and call out uncertainty.
+
+## Checklist
+
+- [ ] Define the release scope (range, tags, branch, PR, or milestone), stating any inferred assumption.
+- [ ] Collect evidence from commits, PR metadata, and diffs.
+- [ ] Classify changes into Added, Changed, Fixed, Deprecated, Removed, Security, and Migration Notes.
+- [ ] Detect breaking changes using the Breaking-Change Heuristics.
+- [ ] Draft user-facing release notes and maintainer-facing changelog entries as requested.
+- [ ] Add upgrade and rollback guidance when the diff indicates migrations, config, or dependency changes.
+- [ ] Calibrate claims against diff evidence before returning output.
 
 ## Evidence Checklist
 

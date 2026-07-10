@@ -2,76 +2,172 @@
   "schema_version": "1.0",
   "skills": [
     {
-      "approx_tokens": 1010,
+      "approx_tokens": 976,
       "findings": [],
       "line_count": 86,
       "metadata": {
-        "description_length": 675,
-        "git_root": "C:/workspaces/CCSIF",
+        "description_length": 456,
+        "git_root": "/home/user/CCSIF",
         "has_evals": true,
         "has_scripts": true,
         "linked_references": []
       },
       "name": "7axes-audit",
-      "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\7axes-audit\\SKILL.md",
-      "root": "C:\\workspaces\\CCSIF",
+      "path": "/home/user/CCSIF/.claude/skills/7axes-audit/SKILL.md",
+      "root": "/home/user/CCSIF",
       "score": 100
     },
     {
-      "approx_tokens": 811,
+      "approx_tokens": 817,
       "findings": [],
       "line_count": 77,
       "metadata": {
-        "description_length": 525,
-        "git_root": "C:/workspaces/CCSIF",
+        "description_length": 546,
+        "git_root": "/home/user/CCSIF",
         "has_evals": true,
         "has_scripts": false,
         "linked_references": []
       },
       "name": "7axes-reference",
-      "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\7axes-reference\\SKILL.md",
-      "root": "C:\\workspaces\\CCSIF",
+      "path": "/home/user/CCSIF/.claude/skills/7axes-reference/SKILL.md",
+      "root": "/home/user/CCSIF",
       "score": 100
     },
     {
-      "approx_tokens": 2130,
+      "approx_tokens": 2562,
+      "findings": [],
+      "line_count": 223,
+      "metadata": {
+        "description_length": 481,
+        "git_root": "/home/user/CCSIF",
+        "has_evals": true,
+        "has_scripts": false,
+        "linked_references": []
+      },
+      "name": "accessibility-review",
+      "path": "/home/user/CCSIF/.claude/skills/accessibility-review/SKILL.md",
+      "root": "/home/user/CCSIF",
+      "score": 100
+    },
+    {
+      "approx_tokens": 2012,
+      "findings": [],
+      "line_count": 202,
+      "metadata": {
+        "description_length": 472,
+        "git_root": "/home/user/CCSIF",
+        "has_evals": true,
+        "has_scripts": false,
+        "linked_references": []
+      },
+      "name": "adr-authoring",
+      "path": "/home/user/CCSIF/.claude/skills/adr-authoring/SKILL.md",
+      "root": "/home/user/CCSIF",
+      "score": 100
+    },
+    {
+      "approx_tokens": 1784,
+      "findings": [],
+      "line_count": 163,
+      "metadata": {
+        "description_length": 509,
+        "git_root": "/home/user/CCSIF",
+        "has_evals": true,
+        "has_scripts": false,
+        "linked_references": []
+      },
+      "name": "api-contract-docs",
+      "path": "/home/user/CCSIF/.claude/skills/api-contract-docs/SKILL.md",
+      "root": "/home/user/CCSIF",
+      "score": 100
+    },
+    {
+      "approx_tokens": 2536,
+      "findings": [],
+      "line_count": 180,
+      "metadata": {
+        "description_length": 535,
+        "git_root": "/home/user/CCSIF",
+        "has_evals": true,
+        "has_scripts": false,
+        "linked_references": []
+      },
+      "name": "api-contract-review",
+      "path": "/home/user/CCSIF/.claude/skills/api-contract-review/SKILL.md",
+      "root": "/home/user/CCSIF",
+      "score": 100
+    },
+    {
+      "approx_tokens": 2099,
       "findings": [],
       "line_count": 253,
       "metadata": {
-        "description_length": 783,
-        "git_root": "C:/workspaces/CCSIF",
+        "description_length": 583,
+        "git_root": "/home/user/CCSIF",
         "has_evals": true,
         "has_scripts": true,
         "linked_references": []
       },
       "name": "brainstorming-ux-features",
-      "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\brainstorming-ux-features\\SKILL.md",
-      "root": "C:\\workspaces\\CCSIF",
+      "path": "/home/user/CCSIF/.claude/skills/brainstorming-ux-features/SKILL.md",
+      "root": "/home/user/CCSIF",
       "score": 100
     },
     {
-      "approx_tokens": 1237,
+      "approx_tokens": 1645,
+      "findings": [],
+      "line_count": 154,
+      "metadata": {
+        "description_length": 554,
+        "git_root": "/home/user/CCSIF",
+        "has_evals": true,
+        "has_scripts": false,
+        "linked_references": []
+      },
+      "name": "ci-cd-audit",
+      "path": "/home/user/CCSIF/.claude/skills/ci-cd-audit/SKILL.md",
+      "root": "/home/user/CCSIF",
+      "score": 100
+    },
+    {
+      "approx_tokens": 1658,
+      "findings": [],
+      "line_count": 139,
+      "metadata": {
+        "description_length": 708,
+        "git_root": "/home/user/CCSIF",
+        "has_evals": true,
+        "has_scripts": false,
+        "linked_references": []
+      },
+      "name": "cicd-workflow-audit",
+      "path": "/home/user/CCSIF/.claude/skills/cicd-workflow-audit/SKILL.md",
+      "root": "/home/user/CCSIF",
+      "score": 100
+    },
+    {
+      "approx_tokens": 1255,
       "findings": [],
       "line_count": 135,
       "metadata": {
-        "description_length": 429,
-        "git_root": "C:/workspaces/CCSIF",
+        "description_length": 526,
+        "git_root": "/home/user/CCSIF",
         "has_evals": true,
         "has_scripts": true,
         "linked_references": []
       },
       "name": "auditing-ai-agent-config-architecture",
-      "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\claude-code-architecture-auditor\\SKILL.md",
-      "root": "C:\\workspaces\\CCSIF",
+      "path": "/home/user/CCSIF/.claude/skills/claude-code-architecture-auditor/SKILL.md",
+      "root": "/home/user/CCSIF",
       "score": 100
     },
     {
-      "approx_tokens": 1641,
+      "approx_tokens": 1645,
       "findings": [],
       "line_count": 145,
       "metadata": {
-        "description_length": 528,
-        "git_root": "C:/workspaces/CCSIF",
+        "description_length": 517,
+        "git_root": "/home/user/CCSIF",
         "has_evals": true,
         "has_scripts": true,
         "linked_references": [
@@ -79,17 +175,33 @@
         ]
       },
       "name": "compiling-tribal-knowledge",
-      "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\compiling-tribal-knowledge\\SKILL.md",
-      "root": "C:\\workspaces\\CCSIF",
+      "path": "/home/user/CCSIF/.claude/skills/compiling-tribal-knowledge/SKILL.md",
+      "root": "/home/user/CCSIF",
       "score": 100
     },
     {
-      "approx_tokens": 2589,
+      "approx_tokens": 2425,
+      "findings": [],
+      "line_count": 252,
+      "metadata": {
+        "description_length": 523,
+        "git_root": "/home/user/CCSIF",
+        "has_evals": true,
+        "has_scripts": false,
+        "linked_references": []
+      },
+      "name": "contributor-onboarding",
+      "path": "/home/user/CCSIF/.claude/skills/contributor-onboarding/SKILL.md",
+      "root": "/home/user/CCSIF",
+      "score": 100
+    },
+    {
+      "approx_tokens": 2557,
       "findings": [],
       "line_count": 285,
       "metadata": {
-        "description_length": 780,
-        "git_root": "C:/workspaces/CCSIF",
+        "description_length": 542,
+        "git_root": "/home/user/CCSIF",
         "has_evals": true,
         "has_scripts": true,
         "linked_references": [
@@ -100,17 +212,33 @@
         ]
       },
       "name": "crafting-repository-security-policy",
-      "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\crafting-repository-security-policy\\SKILL.md",
-      "root": "C:\\workspaces\\CCSIF",
+      "path": "/home/user/CCSIF/.claude/skills/crafting-repository-security-policy/SKILL.md",
+      "root": "/home/user/CCSIF",
       "score": 100
     },
     {
-      "approx_tokens": 360,
+      "approx_tokens": 1608,
+      "findings": [],
+      "line_count": 121,
+      "metadata": {
+        "description_length": 508,
+        "git_root": "/home/user/CCSIF",
+        "has_evals": true,
+        "has_scripts": false,
+        "linked_references": []
+      },
+      "name": "database-migration-review",
+      "path": "/home/user/CCSIF/.claude/skills/database-migration-review/SKILL.md",
+      "root": "/home/user/CCSIF",
+      "score": 100
+    },
+    {
+      "approx_tokens": 312,
       "findings": [],
       "line_count": 33,
       "metadata": {
-        "description_length": 732,
-        "git_root": "C:/workspaces/CCSIF",
+        "description_length": 400,
+        "git_root": "/home/user/CCSIF",
         "has_evals": true,
         "has_scripts": true,
         "linked_references": [
@@ -118,8 +246,24 @@
         ]
       },
       "name": "dependency-audit",
-      "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\dependency-audit\\SKILL.md",
-      "root": "C:\\workspaces\\CCSIF",
+      "path": "/home/user/CCSIF/.claude/skills/dependency-audit/SKILL.md",
+      "root": "/home/user/CCSIF",
+      "score": 100
+    },
+    {
+      "approx_tokens": 1979,
+      "findings": [],
+      "line_count": 169,
+      "metadata": {
+        "description_length": 492,
+        "git_root": "/home/user/CCSIF",
+        "has_evals": true,
+        "has_scripts": false,
+        "linked_references": []
+      },
+      "name": "dependency-upgrade-planning",
+      "path": "/home/user/CCSIF/.claude/skills/dependency-upgrade-planning/SKILL.md",
+      "root": "/home/user/CCSIF",
       "score": 100
     },
     {
@@ -128,7 +272,7 @@
       "line_count": 197,
       "metadata": {
         "description_length": 534,
-        "git_root": "C:/workspaces/CCSIF",
+        "git_root": "/home/user/CCSIF",
         "has_evals": true,
         "has_scripts": true,
         "linked_references": [
@@ -137,17 +281,33 @@
         ]
       },
       "name": "disambiguating-skill-descriptions",
-      "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\disambiguating-skill-descriptions\\SKILL.md",
-      "root": "C:\\workspaces\\CCSIF",
+      "path": "/home/user/CCSIF/.claude/skills/disambiguating-skill-descriptions/SKILL.md",
+      "root": "/home/user/CCSIF",
       "score": 100
     },
     {
-      "approx_tokens": 419,
+      "approx_tokens": 2440,
+      "findings": [],
+      "line_count": 239,
+      "metadata": {
+        "description_length": 573,
+        "git_root": "/home/user/CCSIF",
+        "has_evals": true,
+        "has_scripts": false,
+        "linked_references": []
+      },
+      "name": "documentation-drift",
+      "path": "/home/user/CCSIF/.claude/skills/documentation-drift/SKILL.md",
+      "root": "/home/user/CCSIF",
+      "score": 100
+    },
+    {
+      "approx_tokens": 380,
       "findings": [],
       "line_count": 38,
       "metadata": {
-        "description_length": 732,
-        "git_root": "C:/workspaces/CCSIF",
+        "description_length": 497,
+        "git_root": "/home/user/CCSIF",
         "has_evals": true,
         "has_scripts": true,
         "linked_references": [
@@ -155,17 +315,17 @@
         ]
       },
       "name": "fsv-verify",
-      "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\fsv-verify\\SKILL.md",
-      "root": "C:\\workspaces\\CCSIF",
+      "path": "/home/user/CCSIF/.claude/skills/fsv-verify/SKILL.md",
+      "root": "/home/user/CCSIF",
       "score": 100
     },
     {
-      "approx_tokens": 1826,
+      "approx_tokens": 1784,
       "findings": [],
       "line_count": 164,
       "metadata": {
-        "description_length": 707,
-        "git_root": "C:/workspaces/CCSIF",
+        "description_length": 449,
+        "git_root": "/home/user/CCSIF",
         "has_evals": true,
         "has_scripts": true,
         "linked_references": [
@@ -175,17 +335,17 @@
         ]
       },
       "name": "generate-codeowners",
-      "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\generate-codeowners\\SKILL.md",
-      "root": "C:\\workspaces\\CCSIF",
+      "path": "/home/user/CCSIF/.claude/skills/generate-codeowners/SKILL.md",
+      "root": "/home/user/CCSIF",
       "score": 100
     },
     {
-      "approx_tokens": 1608,
+      "approx_tokens": 1595,
       "findings": [],
       "line_count": 155,
       "metadata": {
-        "description_length": 584,
-        "git_root": "C:/workspaces/CCSIF",
+        "description_length": 505,
+        "git_root": "/home/user/CCSIF",
         "has_evals": true,
         "has_scripts": true,
         "linked_references": [
@@ -195,17 +355,17 @@
         ]
       },
       "name": "generating-contributing-guidelines",
-      "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\generating-contributing-guidelines\\SKILL.md",
-      "root": "C:\\workspaces\\CCSIF",
+      "path": "/home/user/CCSIF/.claude/skills/generating-contributing-guidelines/SKILL.md",
+      "root": "/home/user/CCSIF",
       "score": 100
     },
     {
-      "approx_tokens": 1127,
+      "approx_tokens": 1118,
       "findings": [],
       "line_count": 106,
       "metadata": {
-        "description_length": 574,
-        "git_root": "C:/workspaces/CCSIF",
+        "description_length": 481,
+        "git_root": "/home/user/CCSIF",
         "has_evals": true,
         "has_scripts": true,
         "linked_references": [
@@ -214,17 +374,17 @@
         ]
       },
       "name": "generating-readmes",
-      "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\generating-readmes\\SKILL.md",
-      "root": "C:\\workspaces\\CCSIF",
+      "path": "/home/user/CCSIF/.claude/skills/generating-readmes/SKILL.md",
+      "root": "/home/user/CCSIF",
       "score": 100
     },
     {
-      "approx_tokens": 955,
+      "approx_tokens": 949,
       "findings": [],
       "line_count": 63,
       "metadata": {
-        "description_length": 685,
-        "git_root": "C:/workspaces/CCSIF",
+        "description_length": 629,
+        "git_root": "/home/user/CCSIF",
         "has_evals": true,
         "has_scripts": false,
         "linked_references": [
@@ -232,26 +392,33 @@
         ]
       },
       "name": "git-automation",
-      "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\git-automation\\SKILL.md",
-      "root": "C:\\workspaces\\CCSIF",
+      "path": "/home/user/CCSIF/.claude/skills/git-automation/SKILL.md",
+      "root": "/home/user/CCSIF",
       "score": 100
     },
     {
-      "approx_tokens": 3090,
-      "findings": [
-        {
-          "code": "skill-long",
-          "line": null,
-          "message": "SKILL.md has 433 lines; consider compression",
-          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\maintaining-repository-hygiene\\SKILL.md",
-          "severity": "medium",
-          "suggestion": "Move examples and edge cases to references."
-        }
-      ],
-      "line_count": 433,
+      "approx_tokens": 2541,
+      "findings": [],
+      "line_count": 346,
       "metadata": {
-        "description_length": 912,
-        "git_root": "C:/workspaces/CCSIF",
+        "description_length": 433,
+        "git_root": "/home/user/CCSIF",
+        "has_evals": true,
+        "has_scripts": false,
+        "linked_references": []
+      },
+      "name": "incident-response",
+      "path": "/home/user/CCSIF/.claude/skills/incident-response/SKILL.md",
+      "root": "/home/user/CCSIF",
+      "score": 100
+    },
+    {
+      "approx_tokens": 2584,
+      "findings": [],
+      "line_count": 350,
+      "metadata": {
+        "description_length": 489,
+        "git_root": "/home/user/CCSIF",
         "has_evals": true,
         "has_scripts": true,
         "linked_references": [
@@ -261,17 +428,49 @@
         ]
       },
       "name": "maintaining-repository-hygiene",
-      "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\maintaining-repository-hygiene\\SKILL.md",
-      "root": "C:\\workspaces\\CCSIF",
-      "score": 92
+      "path": "/home/user/CCSIF/.claude/skills/maintaining-repository-hygiene/SKILL.md",
+      "root": "/home/user/CCSIF",
+      "score": 100
     },
     {
-      "approx_tokens": 1679,
+      "approx_tokens": 2025,
+      "findings": [],
+      "line_count": 179,
+      "metadata": {
+        "description_length": 617,
+        "git_root": "/home/user/CCSIF",
+        "has_evals": true,
+        "has_scripts": false,
+        "linked_references": []
+      },
+      "name": "migration-safety",
+      "path": "/home/user/CCSIF/.claude/skills/migration-safety/SKILL.md",
+      "root": "/home/user/CCSIF",
+      "score": 100
+    },
+    {
+      "approx_tokens": 1627,
+      "findings": [],
+      "line_count": 118,
+      "metadata": {
+        "description_length": 504,
+        "git_root": "/home/user/CCSIF",
+        "has_evals": true,
+        "has_scripts": false,
+        "linked_references": []
+      },
+      "name": "observability-audit",
+      "path": "/home/user/CCSIF/.claude/skills/observability-audit/SKILL.md",
+      "root": "/home/user/CCSIF",
+      "score": 100
+    },
+    {
+      "approx_tokens": 1649,
       "findings": [],
       "line_count": 166,
       "metadata": {
-        "description_length": 656,
-        "git_root": "C:/workspaces/CCSIF",
+        "description_length": 452,
+        "git_root": "/home/user/CCSIF",
         "has_evals": true,
         "has_scripts": true,
         "linked_references": [
@@ -280,17 +479,17 @@
         ]
       },
       "name": "optimize-github-operations",
-      "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\optimize-github-operations\\SKILL.md",
-      "root": "C:\\workspaces\\CCSIF",
+      "path": "/home/user/CCSIF/.claude/skills/optimize-github-operations/SKILL.md",
+      "root": "/home/user/CCSIF",
       "score": 100
     },
     {
-      "approx_tokens": 1734,
+      "approx_tokens": 1695,
       "findings": [],
       "line_count": 179,
       "metadata": {
-        "description_length": 723,
-        "git_root": "C:/workspaces/CCSIF",
+        "description_length": 480,
+        "git_root": "/home/user/CCSIF",
         "has_evals": true,
         "has_scripts": false,
         "linked_references": [
@@ -299,18 +498,18 @@
         ]
       },
       "name": "pr-triage",
-      "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\pr-triage\\SKILL.md",
-      "root": "C:\\workspaces\\CCSIF",
+      "path": "/home/user/CCSIF/.claude/skills/pr-triage/SKILL.md",
+      "root": "/home/user/CCSIF",
       "score": 100
     },
     {
-      "approx_tokens": 1094,
+      "approx_tokens": 1054,
       "findings": [
         {
           "code": "frontmatter-parse-warning",
           "line": 19,
           "message": "Unparsed frontmatter line: PreToolUse:",
-          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\purging-token-dead-weight\\SKILL.md",
+          "path": "/home/user/CCSIF/.claude/skills/purging-token-dead-weight/SKILL.md",
           "severity": "medium",
           "suggestion": "Use simple key: value or YAML list syntax."
         },
@@ -318,7 +517,7 @@
           "code": "frontmatter-parse-warning",
           "line": 20,
           "message": "Unparsed frontmatter line: - matcher: \"Bash\"",
-          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\purging-token-dead-weight\\SKILL.md",
+          "path": "/home/user/CCSIF/.claude/skills/purging-token-dead-weight/SKILL.md",
           "severity": "medium",
           "suggestion": "Use simple key: value or YAML list syntax."
         },
@@ -326,7 +525,7 @@
           "code": "frontmatter-parse-warning",
           "line": 21,
           "message": "Unparsed frontmatter line: hooks:",
-          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\purging-token-dead-weight\\SKILL.md",
+          "path": "/home/user/CCSIF/.claude/skills/purging-token-dead-weight/SKILL.md",
           "severity": "medium",
           "suggestion": "Use simple key: value or YAML list syntax."
         },
@@ -334,7 +533,7 @@
           "code": "frontmatter-parse-warning",
           "line": 22,
           "message": "Unparsed frontmatter line: - type: command",
-          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\purging-token-dead-weight\\SKILL.md",
+          "path": "/home/user/CCSIF/.claude/skills/purging-token-dead-weight/SKILL.md",
           "severity": "medium",
           "suggestion": "Use simple key: value or YAML list syntax."
         },
@@ -342,7 +541,7 @@
           "code": "frontmatter-parse-warning",
           "line": 23,
           "message": "Unparsed frontmatter line: command: \"python \\\"${CLAUDE_SKILL_DIR}/scripts/hook_guard.py\\\"\"",
-          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\purging-token-dead-weight\\SKILL.md",
+          "path": "/home/user/CCSIF/.claude/skills/purging-token-dead-weight/SKILL.md",
           "severity": "medium",
           "suggestion": "Use simple key: value or YAML list syntax."
         },
@@ -350,15 +549,15 @@
           "code": "frontmatter-parse-warning",
           "line": 24,
           "message": "Unparsed frontmatter line: timeout: 10",
-          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\purging-token-dead-weight\\SKILL.md",
+          "path": "/home/user/CCSIF/.claude/skills/purging-token-dead-weight/SKILL.md",
           "severity": "medium",
           "suggestion": "Use simple key: value or YAML list syntax."
         }
       ],
       "line_count": 111,
       "metadata": {
-        "description_length": 705,
-        "git_root": "C:/workspaces/CCSIF",
+        "description_length": 456,
+        "git_root": "/home/user/CCSIF",
         "has_evals": true,
         "has_scripts": true,
         "linked_references": [
@@ -366,33 +565,65 @@
         ]
       },
       "name": "purging-token-dead-weight",
-      "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\purging-token-dead-weight\\SKILL.md",
-      "root": "C:\\workspaces\\CCSIF",
+      "path": "/home/user/CCSIF/.claude/skills/purging-token-dead-weight/SKILL.md",
+      "root": "/home/user/CCSIF",
       "score": 52
     },
     {
-      "approx_tokens": 367,
+      "approx_tokens": 1279,
+      "findings": [],
+      "line_count": 112,
+      "metadata": {
+        "description_length": 446,
+        "git_root": "/home/user/CCSIF",
+        "has_evals": true,
+        "has_scripts": false,
+        "linked_references": []
+      },
+      "name": "release-notes",
+      "path": "/home/user/CCSIF/.claude/skills/release-notes/SKILL.md",
+      "root": "/home/user/CCSIF",
+      "score": 100
+    },
+    {
+      "approx_tokens": 1957,
+      "findings": [],
+      "line_count": 172,
+      "metadata": {
+        "description_length": 470,
+        "git_root": "/home/user/CCSIF",
+        "has_evals": true,
+        "has_scripts": false,
+        "linked_references": []
+      },
+      "name": "release-readiness",
+      "path": "/home/user/CCSIF/.claude/skills/release-readiness/SKILL.md",
+      "root": "/home/user/CCSIF",
+      "score": 100
+    },
+    {
+      "approx_tokens": 336,
       "findings": [],
       "line_count": 31,
       "metadata": {
-        "description_length": 768,
-        "git_root": "C:/workspaces/CCSIF",
+        "description_length": 508,
+        "git_root": "/home/user/CCSIF",
         "has_evals": true,
         "has_scripts": false,
         "linked_references": []
       },
       "name": "repo-audit",
-      "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\repo-audit\\SKILL.md",
-      "root": "C:\\workspaces\\CCSIF",
+      "path": "/home/user/CCSIF/.claude/skills/repo-audit/SKILL.md",
+      "root": "/home/user/CCSIF",
       "score": 100
     },
     {
-      "approx_tokens": 1748,
+      "approx_tokens": 1756,
       "findings": [],
-      "line_count": 148,
+      "line_count": 149,
       "metadata": {
-        "description_length": 743,
-        "git_root": "C:/workspaces/CCSIF",
+        "description_length": 486,
+        "git_root": "/home/user/CCSIF",
         "has_evals": true,
         "has_scripts": false,
         "linked_references": [
@@ -402,17 +633,17 @@
         ]
       },
       "name": "self-improve",
-      "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\self-improve\\SKILL.md",
-      "root": "C:\\workspaces\\CCSIF",
+      "path": "/home/user/CCSIF/.claude/skills/self-improve/SKILL.md",
+      "root": "/home/user/CCSIF",
       "score": 100
     },
     {
-      "approx_tokens": 1371,
+      "approx_tokens": 1374,
       "findings": [],
       "line_count": 187,
       "metadata": {
-        "description_length": 463,
-        "git_root": "C:/workspaces/CCSIF",
+        "description_length": 448,
+        "git_root": "/home/user/CCSIF",
         "has_evals": true,
         "has_scripts": true,
         "linked_references": [
@@ -422,36 +653,157 @@
         ]
       },
       "name": "skill-auditor",
-      "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\skill-auditor\\SKILL.md",
-      "root": "C:\\workspaces\\CCSIF",
+      "path": "/home/user/CCSIF/.claude/skills/skill-auditor/SKILL.md",
+      "root": "/home/user/CCSIF",
       "score": 100
     },
     {
-      "approx_tokens": 410,
+      "approx_tokens": 370,
       "findings": [],
       "line_count": 48,
       "metadata": {
-        "description_length": 714,
-        "git_root": "C:/workspaces/CCSIF",
+        "description_length": 461,
+        "git_root": "/home/user/CCSIF",
         "has_evals": true,
         "has_scripts": false,
         "linked_references": []
       },
       "name": "stack-detection",
-      "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\stack-detection\\SKILL.md",
-      "root": "C:\\workspaces\\CCSIF",
+      "path": "/home/user/CCSIF/.claude/skills/stack-detection/SKILL.md",
+      "root": "/home/user/CCSIF",
       "score": 100
+    },
+    {
+      "approx_tokens": 1439,
+      "findings": [],
+      "line_count": 150,
+      "metadata": {
+        "description_length": 429,
+        "git_root": "/home/user/CCSIF",
+        "has_evals": true,
+        "has_scripts": false,
+        "linked_references": []
+      },
+      "name": "test-strategy",
+      "path": "/home/user/CCSIF/.claude/skills/test-strategy/SKILL.md",
+      "root": "/home/user/CCSIF",
+      "score": 100
+    },
+    {
+      "approx_tokens": 958,
+      "findings": [
+        {
+          "code": "description-activation-prefix",
+          "line": 3,
+          "message": "Description should lead with precise activation conditions",
+          "path": "/root/.claude/skills/session-start-hook/SKILL.md",
+          "severity": "high",
+          "suggestion": "Start with Use when or Trigger on queries that."
+        },
+        {
+          "code": "description-trigger-patterns",
+          "line": 3,
+          "message": "Description does not expose 3 to 5 clear trigger patterns",
+          "path": "/root/.claude/skills/session-start-hook/SKILL.md",
+          "severity": "medium",
+          "suggestion": "List 3 to 5 user-sayable trigger phrases."
+        },
+        {
+          "code": "description-missing-negative-space",
+          "line": 3,
+          "message": "Description lacks negative-space routing",
+          "path": "/root/.claude/skills/session-start-hook/SKILL.md",
+          "severity": "high",
+          "suggestion": "Name adjacent scenarios that should route elsewhere."
+        },
+        {
+          "code": "missing-when-to-use",
+          "line": 4,
+          "message": "No when_to_use field found",
+          "path": "/root/.claude/skills/session-start-hook/SKILL.md",
+          "severity": "low",
+          "suggestion": "Add explicit trigger reinforcement when useful."
+        },
+        {
+          "code": "missing-arguments",
+          "line": 5,
+          "message": "No argument hint or argument mapping found",
+          "path": "/root/.claude/skills/session-start-hook/SKILL.md",
+          "severity": "low",
+          "suggestion": "Add argument-hint for CLI discoverability when applicable."
+        },
+        {
+          "code": "missing-tool-boundaries",
+          "line": 6,
+          "message": "No explicit tool permission boundaries found",
+          "path": "/root/.claude/skills/session-start-hook/SKILL.md",
+          "severity": "medium",
+          "suggestion": "Add least-privilege allowed-tools or disallowed-tools for state-mutating workflows."
+        },
+        {
+          "code": "missing-toc",
+          "line": null,
+          "message": "SKILL.md exceeds 100 lines without a visible table of contents",
+          "path": "/root/.claude/skills/session-start-hook/SKILL.md",
+          "severity": "low",
+          "suggestion": "Add a compact ToC or compress below 100 lines."
+        },
+        {
+          "code": "missing-checklist",
+          "line": null,
+          "message": "No markdown checklist found for task progress",
+          "path": "/root/.claude/skills/session-start-hook/SKILL.md",
+          "severity": "medium",
+          "suggestion": "Add artifact-producing checklist steps for complex workflows."
+        },
+        {
+          "code": "missing-stop-conditions",
+          "line": null,
+          "message": "No explicit completion gate or stop condition found",
+          "path": "/root/.claude/skills/session-start-hook/SKILL.md",
+          "severity": "medium",
+          "suggestion": "Add completion gate and stop conditions."
+        },
+        {
+          "code": "missing-evals",
+          "line": null,
+          "message": "No evals/evals.json found",
+          "path": "/root/.claude/skills/session-start-hook/evals",
+          "severity": "medium",
+          "suggestion": "Add targeted activation and task-quality evals."
+        },
+        {
+          "code": "missing-verification-log",
+          "line": null,
+          "message": "No verification log found",
+          "path": "/root/.claude/skills/session-start-hook",
+          "severity": "medium",
+          "suggestion": "Add VERIFICATION.md with tested and untested claims."
+        }
+      ],
+      "line_count": 153,
+      "metadata": {
+        "description_length": 238,
+        "git_root": null,
+        "has_evals": false,
+        "has_scripts": false,
+        "linked_references": []
+      },
+      "name": "startup-hook-skill",
+      "path": "/root/.claude/skills/session-start-hook/SKILL.md",
+      "root": "/home/user/CCSIF",
+      "score": 3
     }
   ],
   "summary": {
-    "corpus_score": 97.33,
+    "corpus_score": 96.18,
     "findings_by_severity": {
-      "high": 0,
-      "low": 0,
-      "medium": 7
+      "high": 2,
+      "low": 3,
+      "medium": 12
     },
-    "include_user": false,
-    "root": "C:\\workspaces\\CCSIF",
-    "skills_audited": 21
+    "include_user": true,
+    "root": "/home/user/CCSIF",
+    "skills_audited": 38
   }
 }

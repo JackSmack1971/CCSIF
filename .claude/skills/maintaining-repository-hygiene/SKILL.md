@@ -194,97 +194,15 @@ Do not use `--allow-head-change` by default. Re-audit when HEAD changed. Use it 
 
 ## 5. Stack discovery
 
-The stack profile must be code agnostic and evidence-rich. Detect:
-
-- package/build manifests and lockfiles;
-- language ecosystems and frameworks;
-- package managers and declared versions;
-- monorepo/workspace boundaries;
-- containers, infrastructure, deployment, and documentation tooling;
-- canonical install, build, test, lint, type-check, docs, and release commands;
-- CI-observed commands;
-- generated-output directories and release targets.
-
-Support at minimum:
-
-- JavaScript/TypeScript, Python, Rust, Go, Java/Kotlin, .NET, Ruby, PHP, Swift, Elixir, Dart/Flutter, C/C++, Bazel, Nix, Terraform, Docker, Helm, and GitHub Actions;
-- polyglot and nested projects;
-- npm, pnpm, yarn, Bun, pip/uv/Poetry/Pipenv, Cargo, Go modules, Maven, Gradle, NuGet, Bundler, Composer, SwiftPM, Mix, and Pub.
-
-Rules:
-
-- File extensions alone are weak evidence.
-- Multiple ecosystems are valid.
-- Multiple package managers are a conflict only inside the same project boundary.
-- Framework matches are signals with cited manifest evidence, not exclusive classifications.
-- CI commands can corroborate but must not override contradictory canonical manifests without investigation.
+The stack profile must be code agnostic and evidence-rich. Full detection evidence, supported ecosystem/package-manager list, and conflict rules are in [references/audit-rubric.md](references/audit-rubric.md) section 2. File extensions alone are weak evidence; prefer manifests, lockfiles, workspace configuration, and CI-observed commands. Multiple ecosystems are valid; multiple package managers are a conflict only inside the same project boundary.
 
 ## 6. Audit coverage
 
-Apply the detailed rules in [references/audit-rubric.md](references/audit-rubric.md). Cover these axes:
-
-### Git and repository contents
-
-- stale worktree administrative metadata using Git's dry run;
-- locked/offline worktrees;
-- local branches with gone upstreams;
-- accidental nested repositories;
-- tracked generated, cache, dependency, virtual-environment, and build output;
-- sensitive filenames without reading contents;
-- large tracked files and archives;
-- contradictory lockfiles and missing/unsafe ignore policy.
-
-### `.github/` and automation
-
-- GitHub-recognized community-health file locations;
-- README, SECURITY, CONTRIBUTING, license, support, code of conduct, citation, and funding where contextually applicable;
-- CODEOWNERS coverage and maintainership boundaries;
-- pull-request templates, issue templates/forms, and referenced labels;
-- Dependabot coverage for every detected active ecosystem/directory;
-- GitHub Actions syntax, explicit permissions, full-SHA action pinning, bounded timeouts, untrusted-input interpolation, `pull_request_target`, release/deployment concurrency, and broad write scopes.
-
-### Documentation truthfulness
-
-- broken local links, images, and anchors;
-- references to removed files;
-- commands absent from the nearest manifest or automation boundary;
-- package-manager and setup contradictions;
-- architecture/setup claims inconsistent with the current tree;
-- age-based review signals, clearly marked as heuristic;
-- missing maintenance, support, security, and ownership routes.
-
-External URL checks are off by default. Do not claim they were checked.
-
-### GitHub remote state
-
-When authenticated permissions allow, inspect:
-
-- repository description, homepage, topics, visibility, archive state, and Issues availability;
-- default branch, rulesets, and legacy branch protection;
-- merge methods and automatic merged-branch deletion;
-- labels, issue/pull-request history, and label references;
-- contributor count and relevant security/settings endpoints.
-
-A `403` is a coverage limitation. A `404` may mean absent, unavailable by plan, or hidden by permissions; interpret it with corroborating evidence.
+Apply the detailed rules in [references/audit-rubric.md](references/audit-rubric.md), which enumerates every check for local Git hygiene, GitHub label hygiene, `.github/` governance and automation, documentation integrity, repository contents and size, remote repository settings, and dependency/release hygiene. Treat a `403` as a coverage limitation and a `404` as ambiguous (absent, unavailable by plan, or hidden by permissions) rather than confirmed absence. External URL checks are off by default; never claim they were checked.
 
 ## 7. Issue planning and publication
 
-Follow [references/issue-contract.md](references/issue-contract.md).
-
-Each actionable finding must appear in exactly one issue step. Each issue must include:
-
-- imperative atomic outcome;
-- stable hidden fingerprint;
-- detected stack context;
-- severity and confidence;
-- exact evidence without secrets;
-- implementation checklist;
-- acceptance criteria;
-- deterministic verification;
-- dependencies;
-- risk, rollback, and non-goals.
-
-Grouping is allowed only when findings modify the same policy/file boundary, require the same owner and permissions, share rollback, and pass through the same verification gate. Otherwise split them.
+Follow [references/issue-contract.md](references/issue-contract.md) for the required title and body sections. Each actionable finding must appear in exactly one issue step. Group findings only when they modify the same policy/file boundary, require the same owner and permissions, share rollback, and pass through the same verification gate; otherwise split them.
 
 Issue publication rules:
 
@@ -397,8 +315,7 @@ Every CLI command emits a one-line machine-readable JSON status object and a hum
 
 ## 12. Failure handling
 
-- Missing `gh` in `auto` mode: complete local audit and mark remote coverage skipped/degraded.
-- Missing `gh` in `on` mode: stop remote-dependent workflow.
+- Missing `gh` in `auto` mode: complete local audit and mark remote coverage skipped/degraded; in `on` mode, stop the remote-dependent workflow.
 - Missing PyYAML: continue text-level workflow checks and record degraded syntax coverage.
 - Incomplete label history: produce inventory and suppress all deletion candidates.
 - Changed HEAD before publication: re-audit; do not publish stale evidence by default.

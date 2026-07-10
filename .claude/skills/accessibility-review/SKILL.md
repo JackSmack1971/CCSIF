@@ -11,6 +11,18 @@ allowed-tools: "Read Grep Glob Bash(git rev-parse:*) Bash(git status:*) Bash(git
 
 # Accessibility Review
 
+## Contents
+
+- [Purpose](#purpose)
+- [Trigger Text](#trigger-text)
+- [Inputs](#inputs)
+- [Workflow](#workflow)
+- [Checklist](#checklist)
+- [Severity Guidance](#severity-guidance)
+- [Output Format](#output-format)
+- [Completion Gate](#completion-gate)
+- [Guardrails](#guardrails)
+
 ## Purpose
 
 Review UI code, documentation, or design artifacts for accessibility risks that affect disabled users and assistive-technology users. Produce an evidence-backed report with prioritized findings, likely user impact, references to affected files or artifacts, and practical verification steps using the repository's existing tooling where available.
@@ -130,6 +142,18 @@ Recommend the narrowest meaningful automated checks plus required manual checks.
 - **Manual screen reader:** at least one desktop and/or mobile screen reader appropriate to the product when feasible.
 - **Visual/manual design:** contrast measurement, zoom/reflow, reduced motion, forced-colors/high-contrast mode, non-color state recognition.
 
+## Checklist
+
+- [ ] Establish scope, evidence sources, and comparison target.
+- [ ] Review semantic structure and keyboard navigation.
+- [ ] Review labels, roles, names, focus management, and form errors.
+- [ ] Review color contrast and non-color affordances.
+- [ ] Review screen-reader behavior and dynamic updates.
+- [ ] Review motion, timing, and reduced-motion handling.
+- [ ] Review images, icons, alt text, and decorative content.
+- [ ] Recommend tests using existing repository tooling only.
+- [ ] Produce the report using the Output Format section, with no unmarked skipped areas.
+
 ## Severity Guidance
 
 Classify findings by user impact and confidence:
@@ -178,6 +202,16 @@ Use this structure unless the user asks for another format:
 ```
 
 For JSON output, include equivalent fields for scope, findings, checklist coverage, recommended verification, limitations, and assumptions.
+
+## Completion Gate
+
+Do not report the review complete until:
+
+- Every Checklist item above is marked Covered, Not applicable, or Needs manual verification in the output.
+- Every finding cites concrete evidence (file, line, PR diff hunk, or artifact) rather than assumption.
+- Recommended verification commands are either supported by repository evidence or explicitly marked unavailable locally.
+
+Stop and ask the user instead of guessing when the review target (path, PR, or diff range) is ambiguous or absent and the working tree has no obvious comparison target.
 
 ## Guardrails
 

@@ -217,6 +217,8 @@ Keep the report concise enough for a PR comment, but include exact paths, headin
 
 ## Definition of done
 
+This is the completion gate: do not report the audit finished until every item below is satisfied. Stop and report partial findings, with the specific gap named, when repository evidence is insufficient to classify a claim.
+
 A completed documentation drift audit must include:
 
 - [ ] Repository root and documentation scope were established.
