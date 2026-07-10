@@ -1,0 +1,35 @@
+version = 1
+
+[hooks]
+
+[[hooks.SessionStart]]
+matcher = ""
+
+[[hooks.SessionStart.hooks]]
+type = "command"
+command = "bash .codex/hooks/session-start.sh"
+commandWindows = "bash .codex/hooks/session-start.sh"
+
+[[hooks.PreToolUse]]
+matcher = ""
+
+[[hooks.PreToolUse.hooks]]
+type = "command"
+command = "bash .codex/hooks/pre-tool-use.sh"
+commandWindows = "bash .codex/hooks/pre-tool-use.sh"
+
+[[hooks.PostToolUse]]
+matcher = ""
+
+[[hooks.PostToolUse.hooks]]
+type = "command"
+command = "bash .codex/hooks/post-tool-use.sh"
+commandWindows = "bash .codex/hooks/post-tool-use.sh"
+
+[[hooks.Stop]]
+matcher = ""
+
+[[hooks.Stop.hooks]]
+type = "command"
+command = "bash .codex/hooks/stop.sh"
+commandWindows = "bash .codex/hooks/stop.sh"

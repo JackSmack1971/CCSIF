@@ -6,6 +6,7 @@ CLAUDE.local.md
 
 # Generated telemetry (self-improve trace corpus)
 .claude/traces/*.jsonl
+.codex/traces/*.jsonl
 
 # Secrets
 .env
