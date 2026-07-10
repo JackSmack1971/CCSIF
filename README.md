@@ -83,17 +83,17 @@ Expected for the hook script:
 
 ```mermaid
 graph TD
-  Developer[Developer] --> Session[Claude Code session]
-  Session --> Constitution[CLAUDE.md]
-  Session --> Settings[.claude/settings.json]
-  Session --> Agents[.claude/agents/]
-  Session --> Commands[.claude/commands/]
-  Session --> Workflows[.claude/workflows/]
-  Session --> Rules[.claude/rules/]
-  Session --> Hooks[.claude/hooks/]
-  Hooks --> Traces[.claude/traces/]
-  Workflows --> JS[JavaScript workflow modules]
-  Hooks --> TraceWriter[trace-writer.js]
+  Developer["Developer"] --> Session["Claude Code session"]
+  Session --> Constitution["CLAUDE.md"]
+  Session --> Settings[".claude/settings.json"]
+  Session --> Agents[".claude/agents/"]
+  Session --> Commands[".claude/commands/"]
+  Session --> Workflows[".claude/workflows/"]
+  Session --> Rules[".claude/rules/"]
+  Session --> Hooks[".claude/hooks/"]
+  Hooks --> Traces[".claude/traces/"]
+  Workflows --> JS["JavaScript workflow modules"]
+  Hooks --> TraceWriter["trace-writer.js"]
 ```
 
 The flow is simple:
