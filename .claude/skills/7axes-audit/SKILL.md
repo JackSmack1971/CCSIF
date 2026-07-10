@@ -1,6 +1,13 @@
 ---
 name: 7axes-audit
 description: Trigger on queries that say run the 7 axes audit, full code quality audit, audit this repo, or slash 7axes-audit, to orchestrate seven parallel axis auditors with coverage rotation, deduplicate findings against a persistent ledger so each run surfaces only new or escalated issues, file agent-ready GitHub issues for downstream PR agents, and apply a bounded self-improvement patch. Accepts targetPath, axes subset, live-issues, and assign-agent arguments. NOT for a single-axis or ad hoc lint pass use the individual axis auditor subagents or the 7axes-reference skill instead. Distinct keywords ledger diff, novelty mandate, axis briefs, evolution patch, coverage rotation.
+when_to_use: Trigger for a full seven-axis code quality audit across the whole repository with ledger-based deduplication and GitHub issue filing, not for a single-axis or ad hoc lint pass.
+argument-hint: "[targetPath] [--axes x,y] [--live-issues] [--assign-agent]"
+arguments:
+  - targetPath
+  - axes
+  - live-issues
+  - assign-agent
 allowed-tools: Bash, Read, Grep, Glob, Task, Write
 ---
 

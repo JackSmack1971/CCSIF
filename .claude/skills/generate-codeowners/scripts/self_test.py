@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
-"""Run a dependency-free smoke test for all bundled CODEOWNERS scripts."""
+"""Run a dependency-free smoke test for all bundled CODEOWNERS scripts.
+
+Usage: python3 self_test.py (no arguments; builds a temporary Git fixture and
+exercises the other bundled scripts against it). Exit code: 0 on success,
+raises RuntimeError (non-zero exit) on the first unexpected script result.
+"""
 
 from __future__ import annotations
 

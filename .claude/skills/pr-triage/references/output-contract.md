@@ -1,5 +1,10 @@
 # PR Triage Output Contract
 
+## Contents
+
+- [Markdown format](#markdown-format)
+- [JSON format](#json-format)
+
 ## Markdown format
 
 Return exactly these sections in this order:

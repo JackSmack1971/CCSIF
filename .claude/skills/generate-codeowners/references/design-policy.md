@@ -1,5 +1,16 @@
 # CODEOWNERS design policy
 
+## Contents
+
+- [1. Optimize the socio-technical boundary](#1-optimize-the-socio-technical-boundary)
+- [2. Match strategy to repository archetype](#2-match-strategy-to-repository-archetype)
+- [3. Apply GitHub parser rules precisely](#3-apply-github-parser-rules-precisely)
+- [4. Order from broad to specific](#4-order-from-broad-to-specific)
+- [5. Cross-cutting path guidance](#5-cross-cutting-path-guidance)
+- [6. Evidence hierarchy](#6-evidence-hierarchy)
+- [7. Anti-patterns](#7-anti-patterns)
+- [8. Governance recommendations outside the file](#8-governance-recommendations-outside-the-file)
+
 ## 1. Optimize the socio-technical boundary
 
 CODEOWNERS is review routing, not a directory catalog. Optimize for weak team ownership: contributors may change any area, while a stable team acts as steward. Avoid two extremes:

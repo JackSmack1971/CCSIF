@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
-"""Stop hook: validate .github only when the worktree contains .github changes."""
+"""Stop hook: validate .github only when the worktree contains .github changes.
+
+Usage: invoked by Claude Code as a Stop hook; no arguments. Exit code: 0 when
+there are no .github changes or validation passes; delegates to
+validate_setup.py otherwise and surfaces its exit code.
+"""
 
 from __future__ import annotations
 

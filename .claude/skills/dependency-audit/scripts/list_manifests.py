@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
-"""List common dependency manifests and lockfiles."""
+"""List common dependency manifests and lockfiles.
+
+Usage: python3 list_manifests.py (no arguments; scans the current working
+directory recursively). Output: one manifest or lockfile path per line on
+stdout. Exit code: always 0.
+"""
 
 from pathlib import Path
 

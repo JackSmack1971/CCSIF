@@ -1,5 +1,13 @@
 # Input Discovery Guide
 
+## Contents
+
+- [1. Locating CLAUDE.md](#1-locating-claudemd)
+- [2. Extracting the Constitution](#2-extracting-the-constitution)
+- [3. Locating Trace Files](#3-locating-trace-files)
+- [4. Expected Trace Schema (JSONL)](#4-expected-trace-schema-jsonl)
+- [5. Locating Target Components](#5-locating-target-components)
+
 ## 1. Locating CLAUDE.md
 
 Search in this order; use the first match:

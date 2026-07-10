@@ -16,6 +16,10 @@ Design invariants:
   - The ledger is append-only; current state is derived by replay (last write wins).
   - Calibration is only mutated by deterministic scripts or the meta-auditor
     via explicit patch files — never silently.
+
+Not a CLI entry point: this is a shared library imported with
+`from lib7axes import ...` by feedback.py, preflight.py, and the other
+7axes/*.py scripts. It has no --help and no standalone usage.
 """
 
 import hashlib

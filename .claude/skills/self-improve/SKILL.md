@@ -5,12 +5,23 @@ disable-model-invocation: true
 allowed-tools: Read Grep Glob
 context: fork
 agent: Plan
+when_to_use: Use only when a self-improvement cycle or performance audit is explicitly requested via /self-improve, not for an ad hoc code review or a 7-axes quality audit.
 argument-hint: "(component-type|all) [n-recent-tasks]"
 ---
 
 # Self-Improve
 
 **Target surface:** Claude Code CLI/Desktop. `context: fork` and `agent: Plan` are Claude Code–only; on Claude.ai, remove those two frontmatter fields and run inline with reduced trace corpus.
+
+## Contents
+
+- [Purpose](#purpose)
+- [Inputs](#inputs)
+- [Procedure](#procedure)
+- [Safety](#safety)
+- [Verification](#verification)
+- [Troubleshooting](#troubleshooting)
+- [Worked Example](#worked-example)
 
 ## Purpose
 
@@ -37,17 +48,17 @@ Cannot produce qualifying proposals without this input.
 
 ## Procedure
 
-1. **Discover inputs.** Follow `references/input-discovery.md` to locate `CLAUDE.md`, extract the Constitution section verbatim, enumerate and sort trace files by modification time descending, and read the `n-recent-tasks` most recent entries only.
+1. **Discover inputs.** Follow [references/input-discovery.md](references/input-discovery.md) to locate `CLAUDE.md`, extract the Constitution section verbatim, enumerate and sort trace files by modification time descending, and read the `n-recent-tasks` most recent entries only.
 
 2. **Read target component(s).** If `$ARGUMENTS[0]` names a specific component, read only that file. If `all`, read the component(s) most frequently implicated by trace failures. Use path patterns from `references/input-discovery.md`.
 
-3. **Load KPIs.** Read `references/kpi-defaults.md`. Apply component-specific defaults unless user supplied custom KPIs in the invocation.
+3. **Load KPIs.** Read [references/kpi-defaults.md](references/kpi-defaults.md). Apply component-specific defaults unless user supplied custom KPIs in the invocation.
 
 4. **Analyze traces.** For each entry identify: task type, outcome (`success` / `partial` / `failure`), error class (`activation_miss` / `tool_failure` / `output_quality` / `context_overflow` / `latency`), recurrence count across the window, and the implicated component file.
 
 5. **Score and rank.** Apply the scoring rubric in `references/kpi-defaults.md`. Carry forward only issues with recurrence ≥ 2 OR a single `critical` failure (data loss, security bypass, Constitution violation, unauthorized external call). Rank by score descending.
 
-6. **Draft proposals.** Produce 1–3 proposals strictly using the format in `references/proposal-schema.md`. Each proposal must: quote exact trace evidence with file and entry index; quote the exact verbatim Constitution clause it respects; include a syntactically valid unified diff or before/after block; state expected KPI delta with reasoning; and include a rollback plan.
+6. **Draft proposals.** Produce 1–3 proposals strictly using the format in [references/proposal-schema.md](references/proposal-schema.md). Each proposal must: quote exact trace evidence with file and entry index; quote the exact verbatim Constitution clause it respects; include a syntactically valid unified diff or before/after block; state expected KPI delta with reasoning; and include a rollback plan.
 
 7. **Verify Constitution compliance.** For every proposed diff, confirm the change does not contradict any Constitution clause. If a conflict exists, discard the proposal and note the conflict inline.
 

@@ -4,6 +4,7 @@ description: Use when compiling repository tribal knowledge into a root staging 
 disable-model-invocation: true
 context: fork
 agent: general-purpose
+when_to_use: Use to stage raw repository context and hidden module contracts before a documentation capture pass, not to write final README or CONTRIBUTING content.
 argument-hint: "[optional repository scope]"
 compatibility: Requires Claude Code with repository read/write access, Git, and Python 3.9 or newer.
 allowed-tools: Read, Grep, Glob, Bash, Write
@@ -11,6 +12,17 @@ disallowed-tools: Edit
 ---
 
 # Compile Tribal Knowledge
+
+## Contents
+
+- [Purpose](#purpose)
+- [Output contract](#output-contract)
+- [Procedure](#procedure)
+- [Safety](#safety)
+- [Verification](#verification)
+- [Hook guidance](#hook-guidance)
+- [Troubleshooting](#troubleshooting)
+- [Worked example](#worked-example)
 
 ## Purpose
 
@@ -26,7 +38,7 @@ Write `RAW_CONTEXT.md` at the Git repository root.
 - If it exists without that marker, write `STAGE_NOTES.md` instead.
 - If both names exist without the marker, stop without overwriting either file and report the collision.
 - Keep the staging file at the repository root. Do not create documentation elsewhere.
-- Follow `references/staging-schema.md` exactly.
+- Follow [references/staging-schema.md](references/staging-schema.md) exactly.
 
 ## Procedure
 

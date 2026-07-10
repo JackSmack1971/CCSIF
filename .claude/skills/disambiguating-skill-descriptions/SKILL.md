@@ -1,11 +1,23 @@
 ---
 name: disambiguating-skill-descriptions
 description: Use when auditing or rewriting Claude Code SKILL.md frontmatter descriptions to prevent skill router collision, overlap, or misfire. Trigger on update skill descriptions, fix skill routing, disambiguate skills, audit SKILL.md descriptions, prevent auto invocation collisions. NOT for creating new skills from scratch, general prompt rewriting, README docs, or code review. Requires single line YAML descriptions under 1024 chars with positive triggers, negative routing space, distinctive domain keywords, and validation before edits.
+when_to_use: Use when SKILL.md frontmatter descriptions must be audited or rewritten to prevent router collision, overlap, or misfire, not for creating a new skill from scratch.
 argument-hint: "[skills-root] [--apply]"
 allowed-tools: ["Bash", "Read", "Write", "Edit", "Grep", "Glob"]
 ---
 
 # Disambiguating Skill Descriptions
+
+## Contents
+
+- [Purpose](#purpose)
+- [Non-negotiable description standard](#non-negotiable-description-standard)
+- [Workflow](#workflow)
+- [Rewrite template](#rewrite-template)
+- [Quality gates](#quality-gates)
+- [One-level references](#one-level-references)
+- [Script contracts](#script-contracts)
+- [Security and portability](#security-and-portability)
 
 ## Purpose
 
@@ -69,7 +81,7 @@ Do not rewrite by synonym swapping. Rewrite by narrowing activation boundaries.
 
 ### Step 3: Produce an edit plan
 
-Create `description-plan.json` using the schema in `references/description-plan-schema.md`.
+Create `description-plan.json` using the schema in [references/description-plan-schema.md](references/description-plan-schema.md).
 
 Each entry must include:
 
@@ -135,8 +147,8 @@ A description is ready only when all gates pass:
 
 Read only the directly linked files needed for the task:
 
-- `references/description-standard.md` for the scoring rubric and examples.
-- `references/description-plan-schema.md` for the JSON edit plan contract.
+- [references/description-standard.md](references/description-standard.md) for the scoring rubric and examples.
+- [references/description-plan-schema.md](references/description-plan-schema.md) for the JSON edit plan contract.
 
 ## Script contracts
 

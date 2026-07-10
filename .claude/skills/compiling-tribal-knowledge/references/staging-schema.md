@@ -1,5 +1,14 @@
 # Staging Document Schema
 
+## Contents
+
+- [Required preamble](#required-preamble)
+- [Required repository-wide sections](#required-repository-wide-sections)
+- [Cross-Cutting Contracts](#cross-cutting-contracts)
+- [Required directory section shape](#required-directory-section-shape)
+- [Claim quality rules](#claim-quality-rules)
+- [Exclusions](#exclusions)
+
 Use this schema for the root staging document. Keep headings and labels stable so downstream tooling can split the file deterministically.
 
 ## Required preamble

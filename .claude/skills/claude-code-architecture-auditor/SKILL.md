@@ -1,10 +1,24 @@
 ---
 name: auditing-ai-agent-config-architecture
 description: Use when auditing or improving a repository Claude Code architecture including CLAUDE.md, .claude/rules, settings, hooks, MCP governance, auto-memory hygiene, context budget, path scoped rules, and Read First routing. Trigger on audit Claude Code architecture, refactor .claude, improve CLAUDE.md, optimize Claude Code rules, validate hooks settings. NOT for general code review, app architecture, or ordinary repository hygiene.
+when_to_use: Use when auditing or improving a repository's Claude Code operating architecture (CLAUDE.md, .claude/rules, settings, hooks, MCP governance, memory hygiene) rather than application code or general repository hygiene.
+argument-hint: "[repository root path] [audit-only|improve-in-place|migrate|validate]"
 allowed-tools: Read, Grep, Glob, Bash, Write, Edit
 ---
 
 # Auditing Claude Code Architecture
+
+## Contents
+
+- [Purpose](#purpose)
+- [Inputs](#inputs)
+- [Fast Path](#fast-path)
+- [Audit Axes](#audit-axes)
+- [Required Workflow](#required-workflow)
+- [Improvement Rules](#improvement-rules)
+- [Validation Loop](#validation-loop)
+- [References](#references)
+- [Output Contract](#output-contract)
 
 ## Purpose
 

@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
-"""Read-only, code-agnostic repository audit engine."""
+"""Read-only, code-agnostic repository audit engine.
+
+Not a CLI entry point: this is a library imported by the skill's
+scripts/repository_hygiene.py CLI (see that script for --help and exit codes).
+"""
 from __future__ import annotations
 
 import fnmatch

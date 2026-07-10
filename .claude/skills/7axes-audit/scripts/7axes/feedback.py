@@ -16,6 +16,10 @@ human/agent judgment into calibration updates:
 
 This is the mechanism that makes the system measurably better with use:
 precision improves because rejected rules stop consuming attention.
+
+Usage: python3 feedback.py (no arguments; reads/writes .7axes/ state and the
+current GitHub repository's issues). Exit code: always 0 — every failure path
+(missing gh, missing state, network error) is a no-op, never a hard failure.
 """
 
 import json

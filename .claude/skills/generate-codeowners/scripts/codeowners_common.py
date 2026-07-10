@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
-"""Shared helpers for the generate-codeowners skill."""
+"""Shared helpers for the generate-codeowners skill.
+
+Not a CLI entry point: this is a library imported by the skill's generate
+and audit scripts. It has no --help and no standalone usage.
+"""
 
 from __future__ import annotations
 

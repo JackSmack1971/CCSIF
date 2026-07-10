@@ -2,6 +2,8 @@
 name: dependency-audit
 description: Use when auditing dependency manifests, lockfiles, supply-chain risk, or upgrade safety. Trigger on queries that say audit dependencies, check for vulnerable packages, review lockfile drift, or assess upgrade safety. Inspects package manifests, deprecated or abandoned dependencies, known vulnerable packages, duplicate or conflicting dependency trees, postinstall scripts, native extensions, CI install behavior, and runtime version constraints, then produces isolated findings with evidence and verification steps. NOT for actually upgrading or patching dependencies use the repository's package manager directly instead. Distinct keywords lockfile drift, postinstall scripts, native extensions, supply-chain risk, upgrade safety.
 allowed-tools: Read, Grep, Glob, Bash
+when_to_use: Use to audit dependency manifests, lockfiles, and supply-chain risk, not to actually upgrade or patch dependencies.
+argument-hint: "(no arguments; audits the current repository's manifests and lockfiles)"
 disallowed-tools: Write, Edit
 ---
 
@@ -17,7 +19,7 @@ Inspect:
 - CI install behavior
 - Runtime version constraints
 
-Do not upgrade dependencies during audit-only mode. Create isolated findings with evidence and verification steps.
+Do not upgrade dependencies during audit-only mode. Create isolated findings with evidence and verification steps using [references/audit-template.md](references/audit-template.md).
 
 ## Checklist
 

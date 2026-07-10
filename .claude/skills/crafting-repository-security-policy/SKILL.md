@@ -1,6 +1,8 @@
 ---
 name: crafting-repository-security-policy
 description: Use when asked to generate, audit, or surgically improve a repository SECURITY.md security policy. Trigger on queries that say create a SECURITY.md, audit our security policy, define supported versions and vulnerability reporting, or add safe-harbor and anti-noise guidance. Analyzes the repository and grounds supported versions, private vulnerability reporting, threat boundaries, response expectations, safe-harbor guidance, and supply-chain security references in real repository evidence. NOT for a full application threat model use security-threat-model instead, and NOT for a general code security scan use security-review instead. Distinct keywords safe-harbor guidance, anti-noise requirements, supply-chain references, threat boundaries, private vulnerability reporting.
+when_to_use: Use to create or repair a repository's SECURITY.md, not for a full application threat model or a general code security scan.
+argument-hint: "(no arguments; operates on the current repository)"
 allowed-tools: Read, Grep, Glob, Bash, Write, Edit
 ---
 

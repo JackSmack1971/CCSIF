@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
-"""PreToolUse hook: block destructive Bash commands that can discard .github or worktree state."""
+"""PreToolUse hook: block destructive Bash commands that can discard .github or worktree state.
+
+Usage: invoked by Claude Code as a PreToolUse hook; reads the tool-call JSON
+payload from stdin. Not run directly with arguments. Exit code: 0 to allow
+the command, 2 to block it (message printed to stderr).
+"""
 
 from __future__ import annotations
 

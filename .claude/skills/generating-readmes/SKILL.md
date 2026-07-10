@@ -7,15 +7,20 @@ agent: Explore
 allowed-tools: Read, Grep, Glob, Bash, Write
 argument-hint: "[--audit-only] [--no-write] [--output README.md]"
 arguments:
-  audit-only:
-    description: Inspect the repository, score the current README, and report the upgrade plan without editing files.
-  no-write:
-    description: Generate the proposed README content in the response instead of writing it to disk.
-  output:
-    description: Project-relative README path to create or update. Defaults to README.md.
+  - audit-only
+  - no-write
+  - output
 ---
 
 # README Architect Workflow
+
+## Contents
+
+- [Inputs](#inputs)
+- [Procedure](#procedure)
+- [Safety rules](#safety-rules)
+- [Definition of done](#definition-of-done)
+- [Worked example](#worked-example)
 
 Create or upgrade a repository README as an operating manual plus trust contract. Ground every claim in repository evidence. Mark uncertain claims as `[INFERRED]`. Do not invent badges, commands, URLs, features, policies, screenshots, public APIs, deployment targets, or roadmap commitments.
 
@@ -39,8 +44,8 @@ Create or upgrade a repository README as an operating manual plus trust contract
    - Never read secret-bearing files such as `.env`, `.npmrc`, private keys, credential stores, or untracked local config.
 
 3. Read the README blueprint.
-   - Use `references/readme-blueprint.md` for required structure, section rules, repo-type adaptations, and the 30-point rubric.
-   - Use `references/hook-guidance.md` only when the user wants this README workflow enforced by Claude Code hooks.
+   - Use [references/readme-blueprint.md](references/readme-blueprint.md) for required structure, section rules, repo-type adaptations, and the 30-point rubric.
+   - Use [references/hook-guidance.md](references/hook-guidance.md) only when the user wants this README workflow enforced by Claude Code hooks.
 
 4. Draft from evidence, not vibes.
    - Prefer real commands from package scripts, Make targets, CI workflows, tool config, or documented scripts.

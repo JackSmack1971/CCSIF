@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
-"""Shared deterministic primitives for repository-hygiene scripts."""
+"""Shared deterministic primitives for repository-hygiene scripts.
+
+Not a CLI entry point: this is a library imported by the skill's
+scripts/repository_hygiene.py CLI (see that script for --help and exit codes).
+"""
 from __future__ import annotations
 
 import hashlib

@@ -14,6 +14,17 @@ allowed-tools: Read, Grep, Glob, Bash, Write
 
 # Optimize GitHub Operations
 
+## Contents
+
+- [Invocation](#invocation)
+- [Required inputs](#required-inputs)
+- [Procedure](#procedure)
+- [Safety rules](#safety-rules)
+- [Verification criteria](#verification-criteria)
+- [Troubleshooting](#troubleshooting)
+- [Worked example](#worked-example)
+- [Supporting files](#supporting-files)
+
 Optimize the current repository's `.github/` folder without deleting unrelated automation or inventing repository policy.
 
 ## Invocation
@@ -147,8 +158,8 @@ Completion requires observable evidence that:
 
 ## Supporting files
 
-- Read `references/optimization-contract.md` before evaluating or editing PR governance.
-- Read `references/hook-governance.md` only when the user wants project-level Claude Code hooks for this workflow.
+- Read [references/optimization-contract.md](references/optimization-contract.md) before evaluating or editing PR governance.
+- Read [references/hook-governance.md](references/hook-governance.md) only when the user wants project-level Claude Code hooks for this workflow.
 - Use `assets/` as canonical starting content, not as authority over repository-specific policy.
 - Use `scripts/inventory_github.py` for read-only discovery.
 - Use `scripts/install_assets.py` for a deterministic preview or conservative installation of absent managed files.

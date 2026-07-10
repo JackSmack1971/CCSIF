@@ -1,5 +1,17 @@
 # GitHub Folder Optimization Contract
 
+## Contents
+
+- [Decision hierarchy](#decision-hierarchy)
+- [Canonical layout](#canonical-layout)
+- [Universal PR evidence contract](#universal-pr-evidence-contract)
+- [Specialized template thresholds](#specialized-template-thresholds)
+- [Templates to consolidate](#templates-to-consolidate)
+- [CODEOWNERS contract](#codeowners-contract)
+- [PR validator contract](#pr-validator-contract)
+- [Discoverability](#discoverability)
+- [Completion evidence](#completion-evidence)
+
 ## Decision hierarchy
 
 1. Preserve repository-specific governance that is stricter and still valid.

@@ -1,6 +1,8 @@
 ---
 name: 7axes-reference
 description: Use when performing any 7-Axes axis audit, validating auditor JSON output, or synthesizing 7-Axes results, as the shared reference for axis definitions, scoring anchors, rule ID taxonomy, and the strict JSON output contract. Trigger on queries that say what is the 7 axes rule id format, 7 axes scoring anchors, 7 axes JSON contract, or axis severity levels. NOT for running the audit itself use 7axes-audit instead. Distinct keywords rule id taxonomy, scoring anchors, severity levels, coverage claimed, acceptance criteria.
+when_to_use: Load as the shared reference when authoring or validating a 7-Axes axis auditor or synthesizing axis JSON outputs; it is not invoked directly to run an audit.
+argument-hint: "(reference only, no invocation arguments)"
 allowed-tools: Read
 ---
 

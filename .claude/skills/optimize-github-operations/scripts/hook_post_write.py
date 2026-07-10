@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
-"""PostToolUse hook: log .github file writes without changing repository content."""
+"""PostToolUse hook: log .github file writes without changing repository content.
+
+Usage: invoked by Claude Code as a PostToolUse hook; reads the tool-call JSON
+payload from stdin. Not run directly with arguments. Exit code: always 0 —
+this hook only logs and never blocks.
+"""
 
 from __future__ import annotations
 

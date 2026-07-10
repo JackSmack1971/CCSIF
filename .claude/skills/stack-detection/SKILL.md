@@ -3,6 +3,8 @@ name: stack-detection
 description: Use when classifying the desktop client stack before architectural or client-layer changes. Trigger on queries that say classify the desktop stack, detect tauri versus docs-first scaffold, check if the client is buildable, or pick a follow-on client review skill. Inspects frontend manifests, src-tauri Rust entrypoints, tauri.conf.json, docs and planning notes, and the actual source tree to classify the project as docs-first-scaffold, tauri-desktop-app, or mixed-or-partial. NOT for a generic non-Tauri repository stack detection use plain repository inspection instead. Distinct keywords docs-first scaffold, tauri desktop app, mixed-or-partial classification, follow-on skill routing, runtime wiring evidence.
 disable-model-invocation: false
 user-invocable: true
+when_to_use: Use to classify the desktop client stack before architectural or client-layer changes, not for a generic non-Tauri repository stack detection.
+argument-hint: "(no arguments; inspects the current repository's client stack)"
 allowed-tools: Read, Grep, Glob
 ---
 

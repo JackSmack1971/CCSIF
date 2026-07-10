@@ -15,6 +15,17 @@ allowed-tools: Read, Grep, Glob, Bash, Write
 
 # Generate CODEOWNERS
 
+## Contents
+
+- [Non-negotiable rules](#non-negotiable-rules)
+- [Inputs](#inputs)
+- [Procedure](#procedure)
+- [Checklist](#checklist)
+- [Completion contract](#completion-contract)
+- [Command governance](#command-governance)
+- [Troubleshooting](#troubleshooting)
+- [Worked example](#worked-example)
+
 Create or audit GitHub CODEOWNERS from repository evidence. Treat `$mode` as `generate` when omitted. Treat `$owner_map` as optional. Only accept `generate` or `audit`.
 
 ## Non-negotiable rules
@@ -37,7 +48,7 @@ Create or audit GitHub CODEOWNERS from repository evidence. Treat `$mode` as `ge
 ## Procedure
 
 1. Resolve the repository root with `git rev-parse --show-toplevel`. Stop with a precise error outside a Git worktree.
-2. Read `references/design-policy.md`. Read `references/ownership-plan-schema.md` before creating a plan.
+2. Read [references/design-policy.md](references/design-policy.md). Read [references/ownership-plan-schema.md](references/ownership-plan-schema.md) before creating a plan.
 3. Create an untracked state directory using `git rev-parse --git-path claude-codeowners`; do not place analysis artifacts in the working tree.
 4. Run:
 
@@ -134,7 +145,7 @@ Do not claim success unless the target file exists in generate mode, validation 
 - `Stop` or `TaskCompleted`: require a zero-error validation result and an expected-only diff.
 - `SubagentStop`: return the generated path, validation JSON path, coverage counts, and unresolved warnings.
 
-Use the session-scoped hook profile in `references/hook-guidance.md` when deterministic enforcement is required.
+Use the session-scoped hook profile in [references/hook-guidance.md](references/hook-guidance.md) when deterministic enforcement is required.
 
 ## Troubleshooting
 

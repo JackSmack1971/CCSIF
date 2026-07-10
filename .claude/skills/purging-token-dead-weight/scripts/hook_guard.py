@@ -1,5 +1,11 @@
 #!/usr/bin/env python3
-"""Skill-scoped PreToolUse guard for destructive shell commands."""
+"""Skill-scoped PreToolUse guard for destructive shell commands.
+
+Usage: invoked by Claude Code as a PreToolUse hook; reads the tool-call JSON
+payload from stdin. Not run directly with arguments. Exit code: always 0 —
+denial is signaled by emitting a permissionDecision: deny JSON payload on
+stdout, not by a non-zero exit code.
+"""
 
 from __future__ import annotations
 

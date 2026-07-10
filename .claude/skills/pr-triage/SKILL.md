@@ -5,21 +5,26 @@ disable-model-invocation: true
 user-invocable: true
 context: fork
 agent: Explore
+when_to_use: Use through /pr-triage before review or merge routing when a PR needs an evidence-backed, read-only triage disposition, not for actually merging, commenting on, or editing a pull request.
 argument-hint: "PR_NUMBER_OR_URL [--format markdown|json] [--strict]"
 arguments:
-  - name: pr
-    description: GitHub pull request number or URL.
-    required: true
-  - name: format
-    description: Report format; markdown or json. Defaults to markdown.
-    required: false
-  - name: strict
-    description: Treat missing documented contribution requirements as blocking.
-    required: false
+  - pr
+  - format
+  - strict
 allowed-tools: "Read Grep Glob Bash(git rev-parse:*) Bash(git remote:*) Bash(git status:*) Bash(gh pr view:*) Bash(gh pr diff:*) Bash(gh pr checks:*) Bash(gh pr list:*) Bash(gh issue list:*) Bash(gh search prs:*) Bash(gh search issues:*)"
 ---
 
 # PR Triage
+
+## Contents
+
+- [Purpose](#purpose)
+- [Inputs](#inputs)
+- [Procedure](#procedure)
+- [Safety](#safety)
+- [Verification](#verification)
+- [Troubleshooting](#troubleshooting)
+- [Worked example](#worked-example)
 
 ## Purpose
 
@@ -112,13 +117,13 @@ Ask only for information that changes the disposition. Prefer precise requests t
 
 ### 7. Assign category and priority
 
-Read `references/triage-rubric.md` and apply it exactly.
+Read [references/triage-rubric.md](references/triage-rubric.md) and apply it exactly.
 
 Select one primary category and up to two secondary categories. Assign one priority and state the impact and urgency evidence supporting it. Do not inflate priority from diff size, author language, or requested urgency alone.
 
 ### 8. Produce the disposition
 
-Read `references/output-contract.md` before responding.
+Read [references/output-contract.md](references/output-contract.md) before responding.
 
 Apply decision precedence in this order:
 
