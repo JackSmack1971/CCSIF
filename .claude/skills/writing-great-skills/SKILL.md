@@ -1,6 +1,8 @@
 ---
 name: writing-great-skills
 description: Use when diagnosing why a skill description fails to trigger reliably, deciding whether a skill should be model-invoked or user-invoked, placing new content on the information hierarchy, or applying leading-word and pruning technique to tighten an existing SKILL.md. Trigger on queries that say why isn't this skill firing reliably, should this skill be model-invoked or user-invoked, how do I prune this skill's wording, what leading word fits this skill, explain this skill's information hierarchy. NOT for interviewing a user and running RED-GREEN-REFACTOR pressure-scenario tests to build a brand-new skill, use writing-skills instead, and NOT for iterative eval-driven drafting, benchmarking, or automated description-trigger optimization scripts, use skill-creator instead. Distinct keywords predictability, context load, leading word, information hierarchy, progressive disclosure, granularity.
+when_to_use: Use when you need to tighten a SKILL.md description, choose invocation mode, or place content on the information hierarchy. Do not use for brand-new skill authoring or automated eval-driven drafting.
+argument-hint: "[skill path]"
 allowed-tools: Read
 disable-model-invocation: true
 ---

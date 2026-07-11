@@ -2,6 +2,8 @@
 name: to-spec
 description: Use when converting the current conversation into a formal spec document (PRD) with problem statement, user stories, implementation decisions, and testing decisions, then publishing it to the project issue tracker with the ready-for-agent label. Trigger on queries that say write the spec, turn this into a spec, publish this as a PRD, create a spec from our discussion, file this as a ticket. NOT for interviewing the user to gather requirements from scratch, discuss directly with the user instead. Distinct keywords conversation, synthesis, specification, triage, publish, issue-tracker.
 disable-model-invocation: true
+when_to_use: Use when you want to synthesize the current conversation into a PRD and publish it to the issue tracker. Do not use for requirements interviews; discuss directly with the user instead.
+argument-hint: "[spec topic]"
 allowed-tools: Read, Glob, Grep, Bash
 ---
 

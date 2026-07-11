@@ -162,34 +162,9 @@
       "score": 100
     },
     {
-      "approx_tokens": 1656,
-      "findings": [
-        {
-          "code": "missing-when-to-use",
-          "line": 4,
-          "message": "No when_to_use field found",
-          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\code-review\\SKILL.md",
-          "severity": "low",
-          "suggestion": "Add explicit trigger reinforcement when useful."
-        },
-        {
-          "code": "missing-arguments",
-          "line": 5,
-          "message": "No argument hint or argument mapping found",
-          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\code-review\\SKILL.md",
-          "severity": "low",
-          "suggestion": "Add argument-hint for CLI discoverability when applicable."
-        },
-        {
-          "code": "missing-toc",
-          "line": null,
-          "message": "SKILL.md exceeds 100 lines without a visible table of contents",
-          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\code-review\\SKILL.md",
-          "severity": "low",
-          "suggestion": "Add a compact ToC or compress below 100 lines."
-        }
-      ],
-      "line_count": 102,
+      "approx_tokens": 1725,
+      "findings": [],
+      "line_count": 110,
       "metadata": {
         "description_length": 507,
         "git_root": "C:/workspaces/CCSIF",
@@ -200,7 +175,7 @@
       "name": "code-review",
       "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\code-review\\SKILL.md",
       "root": "C:\\workspaces\\CCSIF",
-      "score": 91
+      "score": 100
     },
     {
       "approx_tokens": 1645,
@@ -308,34 +283,9 @@
       "score": 100
     },
     {
-      "approx_tokens": 1929,
-      "findings": [
-        {
-          "code": "missing-when-to-use",
-          "line": 4,
-          "message": "No when_to_use field found",
-          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\diagnosing-bugs\\SKILL.md",
-          "severity": "low",
-          "suggestion": "Add explicit trigger reinforcement when useful."
-        },
-        {
-          "code": "missing-arguments",
-          "line": 5,
-          "message": "No argument hint or argument mapping found",
-          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\diagnosing-bugs\\SKILL.md",
-          "severity": "low",
-          "suggestion": "Add argument-hint for CLI discoverability when applicable."
-        },
-        {
-          "code": "missing-toc",
-          "line": null,
-          "message": "SKILL.md exceeds 100 lines without a visible table of contents",
-          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\diagnosing-bugs\\SKILL.md",
-          "severity": "low",
-          "suggestion": "Add a compact ToC or compress below 100 lines."
-        }
-      ],
-      "line_count": 135,
+      "approx_tokens": 2025,
+      "findings": [],
+      "line_count": 146,
       "metadata": {
         "description_length": 433,
         "git_root": "C:/workspaces/CCSIF",
@@ -346,7 +296,7 @@
       "name": "diagnosing-bugs",
       "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\diagnosing-bugs\\SKILL.md",
       "root": "C:\\workspaces\\CCSIF",
-      "score": 91
+      "score": 100
     },
     {
       "approx_tokens": 1362,
@@ -479,26 +429,9 @@
       "score": 100
     },
     {
-      "approx_tokens": 291,
-      "findings": [
-        {
-          "code": "missing-when-to-use",
-          "line": 4,
-          "message": "No when_to_use field found",
-          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\grill-with-docs\\SKILL.md",
-          "severity": "low",
-          "suggestion": "Add explicit trigger reinforcement when useful."
-        },
-        {
-          "code": "missing-arguments",
-          "line": 5,
-          "message": "No argument hint or argument mapping found",
-          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\grill-with-docs\\SKILL.md",
-          "severity": "low",
-          "suggestion": "Add argument-hint for CLI discoverability when applicable."
-        }
-      ],
-      "line_count": 19,
+      "approx_tokens": 334,
+      "findings": [],
+      "line_count": 21,
       "metadata": {
         "description_length": 472,
         "git_root": "C:/workspaces/CCSIF",
@@ -509,21 +442,12 @@
       "name": "grill-with-docs",
       "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\grill-with-docs\\SKILL.md",
       "root": "C:\\workspaces\\CCSIF",
-      "score": 94
+      "score": 100
     },
     {
-      "approx_tokens": 503,
-      "findings": [
-        {
-          "code": "missing-when-to-use",
-          "line": 4,
-          "message": "No when_to_use field found",
-          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\handoff\\SKILL.md",
-          "severity": "low",
-          "suggestion": "Add explicit trigger reinforcement when useful."
-        }
-      ],
-      "line_count": 34,
+      "approx_tokens": 534,
+      "findings": [],
+      "line_count": 35,
       "metadata": {
         "description_length": 481,
         "git_root": "C:/workspaces/CCSIF",
@@ -534,31 +458,14 @@
       "name": "handoff",
       "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\handoff\\SKILL.md",
       "root": "C:\\workspaces\\CCSIF",
-      "score": 97
+      "score": 100
     },
     {
-      "approx_tokens": 380,
-      "findings": [
-        {
-          "code": "missing-when-to-use",
-          "line": 4,
-          "message": "No when_to_use field found",
-          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\hindsight-observe\\SKILL.md",
-          "severity": "low",
-          "suggestion": "Add explicit trigger reinforcement when useful."
-        },
-        {
-          "code": "missing-arguments",
-          "line": 5,
-          "message": "No argument hint or argument mapping found",
-          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\hindsight-observe\\SKILL.md",
-          "severity": "low",
-          "suggestion": "Add argument-hint for CLI discoverability when applicable."
-        }
-      ],
-      "line_count": 31,
+      "approx_tokens": 401,
+      "findings": [],
+      "line_count": 33,
       "metadata": {
-        "description_length": 684,
+        "description_length": 589,
         "git_root": "C:/workspaces/CCSIF",
         "has_evals": true,
         "has_scripts": false,
@@ -567,31 +474,14 @@
       "name": "hindsight-observe",
       "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\hindsight-observe\\SKILL.md",
       "root": "C:\\workspaces\\CCSIF",
-      "score": 94
+      "score": 100
     },
     {
-      "approx_tokens": 323,
-      "findings": [
-        {
-          "code": "missing-when-to-use",
-          "line": 4,
-          "message": "No when_to_use field found",
-          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\hindsight-recall\\SKILL.md",
-          "severity": "low",
-          "suggestion": "Add explicit trigger reinforcement when useful."
-        },
-        {
-          "code": "missing-arguments",
-          "line": 5,
-          "message": "No argument hint or argument mapping found",
-          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\hindsight-recall\\SKILL.md",
-          "severity": "low",
-          "suggestion": "Add argument-hint for CLI discoverability when applicable."
-        }
-      ],
-      "line_count": 28,
+      "approx_tokens": 352,
+      "findings": [],
+      "line_count": 30,
       "metadata": {
-        "description_length": 694,
+        "description_length": 602,
         "git_root": "C:/workspaces/CCSIF",
         "has_evals": true,
         "has_scripts": false,
@@ -600,31 +490,14 @@
       "name": "hindsight-recall",
       "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\hindsight-recall\\SKILL.md",
       "root": "C:\\workspaces\\CCSIF",
-      "score": 94
+      "score": 100
     },
     {
-      "approx_tokens": 383,
-      "findings": [
-        {
-          "code": "missing-when-to-use",
-          "line": 4,
-          "message": "No when_to_use field found",
-          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\hindsight-reinforce\\SKILL.md",
-          "severity": "low",
-          "suggestion": "Add explicit trigger reinforcement when useful."
-        },
-        {
-          "code": "missing-arguments",
-          "line": 5,
-          "message": "No argument hint or argument mapping found",
-          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\hindsight-reinforce\\SKILL.md",
-          "severity": "low",
-          "suggestion": "Add argument-hint for CLI discoverability when applicable."
-        }
-      ],
-      "line_count": 30,
+      "approx_tokens": 412,
+      "findings": [],
+      "line_count": 32,
       "metadata": {
-        "description_length": 616,
+        "description_length": 558,
         "git_root": "C:/workspaces/CCSIF",
         "has_evals": true,
         "has_scripts": false,
@@ -633,31 +506,14 @@
       "name": "hindsight-reinforce",
       "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\hindsight-reinforce\\SKILL.md",
       "root": "C:\\workspaces\\CCSIF",
-      "score": 94
+      "score": 100
     },
     {
-      "approx_tokens": 374,
-      "findings": [
-        {
-          "code": "missing-when-to-use",
-          "line": 4,
-          "message": "No when_to_use field found",
-          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\hindsight-retain\\SKILL.md",
-          "severity": "low",
-          "suggestion": "Add explicit trigger reinforcement when useful."
-        },
-        {
-          "code": "missing-arguments",
-          "line": 5,
-          "message": "No argument hint or argument mapping found",
-          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\hindsight-retain\\SKILL.md",
-          "severity": "low",
-          "suggestion": "Add argument-hint for CLI discoverability when applicable."
-        }
-      ],
-      "line_count": 28,
+      "approx_tokens": 388,
+      "findings": [],
+      "line_count": 30,
       "metadata": {
-        "description_length": 687,
+        "description_length": 537,
         "git_root": "C:/workspaces/CCSIF",
         "has_evals": true,
         "has_scripts": false,
@@ -666,29 +522,12 @@
       "name": "hindsight-retain",
       "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\hindsight-retain\\SKILL.md",
       "root": "C:\\workspaces\\CCSIF",
-      "score": 94
+      "score": 100
     },
     {
-      "approx_tokens": 1313,
-      "findings": [
-        {
-          "code": "missing-when-to-use",
-          "line": 4,
-          "message": "No when_to_use field found",
-          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\improve-codebase-architecture\\SKILL.md",
-          "severity": "low",
-          "suggestion": "Add explicit trigger reinforcement when useful."
-        },
-        {
-          "code": "missing-arguments",
-          "line": 5,
-          "message": "No argument hint or argument mapping found",
-          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\improve-codebase-architecture\\SKILL.md",
-          "severity": "low",
-          "suggestion": "Add argument-hint for CLI discoverability when applicable."
-        }
-      ],
-      "line_count": 77,
+      "approx_tokens": 1361,
+      "findings": [],
+      "line_count": 79,
       "metadata": {
         "description_length": 575,
         "git_root": "C:/workspaces/CCSIF",
@@ -699,7 +538,7 @@
       "name": "improve-codebase-architecture",
       "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\improve-codebase-architecture\\SKILL.md",
       "root": "C:\\workspaces\\CCSIF",
-      "score": 94
+      "score": 100
     },
     {
       "approx_tokens": 2541,
@@ -826,58 +665,9 @@
       "score": 100
     },
     {
-      "approx_tokens": 1054,
-      "findings": [
-        {
-          "code": "frontmatter-parse-warning",
-          "line": 19,
-          "message": "Unparsed frontmatter line: PreToolUse:",
-          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\purging-token-dead-weight\\SKILL.md",
-          "severity": "medium",
-          "suggestion": "Use simple key: value or YAML list syntax."
-        },
-        {
-          "code": "frontmatter-parse-warning",
-          "line": 20,
-          "message": "Unparsed frontmatter line: - matcher: \"Bash\"",
-          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\purging-token-dead-weight\\SKILL.md",
-          "severity": "medium",
-          "suggestion": "Use simple key: value or YAML list syntax."
-        },
-        {
-          "code": "frontmatter-parse-warning",
-          "line": 21,
-          "message": "Unparsed frontmatter line: hooks:",
-          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\purging-token-dead-weight\\SKILL.md",
-          "severity": "medium",
-          "suggestion": "Use simple key: value or YAML list syntax."
-        },
-        {
-          "code": "frontmatter-parse-warning",
-          "line": 22,
-          "message": "Unparsed frontmatter line: - type: command",
-          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\purging-token-dead-weight\\SKILL.md",
-          "severity": "medium",
-          "suggestion": "Use simple key: value or YAML list syntax."
-        },
-        {
-          "code": "frontmatter-parse-warning",
-          "line": 23,
-          "message": "Unparsed frontmatter line: command: \"python \\\"${CLAUDE_SKILL_DIR}/scripts/hook_guard.py\\\"\"",
-          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\purging-token-dead-weight\\SKILL.md",
-          "severity": "medium",
-          "suggestion": "Use simple key: value or YAML list syntax."
-        },
-        {
-          "code": "frontmatter-parse-warning",
-          "line": 24,
-          "message": "Unparsed frontmatter line: timeout: 10",
-          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\purging-token-dead-weight\\SKILL.md",
-          "severity": "medium",
-          "suggestion": "Use simple key: value or YAML list syntax."
-        }
-      ],
-      "line_count": 111,
+      "approx_tokens": 1047,
+      "findings": [],
+      "line_count": 104,
       "metadata": {
         "description_length": 456,
         "git_root": "C:/workspaces/CCSIF",
@@ -890,7 +680,7 @@
       "name": "purging-token-dead-weight",
       "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\purging-token-dead-weight\\SKILL.md",
       "root": "C:\\workspaces\\CCSIF",
-      "score": 52
+      "score": 100
     },
     {
       "approx_tokens": 1279,
@@ -941,26 +731,9 @@
       "score": 100
     },
     {
-      "approx_tokens": 392,
-      "findings": [
-        {
-          "code": "missing-when-to-use",
-          "line": 4,
-          "message": "No when_to_use field found",
-          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\research\\SKILL.md",
-          "severity": "low",
-          "suggestion": "Add explicit trigger reinforcement when useful."
-        },
-        {
-          "code": "missing-arguments",
-          "line": 5,
-          "message": "No argument hint or argument mapping found",
-          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\research\\SKILL.md",
-          "severity": "low",
-          "suggestion": "Add argument-hint for CLI discoverability when applicable."
-        }
-      ],
-      "line_count": 16,
+      "approx_tokens": 440,
+      "findings": [],
+      "line_count": 25,
       "metadata": {
         "description_length": 598,
         "git_root": "C:/workspaces/CCSIF",
@@ -971,7 +744,7 @@
       "name": "research",
       "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\research\\SKILL.md",
       "root": "C:\\workspaces\\CCSIF",
-      "score": 94
+      "score": 100
     },
     {
       "approx_tokens": 1756,
@@ -1030,26 +803,9 @@
       "score": 100
     },
     {
-      "approx_tokens": 865,
-      "findings": [
-        {
-          "code": "missing-when-to-use",
-          "line": 4,
-          "message": "No when_to_use field found",
-          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\tdd\\SKILL.md",
-          "severity": "low",
-          "suggestion": "Add explicit trigger reinforcement when useful."
-        },
-        {
-          "code": "missing-arguments",
-          "line": 5,
-          "message": "No argument hint or argument mapping found",
-          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\tdd\\SKILL.md",
-          "severity": "low",
-          "suggestion": "Add argument-hint for CLI discoverability when applicable."
-        }
-      ],
-      "line_count": 47,
+      "approx_tokens": 903,
+      "findings": [],
+      "line_count": 49,
       "metadata": {
         "description_length": 513,
         "git_root": "C:/workspaces/CCSIF",
@@ -1060,29 +816,12 @@
       "name": "tdd",
       "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\tdd\\SKILL.md",
       "root": "C:\\workspaces\\CCSIF",
-      "score": 94
+      "score": 100
     },
     {
-      "approx_tokens": 2223,
-      "findings": [
-        {
-          "code": "missing-when-to-use",
-          "line": 4,
-          "message": "No when_to_use field found",
-          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\teach\\SKILL.md",
-          "severity": "low",
-          "suggestion": "Add explicit trigger reinforcement when useful."
-        },
-        {
-          "code": "missing-toc",
-          "line": null,
-          "message": "SKILL.md exceeds 100 lines without a visible table of contents",
-          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\teach\\SKILL.md",
-          "severity": "low",
-          "suggestion": "Add a compact ToC or compress below 100 lines."
-        }
-      ],
-      "line_count": 154,
+      "approx_tokens": 2301,
+      "findings": [],
+      "line_count": 171,
       "metadata": {
         "description_length": 487,
         "git_root": "C:/workspaces/CCSIF",
@@ -1093,7 +832,7 @@
       "name": "teach",
       "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\teach\\SKILL.md",
       "root": "C:\\workspaces\\CCSIF",
-      "score": 94
+      "score": 100
     },
     {
       "approx_tokens": 1439,
@@ -1112,26 +851,9 @@
       "score": 100
     },
     {
-      "approx_tokens": 864,
-      "findings": [
-        {
-          "code": "missing-when-to-use",
-          "line": 4,
-          "message": "No when_to_use field found",
-          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\to-spec\\SKILL.md",
-          "severity": "low",
-          "suggestion": "Add explicit trigger reinforcement when useful."
-        },
-        {
-          "code": "missing-arguments",
-          "line": 5,
-          "message": "No argument hint or argument mapping found",
-          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\to-spec\\SKILL.md",
-          "severity": "low",
-          "suggestion": "Add argument-hint for CLI discoverability when applicable."
-        }
-      ],
-      "line_count": 85,
+      "approx_tokens": 910,
+      "findings": [],
+      "line_count": 87,
       "metadata": {
         "description_length": 590,
         "git_root": "C:/workspaces/CCSIF",
@@ -1142,29 +864,12 @@
       "name": "to-spec",
       "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\to-spec\\SKILL.md",
       "root": "C:\\workspaces\\CCSIF",
-      "score": 94
+      "score": 100
     },
     {
-      "approx_tokens": 2319,
-      "findings": [
-        {
-          "code": "missing-when-to-use",
-          "line": 4,
-          "message": "No when_to_use field found",
-          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\writing-great-skills\\SKILL.md",
-          "severity": "low",
-          "suggestion": "Add explicit trigger reinforcement when useful."
-        },
-        {
-          "code": "missing-arguments",
-          "line": 5,
-          "message": "No argument hint or argument mapping found",
-          "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\writing-great-skills\\SKILL.md",
-          "severity": "low",
-          "suggestion": "Add argument-hint for CLI discoverability when applicable."
-        }
-      ],
-      "line_count": 95,
+      "approx_tokens": 2363,
+      "findings": [],
+      "line_count": 97,
       "metadata": {
         "description_length": 901,
         "git_root": "C:/workspaces/CCSIF",
@@ -1175,15 +880,15 @@
       "name": "writing-great-skills",
       "path": "C:\\workspaces\\CCSIF\\.claude\\skills\\writing-great-skills\\SKILL.md",
       "root": "C:\\workspaces\\CCSIF",
-      "score": 94
+      "score": 100
     }
   ],
   "summary": {
-    "corpus_score": 97.4,
+    "corpus_score": 100.0,
     "findings_by_severity": {
       "high": 0,
-      "low": 29,
-      "medium": 6
+      "low": 0,
+      "medium": 0
     },
     "include_user": false,
     "root": "C:\\workspaces\\CCSIF",

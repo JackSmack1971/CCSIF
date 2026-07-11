@@ -1,6 +1,8 @@
 ---
 name: hindsight-retain
 description: Use when ingesting new trace lines into the HINDSIGHT memory store as durable World and Experience records. Trigger on retain this trace, ingest new trace lines into memory, persist these observations as memory records, write new facts to HINDSIGHT, store this trace as a retained fact. NOT for neutral observation summaries, recall, or opinion reinforcement. Requires an unprocessed trace range and a non-empty source trace file plus line number on every retained record. Distinct keywords HINDSIGHT, ingest, provenance, trace, durable.
+when_to_use: Use when you need to ingest new trace lines as durable World and Experience records. Do not use for neutral observation summaries, recall, or opinion reinforcement.
+argument-hint: "[trace file] [line range]"
 allowed-tools: Bash
 tools: [shell]
 model: sonnet

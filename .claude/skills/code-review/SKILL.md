@@ -1,6 +1,8 @@
 ---
 name: code-review
 description: Use when reviewing the changes since a fixed point (commit, branch, tag, or merge-base) along two axes, Standards and Spec, by running parallel sub-agents and aggregating their findings side by side. Trigger on queries that say review this branch, review the PR, review work-in-progress changes, review since last commit, review since main. NOT for a single-axis lint pass or ad hoc style check use security-review or a linter instead. Distinct keywords standards, aggregates, parallel, originating, branch.
+when_to_use: Use for two-axis review of a diff from a fixed point, especially when the user asks for PR review, branch review, or review since a commit or merge-base. Do not use for single-axis linting or ad hoc style checks.
+argument-hint: "[fixed-point] [spec-path]"
 allowed-tools: Read, Grep, Glob, Bash, Agent
 ---
 
@@ -12,6 +14,12 @@ Two-axis review of the diff between `HEAD` and a fixed point the user supplies:
 Both axes run as **parallel sub-agents** so they don't pollute each other's context, then this skill aggregates their findings.
 
 The issue tracker should have been provided to you — run `/setup-matt-pocock-skills` if `docs/agents/issue-tracker.md` is missing.
+
+## Contents
+
+- [Checklist](#checklist)
+- [Process](#process)
+- [Why two axes](#why-two-axes)
 
 ## Checklist
 
