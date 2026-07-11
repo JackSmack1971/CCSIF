@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Repository Hygiene Finding",
+  "type": "object",
+  "required": [
+    "id",
+    "rule_id",
+    "category",
+    "severity",
+    "confidence",
+    "title",
+    "summary",
+    "evidence",
+    "remediation_key",
+    "recommended_actions",
+    "acceptance_criteria",
+    "verification"
+  ],
+  "properties": {
+    "id": {"type": "string", "pattern": "^RH-[A-Z0-9-]+$"},
+    "rule_id": {"type": "string"},
+    "category": {"type": "string"},
+    "severity": {"enum": ["critical", "high", "medium", "low", "info"]},
+    "confidence": {"enum": ["high", "medium", "low"]},
+    "title": {"type": "string"},
+    "summary": {"type": "string"},
+    "evidence": {"type": "array", "items": {"type": "object"}},
+    "remediation_key": {"type": "string"},
+    "recommended_actions": {"type": "array", "items": {"type": "string"}},
+    "acceptance_criteria": {"type": "array", "items": {"type": "string"}},
+    "verification": {"type": "array", "items": {"type": "string"}},
+    "destructive": {"type": "boolean"},
+    "actionable": {"type": "boolean"}
+  },
+  "additionalProperties": true
+}

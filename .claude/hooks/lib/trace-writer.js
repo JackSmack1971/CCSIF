@@ -161,6 +161,9 @@ function findLastSkillInvocation(lines) {
 
 // Any tool_result in the tail window that looks like a failure — used by
 // Stop to decide success vs. partial for the completed task turn.
+// Returns { failed, component } — component is the file path implicated by
+// the failing tool call (via its matching tool_use block), or null when the
+// tool had no path input (e.g. bare Bash), matching deriveComponent's contract.
 function findAnyToolFailure(lines, windowSize) {
   windowSize = windowSize || 100;
   const start = Math.max(0, lines.length - windowSize);
@@ -172,18 +175,38 @@ function findAnyToolFailure(lines, windowSize) {
     if (!Array.isArray(content)) continue;
     for (const block of content) {
       if (block && block.type === 'tool_result') {
-        if (block.is_error === true) return true;
         const text =
           typeof block.content === 'string'
             ? block.content
             : Array.isArray(block.content)
             ? block.content.map((c) => (c && c.text) || '').join(' ')
             : '';
-        if (/error|exception|traceback/i.test(text)) return true;
+        const failed = block.is_error === true || /error|exception|traceback/i.test(text);
+        if (failed) {
+          return { failed: true, component: findToolUseComponent(lines, i, block.tool_use_id) };
+        }
       }
     }
   }
-  return false;
+  return { failed: false, component: null };
+}
+
+// Given the index of the failing tool_result entry and its tool_use_id, scan
+// backward for the matching assistant tool_use block to attribute a
+// file-path component to the failure.
+function findToolUseComponent(lines, resultIndex, toolUseId) {
+  if (!toolUseId) return null;
+  for (let i = resultIndex; i >= 0; i--) {
+    const entry = lines[i];
+    const msg = entry && (entry.message || entry);
+    if (!msg || msg.role !== 'assistant' || !Array.isArray(msg.content)) continue;
+    for (const block of msg.content) {
+      if (block && block.type === 'tool_use' && block.id === toolUseId) {
+        return deriveComponent(block.input, process.cwd());
+      }
+    }
+  }
+  return null;
 }
 
 // The error|exception|traceback text scan is only a valid failure signal for
@@ -217,6 +240,27 @@ function classifyPostToolOutcome(toolResponse, toolName) {
     // fall through
   }
   return 'success';
+}
+
+// Extract a short, redacted snippet of the actual failure detail (stderr or
+// matched error/exception/traceback text) so a `tool_failure` note is
+// diagnosable on its own instead of only echoing the input command.
+function failureSnippet(toolResponse) {
+  try {
+    if (toolResponse == null) return null;
+    if (typeof toolResponse === 'string') return truncate(redact(toolResponse), 200);
+    if (typeof toolResponse === 'object') {
+      const text =
+        (typeof toolResponse.stderr === 'string' && toolResponse.stderr.trim()) ||
+        (typeof toolResponse.output === 'string' && toolResponse.output) ||
+        (typeof toolResponse.content === 'string' && toolResponse.content) ||
+        '';
+      return text ? truncate(redact(text), 200) : null;
+    }
+  } catch (_) {
+    // fall through
+  }
+  return null;
 }
 
 // Best-effort file-path attribution. Never leaks an absolute path outside
@@ -253,7 +297,10 @@ function buildPostToolUseEntry(payload, facts) {
       notes = 'env/secret-listing command; response omitted';
     } else {
       const gist = commandGist(cmd);
-      notes = `Bash command (${outcome}): ${gist || '(no command captured)'}`;
+      const detail = outcome === 'failure' ? failureSnippet(toolResponse) : null;
+      notes = `Bash command (${outcome}): ${gist || '(no command captured)'}${
+        detail ? ` | failure detail: ${detail}` : ''
+      }`;
     }
   } else {
     notes = `${toolName || 'tool'} call (${outcome})${component ? ' on ' + component : ''}`;
@@ -277,7 +324,7 @@ function buildStopEntry(payload, facts) {
     skill: facts.skill || null,
     outcome: facts.outcome,
     error_class: facts.errorClass,
-    component: null,
+    component: facts.component ? safeText(facts.component, 200) : null,
     notes: safeText(facts.notes, 400) || 'Stop event summary',
   };
 }
@@ -304,14 +351,15 @@ function main() {
   if (eventName === 'PostToolUse') {
     entry = buildPostToolUseEntry(payload, { taskText, skill });
   } else if (eventName === 'Stop') {
-    const hadFailure = findAnyToolFailure(lines);
+    const failure = findAnyToolFailure(lines);
     entry = buildStopEntry(payload, {
       taskText,
       skill,
-      outcome: hadFailure ? 'partial' : 'success',
-      errorClass: hadFailure ? 'tool_failure' : null,
+      outcome: failure.failed ? 'partial' : 'success',
+      errorClass: failure.failed ? 'tool_failure' : null,
+      component: failure.component,
       notes: `Task turn completed${skill ? ' via skill ' + skill : ''}${
-        hadFailure ? '; at least one tool call failed' : ''
+        failure.failed ? '; at least one tool call failed' : ''
       }.`,
     });
   } else {

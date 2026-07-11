@@ -61,6 +61,15 @@ def check_guard_probes() -> None:
             fail(f"guard did not block protected probe {probe!r}; rc={proc.returncode}; stderr={proc.stderr.strip()}")
 
 
+def check_fd_dup_redirects() -> None:
+    guard = ROOT / ".claude/hooks/lib/pre-tool-use-guard.js"
+    for command in ["cat x 2>&1", "echo hi >&2", "printf ok 1>&2"]:
+        probe = {"tool_name": "Bash", "tool_input": {"command": command}}
+        proc = run(["node", str(guard)], input_text=json.dumps(probe))
+        if proc.returncode != 0:
+            fail(f"guard incorrectly blocked fd-dup redirect probe {probe!r}; rc={proc.returncode}; stderr={proc.stderr.strip()}")
+
+
 def check_shell_parse() -> None:
     for script in [".claude/hooks/pre-tool-use.sh", ".claude/hooks/stop.sh"]:
         proc = run(["bash", "-n", script])
@@ -74,6 +83,7 @@ def main() -> int:
     check_git_visibility()
     check_shell_parse()
     check_guard_probes()
+    check_fd_dup_redirects()
     print("control-plane-check: PASS")
     return 0
 

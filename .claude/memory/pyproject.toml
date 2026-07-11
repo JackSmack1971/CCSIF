@@ -1,0 +1,16 @@
+[project]
+name = "ccsif-hindsight"
+version = "0.1.0"
+description = "Project-scoped HINDSIGHT memory tooling for CCSIF"
+requires-python = ">=3.12"
+dependencies = [
+  "mcp",
+]
+
+[project.optional-dependencies]
+graphiti = [
+  "graphiti-core",
+]
+voyage = [
+  "voyageai",
+]

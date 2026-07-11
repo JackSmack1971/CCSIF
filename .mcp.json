@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "graphiti-memory": {
+      "command": "uv",
+      "args": [
+        "run",
+        "--project",
+        ".claude/memory",
+        "python",
+        ".claude/memory/hindsight_mcp.py"
+      ]
+    }
+  }
+}
