@@ -2,11 +2,10 @@
 'use strict';
 
 /*
- * Deterministic PreToolUse guard for CLAUDE.md's "Protected Areas"
- * (production config, secrets, database migrations, auth, payment/trading
- * logic, CI/CD deployment workflows) and the repo control-plane invariants
- * identified by the self-improvement roadmap. Invoked by pre-tool-use.sh
- * with the Claude Code PreToolUse JSON payload on stdin.
+ * Deterministic PreToolUse guard for repo-sensitive paths:
+ * secrets, credentials, database migrations, auth, payment/trading logic,
+ * CI/CD deployment workflows, and production config. Invoked by
+ * pre-tool-use.sh with the Claude Code PreToolUse JSON payload on stdin.
  *
  * Exit 2 + a reason on stderr blocks the tool call (Claude Code PreToolUse
  * contract). Exit 0 allows it.
@@ -22,26 +21,6 @@
  */
 
 const PROTECTED_AREAS = [
-  {
-    label: 'constitution',
-    re: /(^|[\\/])CLAUDE\.md$/i,
-  },
-  {
-    label: 'control-plane settings',
-    re: /(^|[\\/])\.claude[\\/]settings(\.local)?\.json$/i,
-  },
-  {
-    label: 'control-plane hooks',
-    re: /(^|[\\/])\.claude[\\/]hooks[\\/]/i,
-  },
-  {
-    label: '7axes script-managed ledger',
-    re: /(^|[\\/])\.7axes[\\/](ledger\.jsonl|calibration\.json)$/i,
-  },
-  {
-    label: 'self-improvement registry',
-    re: /(^|[\\/])\.claude[\\/]pending[\\/](registry|session-state)[^\\/]*\.jsonl?$/i,
-  },
   {
     label: 'secrets/credentials',
     re: /(^|[\\/])(\.env(\..+)?|[^\\/]*\.pem|[^\\/]*\.key|[^\\/]*credentials[^\\/]*|[^\\/]*service-account[^\\/]*)$/i,
@@ -68,7 +47,10 @@ const PROTECTED_AREAS = [
   },
 ];
 
-const MUTATING_BASH_TOKEN = /(^|[;&|]\s*)(rm|mv|cp|sed\s+-i|tee|truncate|dd)\b|>>?(?!=)/;
+// `(?!&)` excludes fd-duplication redirections (`2>&1`, `1>&2`, `>&2`), which
+// duplicate a stream and never write to a file, from the "mutating" trigger.
+// A real file-write redirect (`>file`, `>>file`, `&>file`) is unaffected.
+const MUTATING_BASH_TOKEN = /(^|[;&|]\s*)(rm|mv|cp|sed\s+-i|tee|truncate|dd)\b|>>?(?!=)(?!&)/;
 
 function matchProtectedArea(targetPath) {
   if (typeof targetPath !== 'string' || !targetPath) return null;

@@ -1,3 +1,3 @@
 # hooks
 
-Codex project hook scripts for `project-root/your-project/.codex/hooks`.
+Scaffold directory for Claude Code `project-root/your-project/.claude/hooks`.

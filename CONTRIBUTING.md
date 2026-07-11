@@ -6,6 +6,7 @@ Thanks for your interest in CCSIF, a repository-local Claude Code scaffold that 
 
 - [Before contributing](#before-contributing)
 - [Find or propose work](#find-or-propose-work)
+- [Label taxonomy](#label-taxonomy)
 - [Repository scope](#repository-scope)
 - [Local setup](#local-setup)
 - [Development workflow](#development-workflow)
@@ -25,6 +26,13 @@ Thanks for your interest in CCSIF, a repository-local Claude Code scaffold that 
 - There are no issue forms or discussion channels checked into this repository. Open a GitHub issue on the repository to propose a change, report a problem, or ask a question before starting non-trivial work.
 - The standard workflow is one issue per branch per pull request: [`implementation-agent`](./.claude/agents/implementation-agent.md) implements exactly one issue as an isolated branch and PR, and [`pr-reviewer`](./.claude/agents/pr-reviewer.md) reviews it for correctness, verification quality, and merge readiness.
 - The [`/create-pr`](./.claude/commands/create-pr.md), [`/review-pr`](./.claude/commands/review-pr.md), and [`/audit-upstream`](./.claude/commands/audit-upstream.md) slash commands document the corresponding Claude Code workflows if you are contributing through Claude Code itself.
+
+## Label taxonomy
+
+- `repository-hygiene`: repository audit and remediation work that should turn into one focused PR per issue.
+- `codex`: work item intended for Codex-driven implementation after an `@codex` trigger.
+- `status:in-progress`: claimed work that is actively being implemented.
+- Use the default GitHub meanings for stock labels such as `bug`, `documentation`, `enhancement`, `good first issue`, `help wanted`, `invalid`, `question`, and `wontfix`.
 
 ## Repository scope
 

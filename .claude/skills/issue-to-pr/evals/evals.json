@@ -1,0 +1,23 @@
+{
+  "skill_name": "issue-to-pr",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Run issue-to-pr in dry-run mode against this repository and show me the plan — I don't want any branches or PRs opened yet, just tell me what would happen.",
+      "expected_output": "Runs `scripts/issue_to_pr.py plan` (and `validate`) read-only, then reports counts of ready/blocked/destructive-skip/pr-exists issues with issue numbers and titles named for each bucket. No `gh issue create`, `gh pr create`, `git push`, or branch creation occurs. No implementation-agent or pr-reviewer subagents are spawned in dry-run mode.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "We just ran the repo hygiene audit and it filed a bunch of issues. Turn the ones that are safe to automate into PRs, but don't touch anything marked destructive — I want to handle those myself.",
+      "expected_output": "Builds a plan, clearly separates destructive-flagged issues from ready ones, explains why destructive issues are excluded (Tier-1/human-approval framing), and only proceeds with implementation-agent/pr-reviewer for non-destructive, unblocked issues. Reports blocked issues (unresolved dependencies) separately rather than silently skipping them with no explanation.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Issue #42 in this repo has a hygiene fix ready to go — can you implement it and open a PR?",
+      "expected_output": "Scopes the plan to issue #42 only (--issue 42), confirms it carries the repository-hygiene marker, checks it isn't destructive/blocked/already has a PR, then implements via implementation-agent and reviews via pr-reviewer, producing a single focused PR referencing #42 with real verification output in the PR body.",
+      "files": []
+    }
+  ]
+}

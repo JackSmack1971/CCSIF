@@ -252,7 +252,7 @@ See [`CONTRIBUTING.md`](./CONTRIBUTING.md) for how to find or propose work, set 
 |---|---|---|
 | Code of Conduct | [TBD] | No `CODE_OF_CONDUCT.md` file was found. |
 | Security | Policy published | [`SECURITY.md`](./SECURITY.md), [`CLAUDE.md`](./CLAUDE.md), [`.claude/rules/security.md`](./.claude/rules/security.md) |
-| License | [TBD] | No `LICENSE` file or manifest license field was found. |
+| License | MIT | [`LICENSE`](./LICENSE) |
 | Maintainers | [TBD] | No maintainer file was found. |
 | Support | [TBD] | No support policy file was found. |
 
@@ -262,4 +262,4 @@ No roadmap document, issue milestone plan, or release plan was found in the repo
 
 ## License
 
-No license file was found. Add a license before publishing or accepting contributions.
+This repository is licensed under the MIT License. See [`LICENSE`](./LICENSE) for the full text.

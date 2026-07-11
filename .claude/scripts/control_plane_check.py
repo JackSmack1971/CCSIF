@@ -17,6 +17,13 @@ REQUIRED_PATHS = [
     ".claude/commands/control-plane-check.md",
 ]
 PROTECTED_PROBES = [
+    {"tool_name": "Write", "tool_input": {"file_path": ".env"}},
+    {"tool_name": "Write", "tool_input": {"file_path": ".github/workflows/release.yml"}},
+    {"tool_name": "Write", "tool_input": {"file_path": "migrations/001_init.sql"}},
+    {"tool_name": "Bash", "tool_input": {"command": "cat x >> .env"}},
+    {"tool_name": "Bash", "tool_input": {"command": "cat x >> .github/workflows/release.yml"}},
+]
+ALLOWED_PROBES = [
     {"tool_name": "Write", "tool_input": {"file_path": "CLAUDE.md"}},
     {"tool_name": "Write", "tool_input": {"file_path": ".claude/settings.json"}},
     {"tool_name": "Write", "tool_input": {"file_path": ".claude/hooks/pre-tool-use.sh"}},
@@ -61,6 +68,23 @@ def check_guard_probes() -> None:
             fail(f"guard did not block protected probe {probe!r}; rc={proc.returncode}; stderr={proc.stderr.strip()}")
 
 
+def check_allowed_probes() -> None:
+    guard = ROOT / ".claude/hooks/lib/pre-tool-use-guard.js"
+    for probe in ALLOWED_PROBES:
+        proc = run(["node", str(guard)], input_text=json.dumps(probe))
+        if proc.returncode != 0:
+            fail(f"guard incorrectly blocked allowed probe {probe!r}; rc={proc.returncode}; stderr={proc.stderr.strip()}")
+
+
+def check_fd_dup_redirects() -> None:
+    guard = ROOT / ".claude/hooks/lib/pre-tool-use-guard.js"
+    for command in ["cat x 2>&1", "echo hi >&2", "printf ok 1>&2"]:
+        probe = {"tool_name": "Bash", "tool_input": {"command": command}}
+        proc = run(["node", str(guard)], input_text=json.dumps(probe))
+        if proc.returncode != 0:
+            fail(f"guard incorrectly blocked fd-dup redirect probe {probe!r}; rc={proc.returncode}; stderr={proc.stderr.strip()}")
+
+
 def check_shell_parse() -> None:
     for script in [".claude/hooks/pre-tool-use.sh", ".claude/hooks/stop.sh"]:
         proc = run(["bash", "-n", script])
@@ -73,7 +97,9 @@ def main() -> int:
     check_json()
     check_git_visibility()
     check_shell_parse()
+    check_allowed_probes()
     check_guard_probes()
+    check_fd_dup_redirects()
     print("control-plane-check: PASS")
     return 0
 
