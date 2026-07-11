@@ -2,6 +2,8 @@
 name: improve-codebase-architecture
 description: Use when scanning a codebase for architectural deepening opportunities and presenting them as a visual HTML report before grilling through the chosen refactor. Trigger on queries that say improve codebase architecture, find deepening opportunities, surface shallow modules, generate an architecture report. NOT for creating or evaluating an architecture decision record use the architecture skill instead, and NOT for auditing the .claude Claude Code configuration use claude-code-architecture-auditor instead. Distinct keywords deepening, shallow, seams, locality, leverage.
 disable-model-invocation: true
+when_to_use: Use when you want to surface shallow modules, deepening opportunities, or an architecture report before choosing a refactor. Do not use for ADR authoring or auditing the .claude Claude Code configuration.
+argument-hint: "[repo scope] [candidate focus]"
 allowed-tools: Agent, Read, Write, Edit, Bash, Skill
 ---
 

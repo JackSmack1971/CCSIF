@@ -3,6 +3,7 @@ name: handoff
 description: Use when compacting the current conversation into a handoff document so a fresh agent or new session can continue the work. Trigger on queries that say create a handoff document, hand off this session to another agent, compact this conversation for a new session, prepare a context transfer document for the next agent. NOT for writing specs, ADRs, or implementation plans use adr-authoring or to-spec instead. Distinct keywords handoff, conversation, session, redact, credentials.
 argument-hint: "What will the next session be used for?"
 disable-model-invocation: true
+when_to_use: Use when you need a concise context-transfer document for the next agent or session. Do not use for specs, ADRs, or implementation plans.
 allowed-tools: Read, Bash, Write
 ---
 

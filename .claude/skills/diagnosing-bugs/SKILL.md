@@ -1,6 +1,8 @@
 ---
 name: diagnosing-bugs
 description: Use when diagnosing hard bugs or performance regressions that need a disciplined reproduce-hypothesize-instrument-fix loop. Trigger on queries that say diagnose this bug, debug this, something is broken, it keeps throwing, the app got slow. NOT for a trivial one-line typo fix with an already-known cause use a direct edit instead. Distinct keywords bisection, instrumentation, regression, reproduction, nondeterministic, hypotheses.
+when_to_use: Use for hard bugs, flaky regressions, and performance problems that need a reproduce-hypothesize-instrument-fix loop. Do not use for a known one-line typo or a direct edit.
+argument-hint: "[bug description] [repro seam]"
 allowed-tools: Read, Grep, Glob, Bash, Edit, Write
 ---
 
@@ -9,6 +11,15 @@ allowed-tools: Read, Grep, Glob, Bash, Edit, Write
 A discipline for hard bugs. Skip phases only when explicitly justified.
 
 When exploring the codebase, read `CONTEXT.md` (if it exists) to get a clear mental model of the relevant modules, and check ADRs in the area you're touching.
+
+## Contents
+
+- [Phase 1 — Build a feedback loop](#phase-1--build-a-feedback-loop)
+- [Phase 2 — Reproduce + minimise](#phase-2--reproduce--minimise)
+- [Phase 3 — Hypothesise](#phase-3--hypothesise)
+- [Phase 4 — Instrument](#phase-4--instrument)
+- [Phase 5 — Fix + regression test](#phase-5--fix--regression-test)
+- [Phase 6 — Cleanup + post-mortem](#phase-6--cleanup--post-mortem)
 
 ## Phase 1 — Build a feedback loop
 
