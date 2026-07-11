@@ -20,6 +20,7 @@ Durable, project-scoped memory for CCSIF.
 ```bash
 python .claude/memory/hindsight.py bootstrap
 python .claude/memory/hindsight.py retain
+python .claude/memory/hindsight.py replay
 python .claude/memory/hindsight.py recall "what changed in the memory architecture?"
 python .claude/memory/hindsight.py observe
 python .claude/memory/hindsight.py reflect "what changed in the memory architecture?"
@@ -27,6 +28,12 @@ python .claude/memory/hindsight.py reinforce --prior 0.6 --supports
 python .claude/memory/hindsight.py self-test
 python .claude/memory/hindsight.py graphiti-check
 ```
+
+Local mode is the default path for `retain`, `recall`, `observe`, `reflect`,
+and `self-test`. `graphiti-check` is the optional backend probe and only
+passes when `HINDSIGHT_BACKEND=graphiti` is set with the Graphiti, LLM, and
+Voyage settings available; otherwise it reports why Graphiti is unavailable
+and the runtime stays local.
 
 ## Opinion reinforcement
 

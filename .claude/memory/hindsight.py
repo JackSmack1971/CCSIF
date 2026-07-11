@@ -352,6 +352,13 @@ def record_provenance(records: list[MemoryRecord]) -> list[str]:
     return sorted(refs)
 
 
+def trace_source_ref(path: Path) -> str:
+    try:
+        return str(path.relative_to(ROOT)).replace("\\", "/")
+    except ValueError:
+        return str(path.resolve()).replace("\\", "/")
+
+
 def extract_entity(record: TraceRecord) -> str | None:
     for candidate in [record.component, record.skill, record.task, record.notes]:
         if not candidate:
@@ -387,7 +394,7 @@ def build_experience_record(path: Path, line_no: int, record: TraceRecord) -> Me
         group_id="ccsif:experience",
         kind="experience",
         text=text,
-        source_trace=str(path.relative_to(ROOT)).replace("\\", "/"),
+        source_trace=trace_source_ref(path),
         source_line=line_no,
         entity=extract_entity(record),
         confidence=1.0,
@@ -407,7 +414,7 @@ def build_world_record(path: Path, line_no: int, record: TraceRecord) -> MemoryR
         group_id="ccsif:world",
         kind="world",
         text=text,
-        source_trace=str(path.relative_to(ROOT)).replace("\\", "/"),
+        source_trace=trace_source_ref(path),
         source_line=line_no,
         entity=extract_entity(record),
         confidence=1.0,
@@ -544,6 +551,14 @@ def write_memory(record: MemoryRecord, path: Path) -> None:
     append_jsonl(path, asdict(record))
 
 
+def clear_trace_state() -> None:
+    for path in (CURSOR_PATH, EPISODES_PATH, OBSERVATIONS_PATH):
+        try:
+            path.unlink()
+        except FileNotFoundError:
+            pass
+
+
 def build_episode_body(kind: str, trace: TraceRecord, source_ref: str) -> str:
     lines = [
         f"Kind: {kind}",
@@ -605,11 +620,20 @@ async def graphiti_search(client, query: str, limit: int) -> list[MemoryRecord]:
 def retain() -> int:
     count = 0
     client = build_graphiti_client()
+    retained_keys = {(rec.kind, rec.source_trace, rec.source_line) for rec in read_all_memory()}
     for path, line_no, trace in iter_new_trace_entries():
         experience = build_experience_record(path, line_no, trace)
         world = build_world_record(path, line_no, trace)
-        write_memory(experience, EPISODES_PATH)
-        write_memory(world, EPISODES_PATH)
+        experience_key = (experience.kind, experience.source_trace, experience.source_line)
+        world_key = (world.kind, world.source_trace, world.source_line)
+        if experience_key not in retained_keys:
+            write_memory(experience, EPISODES_PATH)
+            retained_keys.add(experience_key)
+            count += 1
+        if world_key not in retained_keys:
+            write_memory(world, EPISODES_PATH)
+            retained_keys.add(world_key)
+            count += 1
         if client is not None:
             try:
                 source_ref = f"{experience.source_trace}:{line_no}"
@@ -639,7 +663,6 @@ def retain() -> int:
                 )
             except Exception:
                 client = None
-        count += 2
     print(f"retained {count} memory records")
     return 0
 
@@ -737,6 +760,13 @@ def observe() -> int:
             except Exception:
                 pass
     print(f"observed {len(by_entity)} entities")
+    return 0
+
+
+def replay() -> int:
+    clear_trace_state()
+    retain()
+    observe()
     return 0
 
 
@@ -842,6 +872,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     sub.add_parser("bootstrap")
     sub.add_parser("retain")
+    sub.add_parser("replay")
     sub.add_parser("observe")
     sub.add_parser("self-test")
     sub.add_parser("graphiti-check")
@@ -870,6 +901,8 @@ def main(argv: list[str] | None = None) -> int:
         return bootstrap()
     if args.command == "retain":
         return retain()
+    if args.command == "replay":
+        return replay()
     if args.command == "observe":
         return observe()
     if args.command == "graphiti-check":
