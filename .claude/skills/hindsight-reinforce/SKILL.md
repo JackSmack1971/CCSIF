@@ -1,6 +1,6 @@
 ---
 name: hindsight-reinforce
-description: Use when adjusting an existing opinion memory's confidence score after new supporting or contradicting evidence arrives in the HINDSIGHT store. Trigger on queries that say reinforce this opinion, update confidence after new evidence, strengthen or weaken this belief, recompute confidence score, adjust opinion weight. NOT for ingesting brand-new trace lines use hindsight-retain instead, NOT for building neutral observation summaries use hindsight-observe instead, and NOT for retrieving memories for a prompt use hindsight-recall instead. Distinct keywords opinion, confidence, deterministic, evidence, reinforce.
+description: Use when adjusting an existing opinion memory's confidence score after new supporting or contradicting evidence arrives in the HINDSIGHT store. Trigger on reinforce this opinion, update confidence after new evidence, strengthen or weaken this belief, recompute confidence score, adjust opinion weight. NOT for trace ingestion, neutral observation summaries, or recall. Requires the current stored confidence, the matching evidence chain, and the correct supports or contradicts flag. Distinct keywords opinion, confidence, deterministic, evidence, reinforce.
 tools: [shell]
 allowed-tools: Bash
 model: sonnet

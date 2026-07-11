@@ -46,6 +46,11 @@ class HindsightTests(unittest.TestCase):
         self._persona_patch = patch.object(hindsight, "PERSONA_PATH", base / "no-persona-file.md")
         self._persona_patch.start()
 
+    def write_trace(self, name: str, rows: list[dict[str, object]]) -> Path:
+        path = hindsight.TRACE_DIR / name
+        path.write_text("\n".join(json.dumps(row) for row in rows) + "\n", encoding="utf-8")
+        return path
+
     def tearDown(self) -> None:
         self._persona_patch.stop()
         self._client_patch.stop()
@@ -127,6 +132,90 @@ class HindsightTests(unittest.TestCase):
         self.assertEqual(len(rows), 1)
         self.assertEqual(rows[0]["kind"], "observation")
         self.assertEqual(rows[0]["entity"], "memory hooks")
+
+    def test_retain_is_idempotent_and_replay_rebuilds_trace_state(self) -> None:
+        self.write_trace(
+            "2026-07-10.jsonl",
+            [
+                {
+                    "ts": "2026-07-10T00:00:00Z",
+                    "task": "update the memory hooks",
+                    "skill": "hindsight-retain",
+                    "outcome": "success",
+                    "component": ".claude/hooks/post-tool-use.sh",
+                    "notes": "retained hook events",
+                }
+            ],
+        )
+
+        self.assertEqual(hindsight.retain(), 0)
+        self.assertTrue(hindsight.EPISODES_PATH.exists())
+        first_pass = hindsight.EPISODES_PATH.read_text(encoding="utf-8").splitlines()
+        self.assertEqual(len(first_pass), 2)
+
+        hindsight.CURSOR_PATH.unlink()
+        self.assertEqual(hindsight.retain(), 0)
+        second_pass = hindsight.EPISODES_PATH.read_text(encoding="utf-8").splitlines()
+        self.assertEqual(len(second_pass), 2)
+
+        self.assertEqual(hindsight.replay(), 0)
+        replayed_episodes = hindsight.EPISODES_PATH.read_text(encoding="utf-8").splitlines()
+        replayed_observations = hindsight.OBSERVATIONS_PATH.read_text(encoding="utf-8").splitlines()
+        self.assertEqual(len(replayed_episodes), 2)
+        self.assertEqual(len(replayed_observations), 1)
+
+    def test_local_end_to_end_flow_covers_retain_recall_observe_reflect(self) -> None:
+        self.write_trace(
+            "2026-07-10.jsonl",
+            [
+                {
+                    "ts": "2026-07-10T00:00:00Z",
+                    "task": "update the memory hooks",
+                    "skill": "hindsight-retain",
+                    "outcome": "success",
+                    "component": ".claude/hooks/post-tool-use.sh",
+                    "notes": "retained hook events",
+                }
+            ],
+        )
+
+        self.assertEqual(hindsight.retain(), 0)
+        recall_output = hindsight._render_recall("memory hooks", limit=3)
+        self.assertIn("HINDSIGHT Recall", recall_output)
+        self.assertIn("memory hooks", recall_output)
+
+        self.assertEqual(hindsight.observe(), 0)
+        self.assertTrue(hindsight.OBSERVATIONS_PATH.exists())
+
+        reflect_output = hindsight._render_reflect("memory hooks", limit=3)
+        self.assertIn("HINDSIGHT Reflection", reflect_output)
+        self.assertIn("Confidence", reflect_output)
+        self.assertTrue(hindsight.OPINIONS_PATH.exists())
+
+    def test_recall_respects_limit_and_observe_stays_neutral(self) -> None:
+        self.write_trace(
+            "2026-07-10.jsonl",
+            [
+                {
+                    "ts": "2026-07-10T00:00:00Z",
+                    "task": "update the memory hooks",
+                    "skill": "hindsight-retain",
+                    "outcome": "success",
+                    "component": ".claude/hooks/post-tool-use.sh",
+                    "notes": "retained hook events",
+                }
+            ],
+        )
+
+        self.assertEqual(hindsight.retain(), 0)
+        recall_output = hindsight._render_recall("memory hooks", limit=1)
+        bullets = [line for line in recall_output.splitlines() if line.startswith("- ")]
+        self.assertLessEqual(len(bullets), 1)
+
+        self.assertEqual(hindsight.observe(), 0)
+        observation = json.loads(hindsight.OBSERVATIONS_PATH.read_text(encoding="utf-8").splitlines()[0])
+        self.assertNotIn("I think", observation["text"])
+        self.assertNotIn("persona", observation["text"].lower())
 
     def test_load_persona_defaults_when_file_missing(self) -> None:
         persona = hindsight.load_persona()
