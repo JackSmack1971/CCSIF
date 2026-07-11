@@ -2,7 +2,12 @@
   "$schema": "https://example.invalid/schemas/claude-code-project-settings.schema.json",
   "version": 1,
   "description": "Shared project Claude Code settings. Commit only team-safe values.",
-  "allowedMcpServers": [],
+  "allowedMcpServers": [
+    { "serverName": "graphiti-memory" }
+  ],
+  "enabledMcpjsonServers": [
+    "graphiti-memory"
+  ],
   "permissions": {
     "mode": "ask",
     "allow": [
