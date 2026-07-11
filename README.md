@@ -244,7 +244,7 @@ Use the narrowest check that matches the change:
 
 ## Contributing
 
-Contribution guidelines are not yet formalized in a dedicated file. Please open an issue before large changes.
+See [`CONTRIBUTING.md`](./CONTRIBUTING.md) for how to find or propose work, set up locally, and open a pull request.
 
 ## Governance
 
