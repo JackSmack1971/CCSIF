@@ -65,6 +65,14 @@
         ]
       }
     ],
+    "UserPromptSubmit": [
+      {
+        "matcher": "",
+        "hooks": [
+          { "type": "command", "command": "bash .claude/hooks/hindsight-recall.sh" }
+        ]
+      }
+    ],
     "Stop": [
       {
         "matcher": "",
