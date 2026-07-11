@@ -9,6 +9,7 @@ Thanks for your interest in CCSIF, a repository-local Claude Code scaffold that 
 - [Repository scope](#repository-scope)
 - [Local setup](#local-setup)
 - [Development workflow](#development-workflow)
+- [Merge policy](#merge-policy)
 - [Quality standards](#quality-standards)
 - [Pull requests](#pull-requests)
 - [Getting help](#getting-help)
@@ -54,6 +55,12 @@ Thanks for your interest in CCSIF, a repository-local Claude Code scaffold that 
 - Branch from the default branch, `main`. [`.claude/settings.json`](./.claude/settings.json) lists `main` and `master` as protected branches (`tools.git.protectBranches`), so make your changes on a feature branch and open a pull request rather than pushing directly to `main`.
 - Keep changes small, reviewable, and scoped to a single issue, per the Engineering Rules in [the repository constitution](./CLAUDE.md).
 - Keep audit-only tasks read-only: report findings without editing production code.
+
+## Merge policy
+
+- Merge pull requests with squash commits only.
+- Keep automatic head-branch deletion enabled so merged issue branches do not linger.
+- Leave merge commits and rebase merges disabled in the repository settings.
 
 ## Quality standards
 
