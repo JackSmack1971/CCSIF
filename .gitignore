@@ -8,8 +8,14 @@ CLAUDE.local.md
 .claude/traces/*.jsonl
 .codex/traces/*.jsonl
 
-# Local Claude Code memory artifacts, if ever created inside the repo root
-.claude/memory/
+# Local Claude Code memory runtime state. Keep source files in .claude/memory/
+# tracked; ignore only generated state and heavyweight local indexes.
+.claude/memory/state/
+.claude/memory/.venv/
+.claude/memory/*.db
+.claude/memory/*.sqlite
+.claude/memory/*.sqlite3
+.claude/memory/*.jsonl
 .claude/projects/
 
 # Secrets

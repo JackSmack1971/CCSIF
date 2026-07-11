@@ -1,0 +1,82 @@
+#!/usr/bin/env python3
+"""Deterministic control-plane validation for CCSIF."""
+from __future__ import annotations
+
+import json
+import subprocess
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[2]
+REQUIRED_PATHS = [
+    "CLAUDE.md",
+    ".claude/settings.json",
+    ".claude/hooks/pre-tool-use.sh",
+    ".claude/hooks/lib/pre-tool-use-guard.js",
+    ".claude/hooks/stop.sh",
+    ".claude/commands/control-plane-check.md",
+]
+PROTECTED_PROBES = [
+    {"tool_name": "Write", "tool_input": {"file_path": "CLAUDE.md"}},
+    {"tool_name": "Write", "tool_input": {"file_path": ".claude/settings.json"}},
+    {"tool_name": "Write", "tool_input": {"file_path": ".claude/hooks/pre-tool-use.sh"}},
+    {"tool_name": "Write", "tool_input": {"file_path": ".7axes/ledger.jsonl"}},
+    {"tool_name": "Bash", "tool_input": {"command": "cat x >> .claude/settings.json"}},
+]
+
+
+def run(cmd: list[str], *, input_text: str | None = None) -> subprocess.CompletedProcess[str]:
+    return subprocess.run(cmd, cwd=ROOT, input=input_text, text=True, capture_output=True, check=False)
+
+
+def fail(message: str) -> None:
+    print(f"FAIL: {message}", file=sys.stderr)
+    raise SystemExit(1)
+
+
+def check_required_paths() -> None:
+    missing = [path for path in REQUIRED_PATHS if not (ROOT / path).exists()]
+    if missing:
+        fail(f"missing required control-plane paths: {', '.join(missing)}")
+
+
+def check_json() -> None:
+    try:
+        json.loads((ROOT / ".claude/settings.json").read_text(encoding="utf-8"))
+    except Exception as exc:  # noqa: BLE001 - report exact parse failure
+        fail(f".claude/settings.json is not valid JSON: {exc}")
+
+
+def check_git_visibility() -> None:
+    proc = run(["git", "check-ignore", *REQUIRED_PATHS])
+    if proc.stdout.strip():
+        fail(f"required control-plane paths are ignored by git: {proc.stdout.strip()}")
+
+
+def check_guard_probes() -> None:
+    guard = ROOT / ".claude/hooks/lib/pre-tool-use-guard.js"
+    for probe in PROTECTED_PROBES:
+        proc = run(["node", str(guard)], input_text=json.dumps(probe))
+        if proc.returncode != 2:
+            fail(f"guard did not block protected probe {probe!r}; rc={proc.returncode}; stderr={proc.stderr.strip()}")
+
+
+def check_shell_parse() -> None:
+    for script in [".claude/hooks/pre-tool-use.sh", ".claude/hooks/stop.sh"]:
+        proc = run(["bash", "-n", script])
+        if proc.returncode != 0:
+            fail(f"{script} failed bash -n: {proc.stderr.strip()}")
+
+
+def main() -> int:
+    check_required_paths()
+    check_json()
+    check_git_visibility()
+    check_shell_parse()
+    check_guard_probes()
+    print("control-plane-check: PASS")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

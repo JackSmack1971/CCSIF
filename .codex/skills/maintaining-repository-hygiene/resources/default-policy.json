@@ -1,0 +1,94 @@
+{
+  "schema_version": 1,
+  "issue_min_severity": "low",
+  "issue_labels": [
+    "repository-hygiene"
+  ],
+  "large_file_bytes": 10485760,
+  "very_large_file_bytes": 52428800,
+  "docs_stale_days": 180,
+  "branch_stale_days": 180,
+  "max_remote_issues_to_scan": 10000,
+  "max_text_file_bytes": 1048576,
+  "require_action_sha_pinning": true,
+  "require_workflow_permissions": true,
+  "require_job_timeouts": true,
+  "require_security_policy": true,
+  "require_contributing_guide": true,
+  "require_pull_request_template": true,
+  "require_issue_templates": true,
+  "require_codeowners_for_multi_contributor_repos": true,
+  "require_dependabot_for_detected_ecosystems": true,
+  "require_branch_protection": true,
+  "recommend_delete_branch_on_merge": true,
+  "public_repo_require_license": true,
+  "label_pruning": {
+    "enabled": true,
+    "require_complete_history_scan": true,
+    "protected_names": [
+      "bug",
+      "documentation",
+      "duplicate",
+      "enhancement",
+      "good first issue",
+      "help wanted",
+      "invalid",
+      "question",
+      "wontfix",
+      "dependencies",
+      "security"
+    ],
+    "protected_prefixes": [
+      "release/",
+      "priority/",
+      "status/",
+      "type/"
+    ],
+    "ignore_referenced_labels": true
+  },
+  "generated_or_vendor_directories": [
+    "node_modules/",
+    "vendor/",
+    ".venv/",
+    "venv/",
+    "dist/",
+    "build/",
+    "target/",
+    "coverage/",
+    ".pytest_cache/",
+    ".mypy_cache/",
+    ".ruff_cache/",
+    ".next/",
+    ".nuxt/",
+    ".turbo/",
+    ".gradle/",
+    "bin/",
+    "obj/"
+  ],
+  "sensitive_tracked_patterns": [
+    ".env",
+    ".env.*",
+    "*.pem",
+    "*.key",
+    "id_rsa",
+    "id_ed25519",
+    "credentials.json",
+    "service-account*.json"
+  ],
+  "archive_extensions": [
+    ".zip",
+    ".tar",
+    ".tgz",
+    ".gz",
+    ".7z",
+    ".rar"
+  ],
+  "documentation_globs": [
+    "README*",
+    "CHANGELOG*",
+    "CONTRIBUTING*",
+    "SECURITY*",
+    "docs/**/*.md",
+    "*.md"
+  ]
+}
