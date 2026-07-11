@@ -68,7 +68,13 @@ const PROTECTED_AREAS = [
   },
 ];
 
-const MUTATING_BASH_TOKEN = /(^|[;&|]\s*)(rm|mv|cp|sed\s+-i|tee|truncate|dd)\b|>>?(?!=)/;
+const { isDeepStrictEqual } = require('util');
+const SETTINGS_PATH_RE = /(^|[\\/])\.claude[\\/]settings(\.local)?\.json$/i;
+const SENSITIVE_SETTINGS_KEYS = new Set(['permissions', 'hooks', 'tools', 'env']);
+// `(?!&)` excludes fd-duplication redirections (`2>&1`, `1>&2`, `>&2`), which
+// duplicate a stream and never write to a file, from the "mutating" trigger.
+// A real file-write redirect (`>file`, `>>file`, `&>file`) is unaffected.
+const MUTATING_BASH_TOKEN = /(^|[;&|]\s*)(rm|mv|cp|sed\s+-i|tee|truncate|dd)\b|>>?(?!=)(?!&)/;
 
 function matchProtectedArea(targetPath) {
   if (typeof targetPath !== 'string' || !targetPath) return null;
@@ -77,6 +83,11 @@ function matchProtectedArea(targetPath) {
     if (area.re.test(normalized)) return area.label;
   }
   return null;
+}
+
+function isSettingsPath(targetPath) {
+  if (typeof targetPath !== 'string' || !targetPath) return false;
+  return SETTINGS_PATH_RE.test(targetPath.replace(/\\/g, '/'));
 }
 
 function readStdinJson() {
@@ -92,7 +103,86 @@ function readStdinJson() {
 
 function checkFileTool(toolInput) {
   const candidate = toolInput.file_path || toolInput.path || toolInput.notebook_path;
+  if (isSettingsPath(candidate)) return null;
   return matchProtectedArea(candidate);
+}
+
+function countSubstring(haystack, needle) {
+  if (typeof haystack !== 'string' || typeof needle !== 'string' || !needle) return 0;
+  let count = 0;
+  let index = 0;
+  while (index !== -1) {
+    index = haystack.indexOf(needle, index);
+    if (index !== -1) {
+      count += 1;
+      index += needle.length;
+    }
+  }
+  return count;
+}
+
+function parseJsonObject(text) {
+  if (typeof text !== 'string') return null;
+  const trimmed = text.trim();
+  if (!trimmed) return null;
+  try {
+    const parsed = JSON.parse(trimmed);
+    if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) return parsed;
+  } catch (_) {
+    return null;
+  }
+  return null;
+}
+
+function classifySettingsEdit(toolInput) {
+  const fs = require('fs');
+  const filePath = toolInput.file_path || toolInput.path;
+  const oldString = toolInput.old_string;
+  const newString = toolInput.new_string;
+
+  if (typeof filePath !== 'string' || typeof oldString !== 'string' || typeof newString !== 'string') {
+    return 'control-plane settings';
+  }
+
+  if (oldString === newString) return null;
+
+  let current;
+  try {
+    current = fs.readFileSync(filePath, 'utf8');
+  } catch (_) {
+    return 'control-plane settings';
+  }
+
+  if (countSubstring(current, oldString) !== 1) {
+    return 'control-plane settings';
+  }
+
+  const updated = current.replace(oldString, newString);
+  const before = parseJsonObject(current);
+  const after = parseJsonObject(updated);
+  if (!before || !after) {
+    return 'control-plane settings';
+  }
+
+  const touchedKeys = new Set([...Object.keys(before), ...Object.keys(after)]);
+  for (const key of touchedKeys) {
+    if (SENSITIVE_SETTINGS_KEYS.has(key) && !isDeepStrictEqual(before[key], after[key])) {
+      return 'control-plane settings';
+    }
+  }
+
+  return null;
+}
+
+// Key-level narrowing is safe here because the project settings file is still
+// checked against the native permissions boundary; additive top-level keys are
+// just control-plane metadata, while sensitive keys remain fail-closed.
+function checkSettingsTool(toolName, toolInput) {
+  const candidate = toolInput.file_path || toolInput.path || toolInput.notebook_path;
+  if (!isSettingsPath(candidate)) return null;
+  if (toolName === 'Write' || toolName === 'NotebookEdit') return 'control-plane settings';
+  if (toolName !== 'Edit') return 'control-plane settings';
+  return classifySettingsEdit(toolInput);
 }
 
 function checkBashTool(toolInput) {
@@ -124,7 +214,8 @@ function main() {
 
   let hit = null;
   if (toolName === 'Write' || toolName === 'Edit' || toolName === 'NotebookEdit') {
-    hit = checkFileTool(toolInput);
+    hit = checkSettingsTool(toolName, toolInput);
+    if (!hit) hit = checkFileTool(toolInput);
   } else if (toolName === 'Bash') {
     hit = checkBashTool(toolInput);
   }

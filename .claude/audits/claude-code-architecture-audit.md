@@ -1,7 +1,7 @@
 # Claude Code Architecture Audit Report
 
 Repository: `C:\workspaces\CCSIF`
-Generated: `2026-07-10T07:22:06`
+Generated: `2026-07-10T07:34:09`
 Status: **PARTIAL**
 
 ## Summary
