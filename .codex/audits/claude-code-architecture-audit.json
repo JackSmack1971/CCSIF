@@ -1,0 +1,55 @@
+{
+  "findings": [
+    {
+      "axis": "context budget",
+      "evidence": "73 lines",
+      "id": "CCA-001",
+      "line": null,
+      "path": ".claude/rules/constitutional-agent-engineering-rules.md",
+      "recommendation": "Trim or split this rule file to keep path-injected context lean.",
+      "severity": "medium",
+      "stop_condition": "Rule file is at or below 50 lines or documented as intentionally global.",
+      "title": "Rule file exceeds 50-line target"
+    },
+    {
+      "axis": "context budget",
+      "evidence": "55 lines",
+      "id": "CCA-002",
+      "line": null,
+      "path": ".claude/rules/surgical-density.md",
+      "recommendation": "Trim or split this rule file to keep path-injected context lean.",
+      "severity": "medium",
+      "stop_condition": "Rule file is at or below 50 lines or documented as intentionally global.",
+      "title": "Rule file exceeds 50-line target"
+    },
+    {
+      "axis": "security boundaries",
+      "evidence": "disableSkillShellExecution is not true.",
+      "id": "CCA-003",
+      "line": null,
+      "path": ".claude/settings.json",
+      "recommendation": "Set disableSkillShellExecution true in managed or project settings when inline shell in skills is outside policy.",
+      "severity": "low",
+      "stop_condition": "Policy is explicit in settings or documented as intentionally permissive.",
+      "title": "Skill shell execution is not explicitly disabled"
+    }
+  ],
+  "generated_at": "2026-07-10T07:34:09",
+  "repo": "C:\\workspaces\\CCSIF",
+  "schema": "claude-code-architecture-audit-v1",
+  "summary": {
+    "axes": {
+      "context budget": 2,
+      "security boundaries": 1
+    },
+    "counts": {
+      "critical": 0,
+      "high": 0,
+      "info": 0,
+      "low": 1,
+      "medium": 2
+    },
+    "status": "partial",
+    "total": 3
+  }
+}
