@@ -253,6 +253,7 @@ See [`CONTRIBUTING.md`](./CONTRIBUTING.md) for how to find or propose work, set 
 | Code of Conduct | [TBD] | No `CODE_OF_CONDUCT.md` file was found. |
 | Security | Policy published | [`SECURITY.md`](./SECURITY.md), [`CLAUDE.md`](./CLAUDE.md), [`.claude/rules/security.md`](./.claude/rules/security.md) |
 | License | [TBD] | No `LICENSE` file or manifest license field was found. |
+| Repository topics | `claude-code`, `github`, `javascript`, `bash` | GitHub repository metadata |
 | Maintainers | [TBD] | No maintainer file was found. |
 | Support | [TBD] | No support policy file was found. |
 
