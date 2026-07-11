@@ -2,16 +2,19 @@
 name: testing
 description: Testing expectations for source changes.
 paths:
-  - "src/**"
-  - "test/**"
-  - "tests/**"
-  - "**/*.spec.*"
-  - "**/*.test.*"
+  - ".claude/**"
+  - ".codex/**"
+  - "CLAUDE.md"
+  - "CLAUDE.local.md"
+  - "AGENTS.md"
+  - "CONTRIBUTING.md"
+  - "SECURITY.md"
+  - ".github/**"
 ---
 
 # Testing Rules
 
-- Start with the smallest test that proves the behavior.
-- Add regression tests for confirmed bugs.
-- Keep tests deterministic.
-- Exercise the real source of truth directly when the test's purpose is state verification.
+- Start with the smallest check that proves the changed control-plane behavior.
+- Add regression coverage for confirmed failures in hooks, commands, scripts, settings, or rule files.
+- Keep verification deterministic and rooted in the real source of truth.
+- Prefer the narrowest command that can fail, then expand only if the failure is ambiguous.

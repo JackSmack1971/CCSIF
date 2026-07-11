@@ -2,6 +2,10 @@
 paths:
   - ".mcp.json"
   - ".claude/**"
+  - ".codex/**"
+  - "CLAUDE.md"
+  - "CLAUDE.local.md"
+  - "AGENTS.md"
 ---
 # MCP Resilience Rules
 
