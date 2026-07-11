@@ -106,6 +106,23 @@ jobs:
         self.assertIn("DOCS-BROKEN-LOCAL-REFERENCES", rules)
         self.assertIn("DOCS-COMMAND-NOT-IN-MANIFEST", rules)
 
+    def test_ampersand_heading_anchor_matches_github_double_hyphen(self) -> None:
+        # GitHub renders "## Testing & Verification" with anchor id
+        # "testing--verification" (double hyphen): the stripped "&" leaves
+        # both surrounding spaces in place, and GitHub converts each space
+        # to its own hyphen rather than collapsing the run. A link using
+        # that real anchor must not be reported as broken.
+        self.fixture.write(
+            "README.md",
+            "# Fixture\n\n"
+            "- [Testing & Verification](#testing--verification)\n\n"
+            "## Testing & Verification\n\ncontent\n",
+        )
+        self.fixture.commit()
+        report = self.audit()
+        rules = {item["rule_id"] for item in report["findings"]}
+        self.assertNotIn("DOCS-BROKEN-LOCAL-REFERENCES", rules)
+
     def test_issue_plan_is_atomic_and_valid(self) -> None:
         self.fixture.write("README.md", "# Fixture\n")
         self.fixture.write(".github/workflows/release.yml", "name: Release\non: push\njobs:\n  publish:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n")

@@ -838,7 +838,15 @@ def audit_remote(repo: Path, remote: dict[str, Any] | None, policy: dict[str, An
 
 def _github_anchor(text: str) -> str:
     value = re.sub(r"[^\w\- ]", "", text.casefold(), flags=re.UNICODE)
-    return re.sub(r"\s+", "-", value.strip())
+    # GitHub's real heading-anchor slugger converts every remaining space to
+    # a hyphen individually rather than collapsing consecutive spaces. When
+    # a stripped character (e.g. "&") leaves adjacent spaces behind, GitHub
+    # renders a double hyphen (e.g. "Testing & Verification" ->
+    # "testing--verification"). Collapsing whitespace runs with `\s+` here
+    # previously produced false DOCS-BROKEN-LOCAL-REFERENCES findings for
+    # real, resolvable anchors such as README.md's "Testing & Verification"
+    # and "Reproducibility & Maintenance" links.
+    return re.sub(r" ", "-", value.strip())
 
 
 def _anchors(markdown: str) -> set[str]:
