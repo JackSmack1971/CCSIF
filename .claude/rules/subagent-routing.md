@@ -3,6 +3,8 @@ paths:
   - ".claude/agents/**"
   - ".claude/commands/**"
   - ".claude/skills/**"
+  - ".claude/workflows/**"
+  - ".claude/hooks/**"
   - "CLAUDE.md"
 ---
 # Subagent Routing Rules
