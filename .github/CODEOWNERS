@@ -1,0 +1,25 @@
+# CODEOWNERS
+# Generated from repository evidence. Edit ownership sources, then regenerate.
+# Rules are ordered broad to specific because the last matching rule wins.
+
+# Repository fallback
+# Personal repository with a single verified collaborator holding write access; a repository-wide fallback prevents unowned paths and adds no review noise beyond the reviewer already covering the codebase.
+* @JackSmack1971
+
+# Ownership routing self-protection
+# Protect the ownership routing file from silent override.
+/.github/CODEOWNERS @JackSmack1971
+
+# Repository governance and control plane
+# Root agent governance and constitution.
+/CLAUDE.md @JackSmack1971
+# Agent skills, hooks, workflows, and rules control plane.
+/.claude/ @JackSmack1971
+# Secondary agent hook and workflow control plane.
+/.codex/ @JackSmack1971
+
+# Security-sensitive paths
+# Repository security rules.
+/.claude/rules/security.md @JackSmack1971
+# Hygiene skill security guidance.
+/.claude/skills/maintaining-repository-hygiene/references/portability-security.md @JackSmack1971

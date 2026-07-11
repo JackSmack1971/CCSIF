@@ -251,7 +251,7 @@ See [`CONTRIBUTING.md`](./CONTRIBUTING.md) for how to find or propose work, set 
 | Area | Status | Source |
 |---|---|---|
 | Code of Conduct | [TBD] | No `CODE_OF_CONDUCT.md` file was found. |
-| Security | Repo-local rules exist | [`CLAUDE.md`](./CLAUDE.md), [`.claude/rules/security.md`](./.claude/rules/security.md) |
+| Security | Policy published | [`SECURITY.md`](./SECURITY.md), [`CLAUDE.md`](./CLAUDE.md), [`.claude/rules/security.md`](./.claude/rules/security.md) |
 | License | [TBD] | No `LICENSE` file or manifest license field was found. |
 | Maintainers | [TBD] | No maintainer file was found. |
 | Support | [TBD] | No support policy file was found. |

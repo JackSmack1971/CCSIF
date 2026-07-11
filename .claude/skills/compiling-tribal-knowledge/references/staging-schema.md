@@ -4,7 +4,6 @@
 
 - [Required preamble](#required-preamble)
 - [Required repository-wide sections](#required-repository-wide-sections)
-- [Cross-Cutting Contracts](#cross-cutting-contracts)
 - [Required directory section shape](#required-directory-section-shape)
 - [Claim quality rules](#claim-quality-rules)
 - [Exclusions](#exclusions)
