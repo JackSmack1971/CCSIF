@@ -2,6 +2,8 @@
 name: grill-with-docs
 description: Use when running a documentation-grounded interview to stress-test a plan or design, capturing ADRs and a glossary as citations accumulate. Trigger on queries that say grill this against our docs, stress-test my design with citations, run a grill-with-docs session, cross-examine this proposal using existing documentation. NOT for a plan interrogation without doc citations, use grilling instead. Distinct keywords glossary, citations, interview, decisions, architecture.
 disable-model-invocation: true
+when_to_use: Use for a doc-grounded interview that stress-tests a plan or design and records settled decisions. Do not use for an undocumented plan interrogation; use grilling instead.
+argument-hint: "[plan or design under review]"
 allowed-tools: Read, Write, Edit, Grep, Glob, Skill
 ---
 

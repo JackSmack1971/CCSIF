@@ -1,12 +1,29 @@
 ---
 name: teach
 description: Use when running a multi-session teaching workspace that builds mission-grounded lessons, glossaries, and learning records for a specific topic. Trigger on queries that say teach me about a topic, continue my lessons, resume my learning workspace, quiz me on what I have learned, build a lesson plan for a topic. NOT for a single one-off question with no persistent workspace use a direct chat response instead. Distinct keywords teaching, lessons, mission, glossary, workspace, records.
+when_to_use: Use for a persistent teaching workspace with lessons, glossaries, and learning records. Do not use for a one-off question without a workspace.
 disable-model-invocation: true
 argument-hint: "What would you like to learn about?"
 allowed-tools: Read, Write, Edit, Glob, Bash, WebSearch, WebFetch
 ---
 
 The user has asked you to teach them something. This is a stateful request - they intend to learn the topic over multiple sessions.
+
+## Contents
+
+- [Teaching Workspace](#teaching-workspace)
+- [Philosophy](#philosophy)
+- [Lessons](#lessons)
+- [Assets](#assets)
+- [The Mission](#the-mission)
+- [Zone Of Proximal Development](#zone-of-proximal-development)
+- [Knowledge](#knowledge)
+- [Skills](#skills)
+- [Acquiring Wisdom](#acquiring-wisdom)
+- [Reference Documents](#reference-documents)
+- [`NOTES.md`](#notesmd)
+- [Session Checklist](#session-checklist)
+- [Completion Gate](#completion-gate)
 
 ## Teaching Workspace
 

@@ -1,6 +1,8 @@
 ---
 name: tdd
 description: Use when building a feature or fixing a bug test-first through the red-green-refactor loop, writing tests at seams before implementation, or enforcing vertical-slice TDD discipline. Trigger on queries that say red-green-refactor, write the test first, TDD this feature, test-first workflow, seam-based testing. NOT for choosing which tests to run or defining a verification strategy for changed files use test-strategy instead. Distinct keywords seams, vertical-slice, tracer-bullet, anti-patterns, refactor-loop.
+when_to_use: Use for test-first feature work, bug fixes, or vertical-slice TDD at agreed seams. Do not use for choosing test strategy; use test-strategy instead.
+argument-hint: "[feature or bug] [seam]"
 allowed-tools: Read, Grep, Glob, Edit, Write, Bash
 ---
 

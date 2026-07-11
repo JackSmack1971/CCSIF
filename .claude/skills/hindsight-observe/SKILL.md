@@ -1,6 +1,8 @@
 ---
 name: hindsight-observe
 description: Use when refreshing neutral observation summaries that consolidate existing World and Experience memory facts per entity before downstream reflection runs. Trigger on refresh entity observation summaries, rebuild the observation snapshot, consolidate world and experience facts, recompute neutral memory summaries. NOT for recall, opinion reinforcement, or trace ingestion. Requires neutral wording only, no persona-profile input, and a written observation record for each entity. Distinct keywords entity summaries, World facts, Experience facts, observation snapshot, persona neutrality.
+when_to_use: Use when you need to rebuild neutral entity observation summaries from existing World and Experience facts. Do not use for recall, opinion reinforcement, or trace ingestion.
+argument-hint: "[entity scope]"
 tools: [shell]
 allowed-tools: Bash
 model: sonnet

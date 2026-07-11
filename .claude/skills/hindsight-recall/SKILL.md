@@ -1,6 +1,8 @@
 ---
 name: hindsight-recall
 description: Use when retrieving relevant HINDSIGHT memories to ground a response before answering a non-trivial user prompt under an explicit recall budget. Trigger on recall relevant memories for this prompt, pull HINDSIGHT context before answering, search memory for related facts, fetch prior memories on this topic, look up what we already know. NOT for neutral observation summaries, opinion reinforcement, or trace ingestion. Requires the user's actual query, a max query or memory budget, and a relevance filter before any memory is used. Distinct keywords HINDSIGHT, memories, retrieval, budget, grounding.
+when_to_use: Use when you need to pull relevant HINDSIGHT memories before answering a non-trivial prompt. Do not use for neutral observation summaries, opinion reinforcement, or trace ingestion.
+argument-hint: "[query] [budget]"
 allowed-tools: Bash
 tools: [shell]
 model: sonnet
