@@ -51,6 +51,12 @@ npm run typecheck
 
 Read one matching existing file in a path-scoped area before creating a new file there, so the relevant `.claude/rules/*.md` guidance loads before the write.
 
+## Intent Layer
+
+- Start with [`.claude/AGENTS.md`](./.claude/AGENTS.md) for the repo-local control-plane map.
+- Follow the nearest child node before editing a subtree: [`.claude/docs/AGENTS.md`](./.claude/docs/AGENTS.md) for reference docs and [`.claude/skills/AGENTS.md`](./.claude/skills/AGENTS.md) for skills.
+- Keep the root context singular: use `CLAUDE.md` at the repo root and `AGENTS.md` only inside subdirectories.
+
 ## Engineering Rules
 
 - Keep changes small and reviewable.
