@@ -14,7 +14,7 @@ Repository-local control-plane scaffolding for CCSIF. This subtree defines how a
 
 ## Contracts & Invariants
 - `CLAUDE.md` remains the only root-level context file; keep any `AGENTS.md` files below the repository root.
-- Read the nearest node before changing a child subtree. For example, read `rules/AGENTS.md` before editing rule files and `skills/AGENTS.md` before adding or changing a skill.
+- Read the nearest node before changing a child subtree. For example, read `rules/AGENTS.md` before editing rule files and `skills/` before adding or changing a skill.
 - Treat `.claude/rules/`, `.claude/hooks/`, and `.claude/memory/` as live control surfaces, not passive documentation.
 - Keep edits narrow and preserve behavior within the live `.claude/` control plane.
 
@@ -29,4 +29,4 @@ Repository-local control-plane scaffolding for CCSIF. This subtree defines how a
 ## Related Context
 - Root constitution and Tier rules: `../CLAUDE.md`
 - Reference docs node: `docs/AGENTS.md`
-- Skills node: `skills/AGENTS.md`
+- Skills node: `skills/`
