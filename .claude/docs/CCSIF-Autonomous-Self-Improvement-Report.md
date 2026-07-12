@@ -1,7 +1,7 @@
 # CCSIF → Closed-Loop Autonomous Self-Improvement
 ## Architecture Assessment & Actionable Improvement Plan
 
-**Repo audited:** `JackSmack1971/CCSIF@main` (full clone, all 21 skills, 9 rules, 3 agents, 4 hooks, 2 workflow stubs, settings, both audit reports)
+**Repo audited:** `JackSmack1971/CCSIF@main` (full clone, all 21 skills, 9 rules, 3 agents, 4 hooks, 1 live workflow plus 1 later-removed workflow scaffold, settings, both audit reports)
 **Date:** 2026-07-10
 **Provenance vocabulary:** `[OBSERVED: path]` = read directly from the repo. `[INFERRED]` = deduced from structure. `[EXTERNAL]` = grounded in the current Claude Code hooks reference (verified July 2026 — 30 lifecycle events; `command`/`http`/`mcp_tool`/`prompt`/`agent` handler types; `async: true`; `hookSpecificOutput.additionalContext`; `modifyInput`; frontmatter-scoped hooks in skills/agents; `session_crons`).
 
@@ -27,7 +27,7 @@ Autonomy ladder used below: **L0** manual · **L1** instrumented (observes itsel
 | `/self-improve` skill | L2 | Proposal-only; `disable-model-invocation: true`; "never edits production files" `[OBSERVED: SKILL.md]` |
 | 7axes audit subsystem | **L3** | `evolve.py` applies bounded patches (directives ≤12/axis, weights clamped [0.5,2.0]); `feedback.py` learns from closed issues; ledger dedup `[OBSERVED]` |
 | Hooks (4 of ~30 events) | L1 | SessionStart/PreToolUse/PostToolUse/Stop only; PreToolUse guard **fails open** when node absent `[OBSERVED: pre-tool-use.sh]` |
-| Workflows (`issue-to-pr.js`, `upstream-audit.js`) | L0 | Return static scaffold objects; no execution logic `[OBSERVED]` |
+| Workflows (`issue-to-pr.js`; `upstream-audit.js` later removed) | L0 | `issue-to-pr.js` remains the live orchestration; the dead `upstream-audit.js` scaffold was removed in a later cleanup `[OBSERVED]` |
 | Agents (implementation, pr-reviewer, upstream-auditor) | L0 | Prose contracts only; no hook-enforced output contracts `[OBSERVED]` |
 | Skill evals (21 × `evals.json`) | L0 | No runner, no CI — evals are inert documents `[OBSERVED: no .github/, no run script found]` |
 | KPI system (`kpi-defaults.md`) | L0 | Definitions and targets exist; nothing measures them; `/self-improve` *estimates* deltas `[OBSERVED]` |
@@ -36,7 +36,7 @@ Autonomy ladder used below: **L0** manual · **L1** instrumented (observes itsel
 ### Defects found during this audit (fix regardless of autonomy goals)
 
 1. **Dead rule scope.** `.claude/rules/failure-escalation.md` is path-scoped to `.claude/skills/healing-test-failures/SKILL.md` — **that skill does not exist**, so the entire failure-escalation protocol (the two-retry stop condition, the escalation payload contract) never loads. `[OBSERVED]` This is exactly the kind of rule an autonomous loop depends on.
-2. **Phantom command.** `control-plane.md` and `mcp-resilience.md` both mandate running `/control-plane-check` after control-plane edits — no such command exists in `.claude/commands/`. `[OBSERVED]` An autonomous applier following the rules would hit a non-existent gate.
+2. **Phantom command.** `control-plane.md` and `mcp-resilience.md` both mandate running `/control-plane-check` after control-plane edits. That was a real gap at audit time, but the command now exists in `.claude/commands/` and the gap is resolved. `[OBSERVED -> RESOLVED]`
 3. **Fail-open protected-area guard.** `pre-tool-use.sh` exits 0 with "Protected Area guard skipped (fails open)" when node is unavailable. Reasonable for tracing; wrong for the security gate. `[OBSERVED]`
 4. **Guard doesn't protect the guard.** `pre-tool-use-guard.js` protects secrets/auth/payments/migrations/CI-CD — but **not** `CLAUDE.md`'s constitution block, `.claude/settings.json`, the hook scripts themselves, `.7axes/ledger.jsonl`, or `calibration.json`. The 7axes invariant "Never edit ledger.jsonl or calibration.json by hand — scripts only" is prose, not enforcement. `[OBSERVED]`
 5. **Telemetry granularity mismatch.** `input-discovery.md` §4 expects one trace entry per *task* with `outcome` and `error_class`; the trace writer fires per *tool call* and infers task text from the transcript tail. `activation_miss` — the error class the worked example is built on — is structurally unmeasurable: no signal records that a skill *should* have fired but didn't. `[OBSERVED + INFERRED]`
@@ -153,7 +153,7 @@ Priorities: **P0** = prerequisite for any autonomy (safety/correctness) · **P1*
 | # | Improvement | Mechanism | Effort |
 |---|---|---|---|
 | D1 | **Eval runner.** 21 skills ship `evals/evals.json` and `VERIFICATION.md` with zero execution path. Build `.claude/scripts/run_evals.py`: for each eval case, execute via headless `claude -p` (or Agent SDK) in a scratch worktree, assert expected outputs/behaviors, emit junit-style results. This is the validation gate C3 depends on — **without it, "Tier 2 may auto-apply after passing automated validation" can never be honored.** Run in CI on every PR touching `.claude/`. | Runner + CI wiring | L |
-| D2 | **Implement or delete the workflow stubs.** `issue-to-pr.js` / `upstream-audit.js` return static objects `[OBSERVED]`. Either implement them as real orchestrations against the workflow schema (tighten `workflow.schema.json` — `status` should be an enum, `steps` should be objects with `{name, status, evidence}`), or fold them into the commands/agents that actually do the work and remove the dead layer. Dead scaffolds are context cost and audit noise. | Decision + implementation | M |
+| D2 | **Implement or delete the workflow stubs.** `issue-to-pr.js` / `upstream-audit.js` returned static objects at audit time `[OBSERVED]`. The dead `upstream-audit.js` scaffold and `workflow.schema.json` were later removed, leaving `issue-to-pr.js` as the live workflow surface. The broader design question for the remaining workflow layer is still whether `issue-to-pr.js` should stay as-is or be folded into command/agent entrypoints. | Decision + implementation | M |
 | D3 | **Skill-auditor → applier integration.** `apply_skill_fixes.py` already exists `[OBSERVED]`; route its fix plan through `tier_classify.py` so description-lint fixes (Tier 2) auto-apply through the same gated pipeline instead of a separate side door. One mutation pathway, one audit trail. | Glue code | S |
 | D4 | **Fill `CLAUDE.md` Source-of-Truth Commands.** `stop.sh` itself comments that the section is an unfilled template and only git hygiene is verified `[OBSERVED]`. Once D1 exists: `python3 .claude/scripts/run_evals.py --changed` becomes the repo's real test command, and `stop.sh` wires it in — closing the "verify before claiming success" gap their own improvement plan (M-2) flags. | Doc + stop.sh edit | S |
 
