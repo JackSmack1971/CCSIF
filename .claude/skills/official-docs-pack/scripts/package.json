@@ -1,0 +1,17 @@
+{
+  "name": "claude-skill-official-docs-pack",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Bun crawler and docs-folder writer for the official-docs-pack Claude skill.",
+  "scripts": {
+    "docpack": "bun docpack.ts",
+    "fetch": "bun fetch.ts",
+    "validate": "bash ../scripts/validate-skill.sh"
+  },
+  "dependencies": {
+    "linkedom": "^0.18.12",
+    "turndown": "^7.2.0",
+    "turndown-plugin-gfm": "^1.0.2"
+  }
+}
