@@ -34,4 +34,4 @@ Repository-local control-plane scaffolding for CCSIF. This subtree defines how a
 ## Related Context
 - Root constitution and Tier rules: `../CLAUDE.md`
 - Reference docs node: `docs/AGENTS.md`
-- Skills node: `skills/`
+- Skills subtree: `skills/`
