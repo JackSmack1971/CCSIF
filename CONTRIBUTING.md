@@ -60,7 +60,7 @@ Thanks for your interest in CCSIF, a repository-local Claude Code scaffold that 
 
 ## Development workflow
 
-- Branch from the default branch, `main`. [`.claude/settings.json`](./.claude/settings.json) lists `main` and `master` as protected branches (`tools.git.protectBranches`), so make your changes on a feature branch and open a pull request rather than pushing directly to `main`.
+- Branch from the default branch, `main`, and make your changes on a feature branch before opening a pull request rather than pushing directly to `main`.
 - Keep changes small, reviewable, and scoped to a single issue, per the Engineering Rules in [the repository constitution](./CLAUDE.md).
 - Keep audit-only tasks read-only: report findings without editing production code.
 
