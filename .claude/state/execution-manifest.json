@@ -71,7 +71,8 @@
     "phase_4": "complete",
     "phase_5a": "complete",
     "phase_5b": "complete",
-    "phase_5": "partial",
+    "phase_5c": "complete",
+    "phase_5": "complete",
     "phase_6": "partial",
     "phase_7": "not_started"
   },
@@ -431,5 +432,55 @@
       "Phases 5C, 6, and 7 remain incomplete and are not implicitly validated by these Phase 5B changes."
     ]
   },
-  "next_goal": "Phase 5B is complete. Do not begin Phase 5C or Phase 6 until explicitly directed."
+  "phase_5c_completion": {
+    "status": "complete",
+    "report": ".claude/state/roadmap/phase-5c-report.md",
+    "checkpoint": ".claude/state/roadmap/phase-5c-checkpoint.json",
+    "implemented_files": [
+      ".claude/scripts/bootstrap_control_plane.py",
+      ".claude/commands/bootstrap-control-plane.md",
+      ".claude/scripts/phase5c_portability_proof.py",
+      ".claude/scripts/phase5c_context_pressure.py",
+      "tests/test_bootstrap_control_plane.py",
+      "tests/test_phase5c_portability.py",
+      "tests/test_phase5c_context_pressure.py",
+      ".claude/state/roadmap/phase-5c-portability-evidence.json",
+      ".claude/state/roadmap/phase-5c-context-pressure-evidence.json"
+    ],
+    "design_decisions": [
+      "Bootstrap generates a new, stack-agnostic minimal payload instead of copying this repo's own CCSIF-specific Phase 0-5B scripts verbatim into an unrelated target repo.",
+      "scaffold_tree() is strictly additive-only; rollback-safety follows directly from never overwriting or deleting, so an interrupted run is simply resumed by re-running.",
+      "merge_claude_md() refuses to touch CLAUDE.md at all once any Source-of-Truth Commands section already exists, rather than risking a partial patch that could corrupt a hand-authored block.",
+      "detect_stack() never fabricates a shell test/lint command for a docs-only repo; CLAUDE.md's generated facts block gets a 'rubric' placeholder instead.",
+      "Portability proof runs every post-bootstrap step as an independent fresh subprocess with HOME/USERPROFILE pointed at a nonexistent directory, proving fresh-clone recovery and zero ~/.claude/* dependency empirically.",
+      "Context-pressure measurement is an explicitly documented, reproducible byte-based proxy (always-loaded budget + dispatcher-load-vs-naive-inline ratio), not live token metering, per the roadmap's own allowance."
+    ],
+    "verification_commands": [
+      { "command": "python -m py_compile .claude/scripts/bootstrap_control_plane.py .claude/scripts/phase5c_portability_proof.py .claude/scripts/phase5c_context_pressure.py .claude/scripts/control_plane_check.py tests/test_bootstrap_control_plane.py tests/test_phase5c_portability.py tests/test_phase5c_context_pressure.py", "exit_code": 0 },
+      { "command": "python -m unittest discover -s tests -v", "exit_code": 0, "notes": "127 tests total (106 prior + 21 new), no regression" },
+      { "command": "python3 .claude/scripts/control_plane_check.py", "exit_code": 0 },
+      { "command": "python3 .claude/scripts/rules_fidelity_check.py", "exit_code": 0 },
+      { "command": "python3 .claude/scripts/taxonomy_check.py", "exit_code": 0 },
+      { "command": "python3 .claude/scripts/phase5c_portability_proof.py", "exit_code": 0, "notes": "both_passed: true for both fixture workloads" },
+      { "command": "python3 .claude/scripts/phase5c_context_pressure.py", "exit_code": 0, "notes": "dispatcher load 15.9% of naive-inline baseline; within_target: true" },
+      { "command": "python3 -c \"import json; json.load(open('.claude/settings.json'))\"", "exit_code": 0 }
+    ],
+    "test_counts": {
+      "test_bootstrap_control_plane.py": 18,
+      "test_phase5c_portability.py": 1,
+      "test_phase5c_context_pressure.py": 2,
+      "total_new": 21,
+      "total_repo": 127
+    },
+    "incidents_caught_during_implementation": [
+      "taxonomy_check's global-path-dependency scanner flagged ~/.claude/* mentions inside the new scripts' own no-dependency documentation; fixed by rewording each to include an explicit negation word within the checker's negation window."
+    ],
+    "remaining_risks": [
+      "Context-pressure figures are a documented byte-based proxy, not live Agent-SDK token metering; none is available in this environment.",
+      "The portability proof uses fresh temp-directory copies to simulate a fresh clone; no real git clone of a pushed remote was performed.",
+      "Bootstrap's generated framework is a deliberately minimal payload; it does not transplant this repo's own accumulated Phase 0-5B tooling, which remains Phase 7's concern.",
+      "Phases 6 and 7 remain unimplemented and are not implicitly validated by these Phase 5C changes."
+    ]
+  },
+  "next_goal": "Phase 5C is complete. Do not begin Phase 6 or Phase 7 until explicitly directed."
 }

@@ -1,0 +1,27 @@
+{
+  "always_loaded_instruction_budget": {
+    "budget_lines": 400,
+    "measured_lines": 140,
+    "parts": [
+      "CLAUDE.md=74",
+      "failure-escalation.md=27",
+      "hindsight-memory.md=12",
+      "persona-profile.md=11",
+      "surgical-density.md=16"
+    ],
+    "pct_of_budget": 35.0
+  },
+  "kind": "phase5c-context-pressure-proxy",
+  "method": "documented reproducible proxy (no live token metering available in this environment)",
+  "multi_plan_dispatcher_load_proxy": {
+    "dispatcher_load_as_pct_of_naive_inline": 15.9,
+    "dispatcher_status_call_chars": 1399,
+    "dispatcher_status_call_tokens_est": 350,
+    "naive_inline_all_plans_chars": 8780,
+    "naive_inline_all_plans_tokens_est": 2195,
+    "note": "Building happens in a fresh subagent context per plan (builder.md: isolation: worktree); the main thread only ever holds the compact /status summary shown here, never each plan's full task/assumption detail.",
+    "plan_count": 10,
+    "roadmap_target_pct": 50.0,
+    "within_target": true
+  }
+}

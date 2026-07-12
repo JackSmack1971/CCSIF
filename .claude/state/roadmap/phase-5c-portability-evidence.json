@@ -1,0 +1,411 @@
+{
+  "both_passed": true,
+  "kind": "phase5c-portability-proof",
+  "only_facts_and_verify_targets_differ": true,
+  "workloads": [
+    {
+      "bootstrap_run": {
+        "exit_code": 0,
+        "stdout": {
+          "claude_md": "created",
+          "facts": {
+            "build_command": null,
+            "commit_convention": "conventional-commits",
+            "issue_tracker": "none",
+            "lint_command": "python -m ruff check .",
+            "mandatory_gates": [
+              "plan",
+              "verify"
+            ],
+            "memory_policy": "gitignored",
+            "platform": "windows",
+            "skippable_gates": [
+              "brainstorm",
+              "research",
+              "grill"
+            ],
+            "test_command": "python -m pytest -q"
+          },
+          "gitignore_added": [
+            "CLAUDE.local.md",
+            ".claude/settings.local.json"
+          ],
+          "settings_json": "created",
+          "settings_local_json": {
+            "path": "C:\\Users\\click\\AppData\\Local\\Temp\\phase5c-code-stack-z50qan2t\\.claude\\settings.local.json",
+            "status": "created"
+          },
+          "target": "C:\\Users\\click\\AppData\\Local\\Temp\\phase5c-code-stack-z50qan2t",
+          "tree": {
+            "created": [
+              "C:\\Users\\click\\AppData\\Local\\Temp\\phase5c-code-stack-z50qan2t\\.claude\\rules\\00-operating-doctrine.md",
+              "C:\\Users\\click\\AppData\\Local\\Temp\\phase5c-code-stack-z50qan2t\\.claude\\rules\\10-karpathy-guidelines.md",
+              "C:\\Users\\click\\AppData\\Local\\Temp\\phase5c-code-stack-z50qan2t\\.claude\\rules\\20-lifecycle-gates.md",
+              "C:\\Users\\click\\AppData\\Local\\Temp\\phase5c-code-stack-z50qan2t\\.claude\\rules\\30-skill-taxonomy.md",
+              "C:\\Users\\click\\AppData\\Local\\Temp\\phase5c-code-stack-z50qan2t\\.claude\\scripts\\common.py",
+              "C:\\Users\\click\\AppData\\Local\\Temp\\phase5c-code-stack-z50qan2t\\.claude\\scripts\\verify_adapter.py",
+              "C:\\Users\\click\\AppData\\Local\\Temp\\phase5c-code-stack-z50qan2t\\.claude\\scripts\\lifecycle.py",
+              "C:\\Users\\click\\AppData\\Local\\Temp\\phase5c-code-stack-z50qan2t\\.claude\\scripts\\control_plane_check.py",
+              "C:\\Users\\click\\AppData\\Local\\Temp\\phase5c-code-stack-z50qan2t\\.claude\\hooks\\verify.sh",
+              "C:\\Users\\click\\AppData\\Local\\Temp\\phase5c-code-stack-z50qan2t\\.claude\\hooks\\verify.ps1",
+              "C:\\Users\\click\\AppData\\Local\\Temp\\phase5c-code-stack-z50qan2t\\docs\\CONTEXT.md",
+              "C:\\Users\\click\\AppData\\Local\\Temp\\phase5c-code-stack-z50qan2t\\docs\\adr\\0000-template.md",
+              "C:\\Users\\click\\AppData\\Local\\Temp\\phase5c-code-stack-z50qan2t\\.claude\\plans\\.gitkeep",
+              "C:\\Users\\click\\AppData\\Local\\Temp\\phase5c-code-stack-z50qan2t\\.claude\\state\\ledger.md",
+              "C:\\Users\\click\\AppData\\Local\\Temp\\phase5c-code-stack-z50qan2t\\.claude\\state\\checkpoints\\.gitkeep",
+              "C:\\Users\\click\\AppData\\Local\\Temp\\phase5c-code-stack-z50qan2t\\.claude\\state\\handoffs\\.gitkeep",
+              "C:\\Users\\click\\AppData\\Local\\Temp\\phase5c-code-stack-z50qan2t\\.claude\\state\\research\\.gitkeep",
+              "C:\\Users\\click\\AppData\\Local\\Temp\\phase5c-code-stack-z50qan2t\\.claude\\state\\agents\\.gitkeep",
+              "C:\\Users\\click\\AppData\\Local\\Temp\\phase5c-code-stack-z50qan2t\\.claude\\state\\experiments\\.gitkeep",
+              "C:\\Users\\click\\AppData\\Local\\Temp\\phase5c-code-stack-z50qan2t\\.claude\\memory\\.gitkeep",
+              "C:\\Users\\click\\AppData\\Local\\Temp\\phase5c-code-stack-z50qan2t\\.claude\\commands\\brainstorm.md",
+              "C:\\Users\\click\\AppData\\Local\\Temp\\phase5c-code-stack-z50qan2t\\.claude\\commands\\grill.md",
+              "C:\\Users\\click\\AppData\\Local\\Temp\\phase5c-code-stack-z50qan2t\\.claude\\commands\\research.md",
+              "C:\\Users\\click\\AppData\\Local\\Temp\\phase5c-code-stack-z50qan2t\\.claude\\commands\\plan.md",
+              "C:\\Users\\click\\AppData\\Local\\Temp\\phase5c-code-stack-z50qan2t\\.claude\\commands\\build.md",
+              "C:\\Users\\click\\AppData\\Local\\Temp\\phase5c-code-stack-z50qan2t\\.claude\\commands\\verify.md",
+              "C:\\Users\\click\\AppData\\Local\\Temp\\phase5c-code-stack-z50qan2t\\.claude\\commands\\ship.md",
+              "C:\\Users\\click\\AppData\\Local\\Temp\\phase5c-code-stack-z50qan2t\\.claude\\commands\\handoff.md",
+              "C:\\Users\\click\\AppData\\Local\\Temp\\phase5c-code-stack-z50qan2t\\.claude\\commands\\status.md",
+              "C:\\Users\\click\\AppData\\Local\\Temp\\phase5c-code-stack-z50qan2t\\.claude\\commands\\debug.md",
+              "C:\\Users\\click\\AppData\\Local\\Temp\\phase5c-code-stack-z50qan2t\\.claude\\commands\\experiment.md",
+              "C:\\Users\\click\\AppData\\Local\\Temp\\phase5c-code-stack-z50qan2t\\.claude\\skills\\alignment-interview\\SKILL.md",
+              "C:\\Users\\click\\AppData\\Local\\Temp\\phase5c-code-stack-z50qan2t\\.claude\\skills\\atomic-planning\\SKILL.md",
+              "C:\\Users\\click\\AppData\\Local\\Temp\\phase5c-code-stack-z50qan2t\\.claude\\skills\\session-takeover\\SKILL.md",
+              "C:\\Users\\click\\AppData\\Local\\Temp\\phase5c-code-stack-z50qan2t\\.claude\\skills\\metric-gated-experiment\\SKILL.md"
+            ],
+            "preserved": []
+          }
+        }
+      },
+      "facts_detect": {
+        "exit_code": 0,
+        "stdout": {
+          "build_command": null,
+          "commit_convention": "conventional-commits",
+          "issue_tracker": "none",
+          "lint_command": "python -m ruff check .",
+          "mandatory_gates": [
+            "plan",
+            "verify"
+          ],
+          "memory_policy": "gitignored",
+          "platform": "windows",
+          "skippable_gates": [
+            "brainstorm",
+            "research",
+            "grill"
+          ],
+          "test_command": "python -m pytest -q"
+        }
+      },
+      "no_home_dependency_proof": {
+        "hostile_home_exists": false,
+        "hostile_home_used": "C:\\Users\\click\\AppData\\Local\\Temp\\does-not-exist-control-plane-home",
+        "note": "Every subprocess above ran with HOME/USERPROFILE pointed at a nonexistent path; success proves this workload must never have performed a ~/.claude/* read/write."
+      },
+      "passed": true,
+      "smoke_after_restart": {
+        "exit_code": 0,
+        "result": {
+          "align": {
+            "artifact": "C:\\Users\\click\\AppData\\Local\\Temp\\phase5c-code-stack-z50qan2t\\.claude\\state\\research\\smoke-align.md",
+            "exists": true
+          },
+          "all_artifacts_present": true,
+          "build": {
+            "artifact": "C:\\Users\\click\\AppData\\Local\\Temp\\phase5c-code-stack-z50qan2t\\.claude\\state\\smoke-build-marker.txt",
+            "exists": true
+          },
+          "plan": {
+            "plan_id": "plan-71e06083c12e",
+            "status": "draft"
+          },
+          "research": {
+            "artifact": "C:\\Users\\click\\AppData\\Local\\Temp\\phase5c-code-stack-z50qan2t\\.claude\\state\\research\\smoke-research.md",
+            "exists": true
+          },
+          "status_reconstruction": {
+            "experiments": [],
+            "latest_checkpoint": null,
+            "ledger_tail": [
+              "# Ledger",
+              "Append-only. One entry per completed unit of work."
+            ],
+            "plans": {
+              "by_status": {
+                "draft": 1
+              },
+              "plans": [
+                {
+                  "plan_id": "plan-71e06083c12e",
+                  "status": "draft",
+                  "tasks": 1,
+                  "title": "Smoke plan"
+                }
+              ],
+              "total": 1
+            },
+            "recent_handoffs": [],
+            "reconstructed_at": "2026-07-12T22:47:54.933030Z",
+            "source": "disk-only"
+          },
+          "verify": {
+            "commands": [
+              {
+                "command": "python3 -c \"print('smoke ok')\"",
+                "exit_code": 0,
+                "label": "smoke",
+                "slug": "smoke",
+                "stderr_tail": "",
+                "stdout_tail": "smoke ok\n"
+              }
+            ],
+            "exit_code": 0,
+            "message": null,
+            "status": "pass",
+            "target": "smoke"
+          }
+        }
+      },
+      "status_reconstruction": {
+        "exit_code": 0,
+        "result": {
+          "experiments": [],
+          "latest_checkpoint": null,
+          "ledger_tail": [
+            "# Ledger",
+            "Append-only. One entry per completed unit of work."
+          ],
+          "plans": {
+            "by_status": {
+              "draft": 1
+            },
+            "plans": [
+              {
+                "plan_id": "plan-71e06083c12e",
+                "status": "draft",
+                "tasks": 1,
+                "title": "Smoke plan"
+              }
+            ],
+            "total": 1
+          },
+          "recent_handoffs": [],
+          "reconstructed_at": "2026-07-12T22:47:55.120589Z",
+          "source": "disk-only"
+        }
+      },
+      "target": "C:\\Users\\click\\AppData\\Local\\Temp\\phase5c-code-stack-z50qan2t",
+      "validate_after_restart": {
+        "exit_code": 0,
+        "stdout": {
+          "status": "pass"
+        }
+      },
+      "workload": "code-stack-python"
+    },
+    {
+      "bootstrap_run": {
+        "exit_code": 0,
+        "stdout": {
+          "claude_md": "created",
+          "facts": {
+            "build_command": null,
+            "commit_convention": "conventional-commits",
+            "issue_tracker": "none",
+            "lint_command": null,
+            "mandatory_gates": [
+              "plan",
+              "verify"
+            ],
+            "memory_policy": "gitignored",
+            "platform": "windows",
+            "skippable_gates": [
+              "brainstorm",
+              "research",
+              "grill"
+            ],
+            "test_command": null
+          },
+          "gitignore_added": [
+            "CLAUDE.local.md",
+            ".claude/settings.local.json"
+          ],
+          "settings_json": "created",
+          "settings_local_json": {
+            "path": "C:\\Users\\click\\AppData\\Local\\Temp\\phase5c-non-code-ebm2wx2m\\.claude\\settings.local.json",
+            "status": "created"
+          },
+          "target": "C:\\Users\\click\\AppData\\Local\\Temp\\phase5c-non-code-ebm2wx2m",
+          "tree": {
+            "created": [
+              "C:\\Users\\click\\AppData\\Local\\Temp\\phase5c-non-code-ebm2wx2m\\.claude\\rules\\00-operating-doctrine.md",
+              "C:\\Users\\click\\AppData\\Local\\Temp\\phase5c-non-code-ebm2wx2m\\.claude\\rules\\10-karpathy-guidelines.md",
+              "C:\\Users\\click\\AppData\\Local\\Temp\\phase5c-non-code-ebm2wx2m\\.claude\\rules\\20-lifecycle-gates.md",
+              "C:\\Users\\click\\AppData\\Local\\Temp\\phase5c-non-code-ebm2wx2m\\.claude\\rules\\30-skill-taxonomy.md",
+              "C:\\Users\\click\\AppData\\Local\\Temp\\phase5c-non-code-ebm2wx2m\\.claude\\scripts\\common.py",
+              "C:\\Users\\click\\AppData\\Local\\Temp\\phase5c-non-code-ebm2wx2m\\.claude\\scripts\\verify_adapter.py",
+              "C:\\Users\\click\\AppData\\Local\\Temp\\phase5c-non-code-ebm2wx2m\\.claude\\scripts\\lifecycle.py",
+              "C:\\Users\\click\\AppData\\Local\\Temp\\phase5c-non-code-ebm2wx2m\\.claude\\scripts\\control_plane_check.py",
+              "C:\\Users\\click\\AppData\\Local\\Temp\\phase5c-non-code-ebm2wx2m\\.claude\\hooks\\verify.sh",
+              "C:\\Users\\click\\AppData\\Local\\Temp\\phase5c-non-code-ebm2wx2m\\.claude\\hooks\\verify.ps1",
+              "C:\\Users\\click\\AppData\\Local\\Temp\\phase5c-non-code-ebm2wx2m\\docs\\CONTEXT.md",
+              "C:\\Users\\click\\AppData\\Local\\Temp\\phase5c-non-code-ebm2wx2m\\docs\\adr\\0000-template.md",
+              "C:\\Users\\click\\AppData\\Local\\Temp\\phase5c-non-code-ebm2wx2m\\.claude\\plans\\.gitkeep",
+              "C:\\Users\\click\\AppData\\Local\\Temp\\phase5c-non-code-ebm2wx2m\\.claude\\state\\ledger.md",
+              "C:\\Users\\click\\AppData\\Local\\Temp\\phase5c-non-code-ebm2wx2m\\.claude\\state\\checkpoints\\.gitkeep",
+              "C:\\Users\\click\\AppData\\Local\\Temp\\phase5c-non-code-ebm2wx2m\\.claude\\state\\handoffs\\.gitkeep",
+              "C:\\Users\\click\\AppData\\Local\\Temp\\phase5c-non-code-ebm2wx2m\\.claude\\state\\research\\.gitkeep",
+              "C:\\Users\\click\\AppData\\Local\\Temp\\phase5c-non-code-ebm2wx2m\\.claude\\state\\agents\\.gitkeep",
+              "C:\\Users\\click\\AppData\\Local\\Temp\\phase5c-non-code-ebm2wx2m\\.claude\\state\\experiments\\.gitkeep",
+              "C:\\Users\\click\\AppData\\Local\\Temp\\phase5c-non-code-ebm2wx2m\\.claude\\memory\\.gitkeep",
+              "C:\\Users\\click\\AppData\\Local\\Temp\\phase5c-non-code-ebm2wx2m\\.claude\\commands\\brainstorm.md",
+              "C:\\Users\\click\\AppData\\Local\\Temp\\phase5c-non-code-ebm2wx2m\\.claude\\commands\\grill.md",
+              "C:\\Users\\click\\AppData\\Local\\Temp\\phase5c-non-code-ebm2wx2m\\.claude\\commands\\research.md",
+              "C:\\Users\\click\\AppData\\Local\\Temp\\phase5c-non-code-ebm2wx2m\\.claude\\commands\\plan.md",
+              "C:\\Users\\click\\AppData\\Local\\Temp\\phase5c-non-code-ebm2wx2m\\.claude\\commands\\build.md",
+              "C:\\Users\\click\\AppData\\Local\\Temp\\phase5c-non-code-ebm2wx2m\\.claude\\commands\\verify.md",
+              "C:\\Users\\click\\AppData\\Local\\Temp\\phase5c-non-code-ebm2wx2m\\.claude\\commands\\ship.md",
+              "C:\\Users\\click\\AppData\\Local\\Temp\\phase5c-non-code-ebm2wx2m\\.claude\\commands\\handoff.md",
+              "C:\\Users\\click\\AppData\\Local\\Temp\\phase5c-non-code-ebm2wx2m\\.claude\\commands\\status.md",
+              "C:\\Users\\click\\AppData\\Local\\Temp\\phase5c-non-code-ebm2wx2m\\.claude\\commands\\debug.md",
+              "C:\\Users\\click\\AppData\\Local\\Temp\\phase5c-non-code-ebm2wx2m\\.claude\\commands\\experiment.md",
+              "C:\\Users\\click\\AppData\\Local\\Temp\\phase5c-non-code-ebm2wx2m\\.claude\\skills\\alignment-interview\\SKILL.md",
+              "C:\\Users\\click\\AppData\\Local\\Temp\\phase5c-non-code-ebm2wx2m\\.claude\\skills\\atomic-planning\\SKILL.md",
+              "C:\\Users\\click\\AppData\\Local\\Temp\\phase5c-non-code-ebm2wx2m\\.claude\\skills\\session-takeover\\SKILL.md",
+              "C:\\Users\\click\\AppData\\Local\\Temp\\phase5c-non-code-ebm2wx2m\\.claude\\skills\\metric-gated-experiment\\SKILL.md"
+            ],
+            "preserved": []
+          }
+        }
+      },
+      "facts_detect": {
+        "exit_code": 0,
+        "stdout": {
+          "build_command": null,
+          "commit_convention": "conventional-commits",
+          "issue_tracker": "none",
+          "lint_command": null,
+          "mandatory_gates": [
+            "plan",
+            "verify"
+          ],
+          "memory_policy": "gitignored",
+          "platform": "windows",
+          "skippable_gates": [
+            "brainstorm",
+            "research",
+            "grill"
+          ],
+          "test_command": null
+        }
+      },
+      "no_home_dependency_proof": {
+        "hostile_home_exists": false,
+        "hostile_home_used": "C:\\Users\\click\\AppData\\Local\\Temp\\does-not-exist-control-plane-home",
+        "note": "Every subprocess above ran with HOME/USERPROFILE pointed at a nonexistent path; success proves this workload must never have performed a ~/.claude/* read/write."
+      },
+      "passed": true,
+      "smoke_after_restart": {
+        "exit_code": 0,
+        "result": {
+          "align": {
+            "artifact": "C:\\Users\\click\\AppData\\Local\\Temp\\phase5c-non-code-ebm2wx2m\\.claude\\state\\research\\smoke-align.md",
+            "exists": true
+          },
+          "all_artifacts_present": true,
+          "build": {
+            "artifact": "C:\\Users\\click\\AppData\\Local\\Temp\\phase5c-non-code-ebm2wx2m\\.claude\\state\\smoke-build-marker.txt",
+            "exists": true
+          },
+          "plan": {
+            "plan_id": "plan-7d168da0f7d4",
+            "status": "draft"
+          },
+          "research": {
+            "artifact": "C:\\Users\\click\\AppData\\Local\\Temp\\phase5c-non-code-ebm2wx2m\\.claude\\state\\research\\smoke-research.md",
+            "exists": true
+          },
+          "status_reconstruction": {
+            "experiments": [],
+            "latest_checkpoint": null,
+            "ledger_tail": [
+              "# Ledger",
+              "Append-only. One entry per completed unit of work."
+            ],
+            "plans": {
+              "by_status": {
+                "draft": 1
+              },
+              "plans": [
+                {
+                  "plan_id": "plan-7d168da0f7d4",
+                  "status": "draft",
+                  "tasks": 1,
+                  "title": "Smoke plan"
+                }
+              ],
+              "total": 1
+            },
+            "recent_handoffs": [],
+            "reconstructed_at": "2026-07-12T22:47:56.070260Z",
+            "source": "disk-only"
+          },
+          "verify": {
+            "commands": [
+              {
+                "command": "python3 -c \"print('smoke ok')\"",
+                "exit_code": 0,
+                "label": "smoke",
+                "slug": "smoke",
+                "stderr_tail": "",
+                "stdout_tail": "smoke ok\n"
+              }
+            ],
+            "exit_code": 0,
+            "message": null,
+            "status": "pass",
+            "target": "smoke"
+          }
+        }
+      },
+      "status_reconstruction": {
+        "exit_code": 0,
+        "result": {
+          "experiments": [],
+          "latest_checkpoint": null,
+          "ledger_tail": [
+            "# Ledger",
+            "Append-only. One entry per completed unit of work."
+          ],
+          "plans": {
+            "by_status": {
+              "draft": 1
+            },
+            "plans": [
+              {
+                "plan_id": "plan-7d168da0f7d4",
+                "status": "draft",
+                "tasks": 1,
+                "title": "Smoke plan"
+              }
+            ],
+            "total": 1
+          },
+          "recent_handoffs": [],
+          "reconstructed_at": "2026-07-12T22:47:56.262915Z",
+          "source": "disk-only"
+        }
+      },
+      "target": "C:\\Users\\click\\AppData\\Local\\Temp\\phase5c-non-code-ebm2wx2m",
+      "validate_after_restart": {
+        "exit_code": 0,
+        "stdout": {
+          "status": "pass"
+        }
+      },
+      "workload": "non-code-research-pipeline"
+    }
+  ]
+}

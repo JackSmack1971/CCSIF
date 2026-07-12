@@ -59,6 +59,10 @@ REQUIRED_PATHS = [
     ".claude/skills/atomic-planning/SKILL.md",
     ".claude/skills/session-takeover/SKILL.md",
     ".claude/skills/metric-gated-experiment/SKILL.md",
+    ".claude/scripts/bootstrap_control_plane.py",
+    ".claude/commands/bootstrap-control-plane.md",
+    ".claude/scripts/phase5c_portability_proof.py",
+    ".claude/scripts/phase5c_context_pressure.py",
 ]
 PROTECTED_PROBES = [
     {"tool_name": "Write", "tool_input": {"file_path": ".env"}},

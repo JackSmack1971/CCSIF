@@ -192,3 +192,32 @@
   - `/build` and `/ship`'s delegated agent/skill flows (builder, pr-reviewer, tdd, git-automation) were verified statically (taxonomy, frontmatter) rather than by a real live delegated run in this session.
   - The `/experiment` gate's revert step is a documented `SKILL.md` instruction, not a script-enforced git action; nothing mechanically verifies the working tree matches a `revert` decision.
   - Unrelated untracked files remain preserved and untouched.
+
+## Phase 5C: /bootstrap-control-plane, fresh-clone recovery, cross-stack portability proof
+
+- Confirmed Phase 5B complete before starting (`phase-5b-report.md`, `phase-5b-checkpoint.json`, status `complete`; `control_plane_check.py`, `rules_fidelity_check.py`, and 106 tests re-verified `PASS`). Read `docs/claude-code-control-plane-roadmap-v2.md`, the manifest, Phase 5A/5B evidence, existing verify-adapter/lifecycle scripts, `.gitignore`, and both settings files in full before any change.
+- Added:
+  - `.claude/scripts/bootstrap_control_plane.py` — additive-only, idempotent installer/reconciler. Scans/interviews for issue tracker, build/test/lint or non-code verifier, commit convention, mandatory/skippable gates, memory policy, and platform; generates a stack-agnostic minimal payload (`verify_adapter.py`, `lifecycle.py`, `common.py`, generic rule/command/skill stubs) rather than copying this repo's own CCSIF-specific Phase 0-5B scripts; merges (never overwrites) `CLAUDE.md`'s Source-of-Truth Commands facts block; writes `autoMemoryDirectory` (absolute) only into gitignored `.claude/settings.local.json`, additive-only, mirroring `phase2_memory.bootstrap_local_settings`'s exact contract; appends safe `.gitignore` entries; validates hooks/permissions/required paths; runs a trivial five-gate smoke workflow.
+  - `.claude/commands/bootstrap-control-plane.md` — thin orchestrator delegating entirely to the script above.
+  - `.claude/scripts/phase5c_portability_proof.py` — builds two throwaway fixture repos (a Python code stack and a docs-only non-code research pipeline), bootstraps each from a fresh copy, runs every post-bootstrap step (validate/smoke/status) as an independent fresh subprocess with `HOME`/`USERPROFILE` pointed at a directory that does not exist, and persists evidence to `.claude/state/roadmap/phase-5c-portability-evidence.json`.
+  - `.claude/scripts/phase5c_context_pressure.py` — documented, reproducible byte-based context-pressure proxy (no live token metering available in this environment): reuses the always-loaded instruction budget measurement (140/400 lines, 35%) and adds a 10-plan dispatcher-load-vs-naive-inline-cost ratio (15.9%), both under the roadmap's ~50% target; persisted to `.claude/state/roadmap/phase-5c-context-pressure-evidence.json`.
+  - `tests/test_bootstrap_control_plane.py` (18 tests), `tests/test_phase5c_portability.py` (1 integration test), `tests/test_phase5c_context_pressure.py` (2 tests) — idempotence, migration/preservation of pre-existing customizations, Windows/POSIX path handling, rollback-safe (resumable) failure, validate/smoke, stack detection, full two-workload portability proof, context-pressure proxy assertions.
+  - `.claude/state/roadmap/phase-5c-report.md`, `.claude/state/roadmap/phase-5c-checkpoint.json`.
+- Updated: `.claude/scripts/control_plane_check.py` (registered 5 new required paths), `.claude/state/completion-matrix.md` (Phase 5C section moved from "not started" to "complete" with real evidence), `.claude/state/execution-manifest.json` (`phase_5c: complete`, `phase_5: complete`, `phase_5c_completion` block, `next_goal`).
+- Incident caught and fixed before any full test run completed: `taxonomy_check.py`'s global-path-dependency scanner flagged `~/.claude/*` mentions inside the new scripts' own no-dependency documentation (docstrings/comments describing the guarantee, not creating one); fixed by rewording each to include an explicit negation word (`never`/`must never`) within the checker's 120-character negation window, re-verifying `control_plane_check.py` and `taxonomy_check.py` `PASS` after each fix.
+- Verification commands:
+  - `python -m py_compile .claude/scripts/bootstrap_control_plane.py .claude/scripts/phase5c_portability_proof.py .claude/scripts/phase5c_context_pressure.py .claude/scripts/control_plane_check.py tests/test_bootstrap_control_plane.py tests/test_phase5c_portability.py tests/test_phase5c_context_pressure.py` -> `0`
+  - `python -m unittest discover -s tests -v` -> `0` (127 tests: 106 prior + 21 new, no regression)
+  - `python3 .claude/scripts/control_plane_check.py` -> `0`
+  - `python3 .claude/scripts/rules_fidelity_check.py` -> `0`
+  - `python3 .claude/scripts/taxonomy_check.py` -> `0`
+  - `python3 .claude/scripts/phase5c_portability_proof.py` -> `0` (`both_passed: true` for both fixture workloads)
+  - `python3 .claude/scripts/phase5c_context_pressure.py` -> `0` (`within_target: true`, 15.9% dispatcher load vs. 50% target)
+  - `python3 -c "import json; json.load(open('.claude/settings.json'))"` -> `0`
+- Evidence: `.claude/state/roadmap/phase-5c-report.md`, `.claude/state/roadmap/phase-5c-checkpoint.json`, `.claude/state/roadmap/phase-5c-portability-evidence.json`, `.claude/state/roadmap/phase-5c-context-pressure-evidence.json`, updated `completion-matrix.md` Phase 5C section.
+- Notes:
+  - Phases 6 and 7 are untouched, per instruction not to begin them.
+  - Context-pressure figures are a documented byte-based proxy, not live Agent-SDK token metering; none is available in this environment.
+  - The portability proof uses fresh temp-directory copies to simulate a fresh clone; no real `git clone` of a pushed remote was performed (no remote was designated for this task).
+  - Bootstrap's generated framework is a deliberately minimal, stack-agnostic payload; it does not transplant this repo's own accumulated Phase 0-5B tooling (session harness, subagent tracking, dynamic workflow engine), which remains Phase 7's "package the stable core as a versioned plugin" concern.
+  - Unrelated untracked files (pre-existing roadmap docs, `.scratch/`, prior-session state dirs) remain preserved and untouched.
