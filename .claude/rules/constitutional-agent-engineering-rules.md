@@ -3,7 +3,6 @@ trigger: model_decision
 description: Immutable constitutional ruleset that governs planning, editing, validation, and execution behavior of AI coding agents. These rules are always active and take precedence over project-specific instructions.
 paths:
   - ".claude/**"
-  - ".codex/**"
   - "CLAUDE.md"
   - "CLAUDE.local.md"
   - "AGENTS.md"

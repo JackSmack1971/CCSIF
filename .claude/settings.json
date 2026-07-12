@@ -1,12 +1,9 @@
 {
-  "$schema": "https://example.invalid/schemas/claude-code-project-settings.schema.json",
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
   "version": 1,
   "description": "Shared project Claude Code settings. Commit only team-safe values.",
   "allowedMcpServers": [
     { "serverName": "graphiti-memory" }
-  ],
-  "enabledMcpjsonServers": [
-    "graphiti-memory"
   ],
   "claudeMdExcludes": [
     ".claude/worktrees/**/CLAUDE.md",
@@ -19,10 +16,7 @@
       "Bash(git status:*)",
       "Bash(git diff:*)",
       "Bash(git log --oneline -20)",
-      "Bash(python3 .claude/scripts/control_plane_check.py)",
-      "Bash(npm test:*)",
-      "Bash(npm run lint:*)",
-      "Bash(npm run typecheck:*)"
+      "Bash(python3 .claude/scripts/control_plane_check.py)"
     ],
     "deny": [
       "Bash(git push --force:*)",
@@ -31,19 +25,6 @@
       "Bash(terraform destroy:*)",
       "Bash(kubectl delete:*)"
     ]
-  },
-  "tools": {
-    "shell": {
-      "enabled": true,
-      "timeoutSeconds": 120
-    },
-    "git": {
-      "protectBranches": [
-        "main",
-        "master"
-      ],
-      "requireStatusBeforeCommit": true
-    }
   },
   "hooks": {
     "SessionStart": [

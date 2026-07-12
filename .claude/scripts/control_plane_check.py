@@ -3,8 +3,10 @@
 from __future__ import annotations
 
 import json
+import os
 import subprocess
 import sys
+import shutil
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -36,6 +38,31 @@ def run(cmd: list[str], *, input_text: str | None = None) -> subprocess.Complete
     return subprocess.run(cmd, cwd=ROOT, input=input_text, text=True, capture_output=True, check=False)
 
 
+def resolve_node() -> str:
+    for candidate in ("node", "node.exe"):
+        path = shutil.which(candidate)
+        if path:
+            return path
+
+    for candidate in ("node", "node.exe"):
+        proc = run(["where.exe", candidate])
+        if proc.returncode == 0:
+            for line in proc.stdout.splitlines():
+                line = line.strip()
+                if line:
+                    return line
+
+    fail("unable to locate node or node.exe on PATH")
+
+
+def node_script_arg(node: str, path: Path) -> str:
+    if node.lower().endswith(".exe") and os.name != "nt":
+        proc = run(["wslpath", "-w", str(path)])
+        if proc.returncode == 0:
+            return proc.stdout.strip()
+    return str(path)
+
+
 def fail(message: str) -> None:
     print(f"FAIL: {message}", file=sys.stderr)
     raise SystemExit(1)
@@ -62,25 +89,31 @@ def check_git_visibility() -> None:
 
 def check_guard_probes() -> None:
     guard = ROOT / ".claude/hooks/lib/pre-tool-use-guard.js"
+    node = resolve_node()
+    guard_arg = node_script_arg(node, guard)
     for probe in PROTECTED_PROBES:
-        proc = run(["node", str(guard)], input_text=json.dumps(probe))
+        proc = run([node, guard_arg], input_text=json.dumps(probe))
         if proc.returncode != 2:
             fail(f"guard did not block protected probe {probe!r}; rc={proc.returncode}; stderr={proc.stderr.strip()}")
 
 
 def check_allowed_probes() -> None:
     guard = ROOT / ".claude/hooks/lib/pre-tool-use-guard.js"
+    node = resolve_node()
+    guard_arg = node_script_arg(node, guard)
     for probe in ALLOWED_PROBES:
-        proc = run(["node", str(guard)], input_text=json.dumps(probe))
+        proc = run([node, guard_arg], input_text=json.dumps(probe))
         if proc.returncode != 0:
             fail(f"guard incorrectly blocked allowed probe {probe!r}; rc={proc.returncode}; stderr={proc.stderr.strip()}")
 
 
 def check_fd_dup_redirects() -> None:
     guard = ROOT / ".claude/hooks/lib/pre-tool-use-guard.js"
+    node = resolve_node()
+    guard_arg = node_script_arg(node, guard)
     for command in ["cat x 2>&1", "echo hi >&2", "printf ok 1>&2"]:
         probe = {"tool_name": "Bash", "tool_input": {"command": command}}
-        proc = run(["node", str(guard)], input_text=json.dumps(probe))
+        proc = run([node, guard_arg], input_text=json.dumps(probe))
         if proc.returncode != 0:
             fail(f"guard incorrectly blocked fd-dup redirect probe {probe!r}; rc={proc.returncode}; stderr={proc.stderr.strip()}")
 

@@ -3,7 +3,6 @@ name: security
 description: Security-sensitive coding rules.
 paths:
   - ".claude/**"
-  - ".codex/**"
   - "CLAUDE.md"
   - "CLAUDE.local.md"
   - "AGENTS.md"

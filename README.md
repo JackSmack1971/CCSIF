@@ -31,7 +31,7 @@ CCSIF is a repository-local Claude Code scaffold for developers who want shared 
 - Git
 - Claude Code [INFERRED from repository layout and hook/config naming]
 - Bash for the project hook scripts in `.claude/hooks/`
-- Node.js [INFERRED] for `.claude/workflows/*.js` and `.claude/hooks/lib/trace-writer.js`
+- Node.js [INFERRED] for `.claude/workflows/issue-to-pr.js` and `.claude/hooks/lib/trace-writer.js`
 
 ### Clone
 
@@ -72,10 +72,10 @@ Expected for the hook script:
 ## Features
 
 - Shared project constitution in [`CLAUDE.md`](./CLAUDE.md) so agent behavior is anchored to one source of truth.
-- Project permissions and hook wiring in [`.claude/settings.json`](./.claude/settings.json), including shell allow/deny lists and git safety checks.
+- Project permissions and hook wiring in [`.claude/settings.json`](./.claude/settings.json), including shell allow/deny lists and hook registration.
 - Custom slash commands for issue-to-PR, PR review, and upstream audit flows in [`.claude/commands/`](./.claude/commands/).
 - Reusable agent definitions for implementation, PR review, and upstream audit work in [`.claude/agents/`](./.claude/agents/).
-- Deterministic workflow scaffolds in [`.claude/workflows/`](./.claude/workflows/) for issue-to-PR and upstream audit orchestration.
+- Deterministic workflow entrypoint in [`.claude/workflows/`](./.claude/workflows/) for issue-to-PR orchestration.
 - Hook-based trace capture in [`.claude/hooks/`](./.claude/hooks/) that appends daily JSONL telemetry to [`.claude/traces/`](./.claude/traces/).
 - Repo-local skills and rules under [`.claude/skills/`](./.claude/skills/) and [`.claude/rules/`](./.claude/rules/) to keep agent work consistent.
 
@@ -114,7 +114,7 @@ The flow is simple:
 | [`.claude/agents/`](./.claude/agents/) | Agent definitions for implementation, review, and audit. |
 | [`.claude/commands/`](./.claude/commands/) | Slash-command docs for repo workflows. |
 | [`.claude/hooks/`](./.claude/hooks/) | Session hooks and the trace writer. |
-| [`.claude/workflows/`](./.claude/workflows/) | JavaScript workflow scaffolds. |
+| [`.claude/workflows/`](./.claude/workflows/) | JavaScript workflow entrypoint. |
 | [`.claude/skills/`](./.claude/skills/) | Reusable skill definitions and references. |
 | [`.claude/rules/`](./.claude/rules/) | Path-scoped behavior rules. |
 | [`.claude/traces/`](./.claude/traces/) | Generated telemetry, not source. |
@@ -136,7 +136,7 @@ This repository is best treated as a command center for Claude Code work, not as
 - [`implementation-agent.md`](./.claude/agents/implementation-agent.md) implements exactly one issue per branch.
 - [`pr-reviewer.md`](./.claude/agents/pr-reviewer.md) checks diffs for correctness, verification quality, and merge readiness.
 - [`upstream-auditor.md`](./.claude/agents/upstream-auditor.md) is audit-only and creates one GitHub issue per confirmed finding.
-- [`issue-to-pr.js`](./.claude/workflows/issue-to-pr.js) and [`upstream-audit.js`](./.claude/workflows/upstream-audit.js) are workflow scaffolds that return structured status objects.
+- [`issue-to-pr.js`](./.claude/workflows/issue-to-pr.js) is the workflow entrypoint that returns structured status objects.
 
 ## Configuration
 
@@ -144,12 +144,10 @@ This repository is best treated as a command center for Claude Code work, not as
 |---|---:|---|---|---|
 | `CLAUDE.md` constitution block | Yes | N/A | [`CLAUDE.md`](./CLAUDE.md) | Repo-wide operating rules and protected areas. |
 | `permissions.mode` | Yes | `ask` | [`.claude/settings.json`](./.claude/settings.json) | Default permission posture for project actions. |
-| `permissions.allow` | Yes | Allowlist entries in file | [`.claude/settings.json`](./.claude/settings.json) | Permitted shell commands include `git status`, `git diff`, `git log`, `npm test`, `npm run lint`, and `npm run typecheck`. |
+| `permissions.allow` | Yes | Allowlist entries in file | [`.claude/settings.json`](./.claude/settings.json) | Permitted shell commands include `git status`, `git diff`, `git log`, and the repo's control-plane verifier. |
 | `permissions.deny` | Yes | Denylist entries in file | [`.claude/settings.json`](./.claude/settings.json) | Blocks high-risk commands such as `git push --force`, `git reset --hard`, and `rm -rf`. |
-| `tools.shell.timeoutSeconds` | Yes | `120` | [`.claude/settings.json`](./.claude/settings.json) | Shell command timeout for the project session. |
-| `tools.git.protectBranches` | Yes | `main`, `master` | [`.claude/settings.json`](./.claude/settings.json) | Branches that should be protected from accidental edits. |
 | `hooks.SessionStart` | Yes | `bash .claude/hooks/session-start.sh` | [`.claude/settings.json`](./.claude/settings.json) | Prints session start status and repo state. |
-| `hooks.PreToolUse` | Yes | `bash .claude/hooks/pre-tool-use.sh` | [`.claude/settings.json`](./.claude/settings.json) | Placeholder gate for pre-tool checks. |
+| `hooks.PreToolUse` | Yes | `bash .claude/hooks/pre-tool-use.sh` | [`.claude/settings.json`](./.claude/settings.json) | Protected-area guard for pre-tool checks. |
 | `hooks.PostToolUse` | Yes | `bash .claude/hooks/post-tool-use.sh` | [`.claude/settings.json`](./.claude/settings.json) | Writes trace telemetry after tool use. |
 | `hooks.Stop` | Yes | `bash .claude/hooks/stop.sh` | [`.claude/settings.json`](./.claude/settings.json) | Writes final trace telemetry at stop. |
 | `EXAMPLE_LOCAL_ONLY` | No | `replace-me` | [`.claude/settings.local.json`](./.claude/settings.local.json) | Example machine-local placeholder; do not treat as a shared secret. |
@@ -182,7 +180,6 @@ No required environment variables were discovered in committed repo files.
 | `self-improve` | When explicitly running `/self-improve` [INFERRED] | Trace-backed improvement proposals for CLAUDE/skills/hooks/MCP config | [`.claude/skills/self-improve/SKILL.md`](./.claude/skills/self-improve/SKILL.md) |
 | `dependency-audit` | When inspecting manifests and lockfiles | Supply-chain risk, vulnerable packages, and install behavior | [`.claude/skills/dependency-audit/SKILL.md`](./.claude/skills/dependency-audit/SKILL.md) |
 | `fsv-verify` | Before and after any mutation | Read-before-act, act once, read-after-act, diff verification | [`.claude/skills/fsv-verify/SKILL.md`](./.claude/skills/fsv-verify/SKILL.md) |
-| `upstream-audit.js` | Workflow orchestration [INFERRED] | Upstream audit step sequencing | [`.claude/workflows/upstream-audit.js`](./.claude/workflows/upstream-audit.js) |
 | `issue-to-pr.js` | Workflow orchestration [INFERRED] | Issue-to-PR step sequencing | [`.claude/workflows/issue-to-pr.js`](./.claude/workflows/issue-to-pr.js) |
 
 ### Hooks / Permissions
@@ -199,13 +196,16 @@ No required environment variables were discovered in committed repo files.
 
 ## Testing & Verification
 
-No automated test suite, build pipeline, or CI workflow was found in the repository.
+No repo-level automated test suite, build pipeline, or CI workflow was found in the repository.
+
+Skill-local tests, verification logs, and evals live under `.claude/skills/` and are the right place to look for workflow-specific validation.
 
 Grounded verification options:
 
 ```bash
 git status --short
 git diff --check
+python3 .claude/scripts/control_plane_check.py
 bash .claude/hooks/session-start.sh
 ```
 
@@ -229,7 +229,7 @@ Use the narrowest check that matches the change:
 | Layer | Technology | Version | Source | Notes |
 |---|---|---|---|---|
 | Repo type | Claude Code agent scaffold [INFERRED] | Unknown | `CLAUDE.md`, `.claude/` layout | Repository-local automation and policy bundle. |
-| Scripting runtime | Node.js [INFERRED] | Unknown | `.claude/workflows/*.js`, `.claude/hooks/lib/trace-writer.js` | JavaScript workflow and hook helper files use Node shebangs. |
+| Scripting runtime | Node.js [INFERRED] | Unknown | `.claude/workflows/issue-to-pr.js`, `.claude/hooks/lib/trace-writer.js` | JavaScript workflow and hook helper files use Node shebangs. |
 | Hook shell | Bash [INFERRED] | Unknown | `.claude/hooks/*.sh` | Session, pre-tool, post-tool, and stop hooks are shell scripts. |
 | Policy format | Markdown / JSON | N/A | `CLAUDE.md`, `.claude/settings.json`, `.claude/**/*.md` | Human-readable repo instructions and settings. |
 | Telemetry format | JSONL | N/A | `.claude/traces/*.jsonl` | Append-only generated trace corpus. |

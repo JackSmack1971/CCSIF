@@ -6,7 +6,6 @@ CLAUDE.local.md
 
 # Generated telemetry (self-improve trace corpus)
 .claude/traces/*.jsonl
-.codex/traces/*.jsonl
 
 # Local Claude Code memory runtime state. Keep source files in .claude/memory/
 # tracked; ignore only generated state and heavyweight local indexes.

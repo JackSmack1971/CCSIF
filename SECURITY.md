@@ -12,7 +12,7 @@ Include in your report:
 
 - A description of the vulnerability and its potential impact.
 - Steps to reproduce, including affected files, hooks, workflows, or skills
-  under `.claude/` or `.codex/`.
+  under `.claude/`.
 - Any relevant logs, trace excerpts, or configuration values (redact
   secret material before sharing).
 
@@ -28,13 +28,13 @@ applied to the `main` branch; there are no other maintained branches.
 ## Scope
 
 This is a repository-local Claude Code scaffold: agent, hook, workflow,
-rule, and skill definitions under `.claude/` and `.codex/`, plus the
+rule, and skill definitions under `.claude/`, plus the
 project constitution in [`CLAUDE.md`](./CLAUDE.md). Security-relevant areas
 include:
 
-- Hook scripts (`.claude/hooks/`, `.codex/hooks/`) and any code they
+- Hook scripts (`.claude/hooks/`) and any code they
   execute.
-- Workflow scripts (`.claude/workflows/`, `.codex/workflows/`).
+- Workflow scripts (`.claude/workflows/`).
 - Permission and settings files (`.claude/settings.json`,
   `.claude/settings.local.json`, `.mcp.json`).
 - MCP server configuration and approvals.

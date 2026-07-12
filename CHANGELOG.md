@@ -10,7 +10,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 - Added the initial `.claude/` control-plane scaffold: agent, command, hook, output-style, rule, skill, and workflow definitions for repository-shared Claude Code behavior
 - Added a self-improvement framework: the `CLAUDE.md` project constitution, the `self-improve` skill, expanded constitutional rules, `.claude/settings.json`, and `trace-writer.js` session telemetry
-- Added a Codex CLI hook scaffold under `.codex/` mirroring the `.claude/` hooks
 - Added a repository README covering quickstart, architecture, and the agent/command/hook/skill map
 - Added the local Claude Code skill corpus (21 project skills) — including a safety-gated `git-automation` reference that requires explicit human confirmation for push, rebase, filter-branch, and release operations — and the `skill-auditor` tooling for auditing and repairing skill-authoring defects
 - Added a `/control-plane-check` command and `control_plane_check.py` script, plus `pre-tool-use-guard.js` enforcement, as part of a self-improvement control-plane roadmap for validating proposed self-modifications

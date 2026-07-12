@@ -10,7 +10,6 @@ RULES_DIR = ROOT / ".claude" / "rules"
 EXPECTED_SCOPES = {
     "00-core-workflow.md": [
         ".claude/**",
-        ".codex/**",
         "CLAUDE.md",
         "CLAUDE.local.md",
         "AGENTS.md",
@@ -21,7 +20,6 @@ EXPECTED_SCOPES = {
     ],
     "architecture.md": [
         ".claude/**",
-        ".codex/**",
         "CLAUDE.md",
         "CLAUDE.local.md",
         "AGENTS.md",
@@ -32,7 +30,6 @@ EXPECTED_SCOPES = {
     ],
     "claude-code-ecosystem.md": [
         ".claude/**",
-        ".codex/**",
         "CLAUDE.md",
         "CLAUDE.local.md",
         "AGENTS.md",
@@ -43,7 +40,6 @@ EXPECTED_SCOPES = {
     ],
     "constitutional-agent-engineering-rules.md": [
         ".claude/**",
-        ".codex/**",
         "CLAUDE.md",
         "CLAUDE.local.md",
         "AGENTS.md",
@@ -54,7 +50,6 @@ EXPECTED_SCOPES = {
     ],
     "control-plane.md": [
         ".claude/**",
-        ".codex/**",
         ".mcp.json",
         "managed-settings.json",
         "CLAUDE.md",
@@ -66,11 +61,10 @@ EXPECTED_SCOPES = {
     ],
     "failure-escalation.md": ["**/*"],
     "hindsight-memory.md": ["**/*"],
-    "mcp-resilience.md": [".mcp.json", ".claude/**", ".codex/**", "CLAUDE.md", "CLAUDE.local.md", "AGENTS.md"],
+    "mcp-resilience.md": [".mcp.json", ".claude/**", "CLAUDE.md", "CLAUDE.local.md", "AGENTS.md"],
     "persona-profile.md": ["**/*"],
     "security.md": [
         ".claude/**",
-        ".codex/**",
         "CLAUDE.md",
         "CLAUDE.local.md",
         "AGENTS.md",
@@ -90,7 +84,6 @@ EXPECTED_SCOPES = {
     "surgical-density.md": ["**/*"],
     "testing.md": [
         ".claude/**",
-        ".codex/**",
         "CLAUDE.md",
         "CLAUDE.local.md",
         "AGENTS.md",

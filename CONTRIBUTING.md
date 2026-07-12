@@ -1,6 +1,6 @@
 # Contributing to CCSIF
 
-Thanks for your interest in CCSIF, a repository-local Claude Code scaffold that centralizes shared agent rules, hooks, workflows, and review commands around a single project constitution. Contributions to the constitution, agents, commands, workflows, hooks, rules, and skills under `.claude/` and `.codex/` are all welcome.
+Thanks for your interest in CCSIF, a repository-local Claude Code scaffold that centralizes shared agent rules, hooks, workflows, and review commands around a single project constitution. Contributions to the constitution, agents, commands, workflows, hooks, rules, and skills under `.claude/` are all welcome.
 
 ## Contents
 
@@ -38,8 +38,8 @@ Thanks for your interest in CCSIF, a repository-local Claude Code scaffold that 
 
 - [The repository constitution](./CLAUDE.md) is a Protected Area: edits to it require explicit human approval (Tier 1) under its own tier rules.
 - Other Protected Areas it declares are production configuration, secrets and credentials, database migrations, authentication and authorization, payment or trading logic, and CI/CD deployment workflows.
-- Treat `.claude/` and `.codex/` control-plane sources (agents, commands, hooks, workflows, rules, settings, `.mcp.json`) as governance changes that need tighter review than ordinary documentation edits.
-- `.claude/traces/` and `.codex/traces/` hold generated telemetry, not source; do not hand-edit trace files.
+- Treat `.claude/` control-plane sources (agents, commands, hooks, workflows, rules, settings, `.mcp.json`) as governance changes that need tighter review than ordinary documentation edits.
+- `.claude/traces/` holds generated telemetry, not source; do not hand-edit trace files.
 - `CLAUDE.local.md` and `.claude/settings.local.json` are local-only overrides that are gitignored; do not commit changes to them.
 
 ## Local setup
@@ -60,7 +60,7 @@ Thanks for your interest in CCSIF, a repository-local Claude Code scaffold that 
 
 ## Development workflow
 
-- Branch from the default branch, `main`. [`.claude/settings.json`](./.claude/settings.json) lists `main` and `master` as protected branches (`tools.git.protectBranches`), so make your changes on a feature branch and open a pull request rather than pushing directly to `main`.
+- Branch from the default branch, `main`, and make your changes on a feature branch before opening a pull request rather than pushing directly to `main`.
 - Keep changes small, reviewable, and scoped to a single issue, per the Engineering Rules in [the repository constitution](./CLAUDE.md).
 - Keep audit-only tasks read-only: report findings without editing production code.
 

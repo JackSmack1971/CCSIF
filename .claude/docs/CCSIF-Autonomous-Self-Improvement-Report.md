@@ -15,6 +15,17 @@ CCSIF is further along than most "self-improving agent" scaffolds: it has a deli
 
 The path to autonomy is not "let the model edit its own files." It is: **generalize the 7axes propose→deterministic-apply→measure→rollback pattern to the whole control plane, wire the 2026 hook surface (SubagentStop, PostToolUseFailure, ConfigChange, Stop-gating, prompt/agent hooks, async hooks) as the sensor and actuator layer, and close the loop with a scheduler (SessionStart cadence + nightly GitHub Action).** Section 4 gives 34 concrete improvements; Section 6 sequences them into four phases, from safety hardening (a hard prerequisite — several current gaps make autonomy actively dangerous) to scheduled unattended cycles.
 
+## 1.1 Current-State Update
+
+The audit findings below are preserved as a 2026-07-10 snapshot of the repo state. Since that assessment, the live tree has changed:
+
+- `/control-plane-check` now exists at `[.claude/commands/control-plane-check.md](../commands/control-plane-check.md)`.
+- `.claude/workflows/upstream-audit.js` has been deleted.
+- `.claude/workflows/assets/workflow.schema.json` has been deleted.
+- `.claude/settings.json` now uses the real Claude Code settings schema URL and no longer carries speculative `tools.*` keys; branch protection remains enforced by repository policy and workflow rules rather than fake settings entries.
+
+This addendum separates historical observations from current repository state so resolved items are not mistaken for active defects.
+
 ---
 
 ## 2. Current State: Where Each Component Sits on the Autonomy Ladder
@@ -27,7 +38,7 @@ Autonomy ladder used below: **L0** manual · **L1** instrumented (observes itsel
 | `/self-improve` skill | L2 | Proposal-only; `disable-model-invocation: true`; "never edits production files" `[OBSERVED: SKILL.md]` |
 | 7axes audit subsystem | **L3** | `evolve.py` applies bounded patches (directives ≤12/axis, weights clamped [0.5,2.0]); `feedback.py` learns from closed issues; ledger dedup `[OBSERVED]` |
 | Hooks (4 of ~30 events) | L1 | SessionStart/PreToolUse/PostToolUse/Stop only; PreToolUse guard **fails open** when node absent `[OBSERVED: pre-tool-use.sh]` |
-| Workflows (`issue-to-pr.js`, `upstream-audit.js`) | L0 | Return static scaffold objects; no execution logic `[OBSERVED]` |
+| Workflows (`issue-to-pr.js`) | L2 | Live workflow entrypoint with deterministic plan/implement/review/record orchestration; the deleted `upstream-audit.js` and `workflow.schema.json` rows below are historical audit observations, not current files `[OBSERVED]` |
 | Agents (implementation, pr-reviewer, upstream-auditor) | L0 | Prose contracts only; no hook-enforced output contracts `[OBSERVED]` |
 | Skill evals (21 × `evals.json`) | L0 | No runner, no CI — evals are inert documents `[OBSERVED: no .github/, no run script found]` |
 | KPI system (`kpi-defaults.md`) | L0 | Definitions and targets exist; nothing measures them; `/self-improve` *estimates* deltas `[OBSERVED]` |
@@ -153,7 +164,7 @@ Priorities: **P0** = prerequisite for any autonomy (safety/correctness) · **P1*
 | # | Improvement | Mechanism | Effort |
 |---|---|---|---|
 | D1 | **Eval runner.** 21 skills ship `evals/evals.json` and `VERIFICATION.md` with zero execution path. Build `.claude/scripts/run_evals.py`: for each eval case, execute via headless `claude -p` (or Agent SDK) in a scratch worktree, assert expected outputs/behaviors, emit junit-style results. This is the validation gate C3 depends on — **without it, "Tier 2 may auto-apply after passing automated validation" can never be honored.** Run in CI on every PR touching `.claude/`. | Runner + CI wiring | L |
-| D2 | **Implement or delete the workflow stubs.** `issue-to-pr.js` / `upstream-audit.js` return static objects `[OBSERVED]`. Either implement them as real orchestrations against the workflow schema (tighten `workflow.schema.json` — `status` should be an enum, `steps` should be objects with `{name, status, evidence}`), or fold them into the commands/agents that actually do the work and remove the dead layer. Dead scaffolds are context cost and audit noise. | Decision + implementation | M |
+| D2 | **Implement or delete the workflow stubs.** `issue-to-pr.js` is the live workflow entrypoint; `upstream-audit.js` and `workflow.schema.json` were deleted in later cleanup work. The remaining improvement path is to either expand the live workflow orchestration or remove the layer entirely if it stops serving a distinct purpose. Dead scaffolds are context cost and audit noise. | Decision + implementation | M |
 | D3 | **Skill-auditor → applier integration.** `apply_skill_fixes.py` already exists `[OBSERVED]`; route its fix plan through `tier_classify.py` so description-lint fixes (Tier 2) auto-apply through the same gated pipeline instead of a separate side door. One mutation pathway, one audit trail. | Glue code | S |
 | D4 | **Fill `CLAUDE.md` Source-of-Truth Commands.** `stop.sh` itself comments that the section is an unfilled template and only git hygiene is verified `[OBSERVED]`. Once D1 exists: `python3 .claude/scripts/run_evals.py --changed` becomes the repo's real test command, and `stop.sh` wires it in — closing the "verify before claiming success" gap their own improvement plan (M-2) flags. | Doc + stop.sh edit | S |
 

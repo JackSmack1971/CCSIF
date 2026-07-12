@@ -10,5 +10,11 @@ This directory contains repository-local Claude Code scaffolding.
 - `commands/` — custom slash commands.
 - `output-styles/` — communication styles.
 - `hooks/` — executable gates and notifications.
+- `memory/` — durable HINDSIGHT state and CLI entrypoint.
+- `docs/` — reference material and architecture notes.
+- `audits/` — audit reports and remediation plans.
+- `pending/` — in-flight proposal and registry state.
+- `scripts/` — control-plane utility scripts.
+- `traces/` — generated telemetry.
 - `workflows/` — deterministic JavaScript orchestration.
 - `worktrees/` — isolated branch workspaces for parallel work.
