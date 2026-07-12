@@ -46,10 +46,25 @@
       "command": "Get-Content -Raw .claude/state/execution-manifest.json | ConvertFrom-Json | Out-Null; $base = Join-Path (Get-Location) '.claude/state'; $resolved = [System.IO.Path]::GetFullPath((Join-Path $base '../../docs/claude-code-control-plane-roadmap-v2.md')); if (!(Test-Path $resolved)) { throw 'missing roadmap link target' }",
       "exit_code": 0,
       "output_summary": "manifest parsed; baseline, matrix, and ledger exist; roadmap link target resolves to docs/claude-code-control-plane-roadmap-v2.md"
+    },
+    {
+      "command": "python3 .claude/scripts/control_plane_check.py",
+      "exit_code": 0,
+      "output_summary": "control-plane-check: PASS after Phase 0 harness, compaction hook, and state validation updates"
+    },
+    {
+      "command": "python3 .claude/scripts/rules_fidelity_check.py",
+      "exit_code": 0,
+      "output_summary": "rules-fidelity-check: PASS after Phase 0 harness updates"
+    },
+    {
+      "command": "python -m unittest discover -s tests -v",
+      "exit_code": 0,
+      "output_summary": "Phase 0 unit, integration, and restart/resume/compaction smoke tests all passed"
     }
   ],
   "phase_status": {
-    "phase_0": "partial",
+    "phase_0": "complete",
     "phase_1": "partial",
     "phase_2": "partial",
     "phase_3": "partial",
@@ -88,11 +103,13 @@
     ".claude/rules/00-core-workflow.md",
     ".claude/rules/control-plane.md",
     ".claude/rules/testing.md",
+    ".claude/hooks/pre-compact.sh",
     ".claude/hooks/pre-tool-use.sh",
     ".claude/hooks/post-tool-use.sh",
     ".claude/hooks/session-start.sh",
     ".claude/hooks/stop.sh",
     ".claude/hooks/lib/pre-tool-use-guard.js",
+    ".claude/scripts/phase0_control_plane.py",
     ".claude/commands/control-plane-check.md",
     ".claude/agents/implementation-agent.md",
     ".claude/agents/pr-reviewer.md",
@@ -103,14 +120,57 @@
     ".claude/memory/",
     ".claude/scripts/control_plane_check.py",
     ".claude/scripts/rules_fidelity_check.py",
+    ".claude/state/completion-matrix.md",
+    ".claude/state/ledger.md",
+    ".claude/state/roadmap/phase-0-checkpoint.json",
+    ".claude/state/roadmap/phase-0-report.md",
     ".mcp.json",
     "docs/claude-code-control-plane-roadmap-v2.md"
   ],
   "known_risks": [
     "The repository already has unrelated untracked files outside `.claude/state/`; they were left untouched.",
-    "Phase 0 durable state and the rest of `.claude/state/` are still only scaffolded at the baseline layer.",
-    "The roadmap's Phase 4 section has no explicit exit-criteria block, so the matrix records that gap rather than inventing one.",
-    "Existing files prove repository surface area, not full runtime behavior; the matrix separates presence from verification."
+    "The Phase 0 harness is intentionally thin and file-backed; it does not attempt to emulate Claude Code's native transcript store.",
+    "The roadmap's Phase 4 section has no explicit exit-criteria block, so the matrix still records that gap rather than inventing one.",
+    "Phases 1-7 remain incomplete and should not be treated as implicitly validated by the Phase 0 harness."
   ],
-  "next_goal": "Implement the minimum Phase 0 durable-state primitives under `.claude/state/` (logs, checkpoints, session metadata) without broadening scope into later phases."
+  "phase_0_completion": {
+    "status": "complete",
+    "report": ".claude/state/roadmap/phase-0-report.md",
+    "checkpoint": ".claude/state/roadmap/phase-0-checkpoint.json",
+    "implemented_files": [
+      ".claude/scripts/phase0_control_plane.py",
+      ".claude/hooks/session-start.sh",
+      ".claude/hooks/pre-tool-use.sh",
+      ".claude/hooks/post-tool-use.sh",
+      ".claude/hooks/pre-compact.sh",
+      ".claude/scripts/control_plane_check.py",
+      "tests/test_phase0_control_plane.py",
+      "tests/test_phase0_smoke.py"
+    ],
+    "design_decisions": [
+      "Use the repo's existing Python and Bash surfaces instead of adding a new runtime.",
+      "Persist session metadata in SQLite and retain raw hook payloads in JSONL exports under .claude/state/.",
+      "Enforce one verified step at a time and require resume from a verified checkpoint.",
+      "Treat terminal retry exhaustion as an explicit failure state rather than a silent retry loop."
+    ],
+    "verification_commands": [
+      {
+        "command": "python3 .claude/scripts/control_plane_check.py",
+        "exit_code": 0
+      },
+      {
+        "command": "python3 .claude/scripts/rules_fidelity_check.py",
+        "exit_code": 0
+      },
+      {
+        "command": "python -m unittest discover -s tests -v",
+        "exit_code": 0
+      }
+    ],
+    "remaining_risks": [
+      "The harness is still a project-local surrogate for Claude Code's native session transcript store, not a replacement for it.",
+      "Later phases still need their own verification and should not inherit trust from the Phase 0 smoke tests."
+    ]
+  },
+  "next_goal": "Phase 0 is complete. Leave Phase 1 untouched until explicitly directed."
 }

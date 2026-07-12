@@ -13,8 +13,12 @@ ROOT = Path(__file__).resolve().parents[2]
 REQUIRED_PATHS = [
     "CLAUDE.md",
     ".claude/settings.json",
+    ".claude/scripts/phase0_control_plane.py",
     ".claude/hooks/pre-tool-use.sh",
     ".claude/hooks/lib/pre-tool-use-guard.js",
+    ".claude/hooks/post-tool-use.sh",
+    ".claude/hooks/session-start.sh",
+    ".claude/hooks/pre-compact.sh",
     ".claude/hooks/stop.sh",
     ".claude/commands/control-plane-check.md",
 ]
@@ -119,7 +123,13 @@ def check_fd_dup_redirects() -> None:
 
 
 def check_shell_parse() -> None:
-    for script in [".claude/hooks/pre-tool-use.sh", ".claude/hooks/stop.sh"]:
+    for script in [
+        ".claude/hooks/session-start.sh",
+        ".claude/hooks/pre-tool-use.sh",
+        ".claude/hooks/post-tool-use.sh",
+        ".claude/hooks/pre-compact.sh",
+        ".claude/hooks/stop.sh",
+    ]:
         proc = run(["bash", "-n", script])
         if proc.returncode != 0:
             fail(f"{script} failed bash -n: {proc.stderr.strip()}")

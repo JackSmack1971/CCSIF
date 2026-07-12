@@ -11,10 +11,10 @@ Legend:
 
 | Criterion | Status | Evidence | Notes |
 |---|---|---|---|
-| A single Claude Code session can be started, resumed, compacted, and verified end to end. | partial | `.claude/hooks/session-start.sh`; `.claude/hooks/stop.sh`; `.claude/settings.json`; `.claude/scripts/control_plane_check.py` | Loop hooks and guard checks exist, but there is no durable session/state store under `.claude/state/` yet. |
-| Every Agent tool call has a durable request/result record under `.claude/state/`. | missing | `.claude/state/` is newly scaffolded only for this baseline; no logs or event store existed before it. | No tool-call ledger, event log, or replay path is implemented yet. |
-| Session state can be reconstructed after restart without guessing. | missing | No `.claude/state/` session store, no checkpoint files, no resume index. | Presence of hooks does not prove restart reconstruction. |
-| Failures are visible, attributable, and recoverable before the next turn runs. | partial | `.claude/hooks/pre-tool-use.sh`; `.claude/hooks/stop.sh`; `.claude/scripts/control_plane_check.py` | Fail-closed guards are present, but failure attribution and recovery records are not yet durable. |
+| A single Claude Code session can be started, resumed, compacted, and verified end to end. | existing | `.claude/hooks/session-start.sh`; `.claude/hooks/pre-compact.sh`; `.claude/hooks/pre-tool-use.sh`; `.claude/hooks/post-tool-use.sh`; `tests/test_phase0_smoke.py` | The hook path now writes session state, logs a verified checkpoint before compaction, and the smoke test exercises start -> act -> verify -> compact -> pause -> resume -> archive. |
+| Every Agent tool call has a durable request/result record under `.claude/state/`. | existing | `.claude/scripts/phase0_control_plane.py`; `.claude/hooks/pre-tool-use.sh`; `.claude/hooks/post-tool-use.sh`; `tests/test_phase0_control_plane.py` | Requests and results are normalized to structured events, written to SQLite plus raw JSONL exports, and replayed from the log. |
+| Session state can be reconstructed after restart without guessing. | existing | `.claude/scripts/phase0_control_plane.py`; `tests/test_phase0_control_plane.py`; `tests/test_phase0_smoke.py` | The restart tests reopen the same state root in a fresh control-plane instance and resume only from a verified checkpoint. |
+| Failures are visible, attributable, and recoverable before the next turn runs. | existing | `.claude/scripts/phase0_control_plane.py`; `.claude/hooks/pre-tool-use.sh`; `tests/test_phase0_control_plane.py` | Terminal failures are explicit, bounded retries are logged, and failures stay correlated to session, turn, step, and tool call. |
 
 ## Phase 1: Rules, Skills & Hooks
 
