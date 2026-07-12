@@ -196,7 +196,7 @@ No required environment variables were discovered in committed repo files.
 
 ## Testing & Verification
 
-No automated test suite, build pipeline, or CI workflow was found in the repository.
+No repo-level automated test suite, build pipeline, or CI workflow was found in the repository.
 
 Grounded verification options:
 
