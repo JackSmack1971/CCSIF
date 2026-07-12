@@ -114,7 +114,7 @@ The flow is simple:
 | [`.claude/agents/`](./.claude/agents/) | Agent definitions for implementation, review, and audit. |
 | [`.claude/commands/`](./.claude/commands/) | Slash-command docs for repo workflows. |
 | [`.claude/hooks/`](./.claude/hooks/) | Session hooks and the trace writer. |
-| [`.claude/workflows/`](./.claude/workflows/) | JavaScript workflow scaffolds. |
+| [`.claude/workflows/`](./.claude/workflows/) | JavaScript workflow entrypoint. |
 | [`.claude/skills/`](./.claude/skills/) | Reusable skill definitions and references. |
 | [`.claude/rules/`](./.claude/rules/) | Path-scoped behavior rules. |
 | [`.claude/traces/`](./.claude/traces/) | Generated telemetry, not source. |
