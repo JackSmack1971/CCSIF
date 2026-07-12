@@ -108,3 +108,29 @@
   - Phase 4 is untouched, per instruction not to start it.
   - Unrelated untracked files remain preserved and untouched.
 
+## 2026-07-12 Phase 4 complete
+
+- Goal: implement Phase 4 (Dynamic Workflows) as a static-first, allowlisted-graph workflow layer wrapping Phase 0's verified-checkpoint mechanism, per `docs/claude-code-control-plane-roadmap-v2.md`, without inventing an unrestricted graph engine or duplicating native `/goal`/`/loop`/routines/plan-mode/hooks/agents.
+- Read: roadmap Phase 4 section in full; `.claude/state/execution-manifest.json`; `.claude/state/roadmap/phase-{0,1,2,3}-report.md` and checkpoints (confirmed all `status: complete` before proceeding); `.claude/settings.json`; `.claude/scripts/phase0_control_plane.py`, `phase3_agents.py`, `control_plane_check.py`, `rules_fidelity_check.py`; `.claude/commands/*`; `.claude/workflows/AGENTS.md`; `.claude/agents/AGENTS.md`; `.claude/rules/AGENTS.md`; `.claude/hooks/stop.sh`.
+- Added:
+  - `.claude/scripts/phase4_workflows.py` — allowlisted-graph engine: `start_run`/`propose_next`/`verify_node`/`advance`/`resume`/`fallback`/`replay`/`status`/`list_runs`. `advance()` rejects any transition outside the current node's `allowed_next` (and records the rejection); high-risk nodes require a real verified Phase 0 checkpoint via `Phase0ControlPlane.load_checkpoint()`; retries are bounded per node (default 2) with an explicit `failed-exhausted-retries` terminal state; `resume()` rolls back to the last verified node.
+  - `.claude/workflows/defs/linear-static.json` (fixed 4-node chain) and `.claude/workflows/defs/evidence-branch.json` (evidence-driven branch + bounded debug/retry loop), both `risk: high`/`checkpoint_required: true` on their `ship` node.
+  - `.claude/commands/workflow.md` — thin CLI entrypoint doc.
+  - `.claude/rules/dynamic-workflows.md` — durable policy for the same invariants (registered in `rules_fidelity_check.py`).
+  - `.claude/state/workflows/.gitkeep`.
+  - `tests/test_phase4_workflows.py` — 9 tests covering all six required scenarios (linear run, evidence branch, rejected branch, interrupted resume, exhausted retries, checkpoint gate) plus definition validation and disk-only reconstruction.
+  - `.claude/state/roadmap/phase-4-report.md`, `.claude/state/roadmap/phase-4-checkpoint.json`.
+- Updated: `.claude/scripts/control_plane_check.py` (new required paths + `check_workflow_defs()` deterministic gate), `.claude/scripts/rules_fidelity_check.py` (registered `dynamic-workflows.md`), `.claude/commands/AGENTS.md`, `.claude/rules/AGENTS.md`, `.claude/workflows/AGENTS.md`, `.claude/state/completion-matrix.md` (Phase 4 section), `.claude/state/execution-manifest.json` (`phase_4: complete`, `phase_4_completion` block, `next_goal`).
+- Verification commands:
+  - `python -m py_compile .claude/scripts/phase4_workflows.py .claude/scripts/control_plane_check.py .claude/scripts/rules_fidelity_check.py tests/test_phase4_workflows.py` -> `0`
+  - `python -m unittest discover -s tests -v` -> `0` (54 tests: 45 prior + 9 new Phase 4, no regression)
+  - `python3 .claude/scripts/control_plane_check.py` -> `0`
+  - `python3 .claude/scripts/rules_fidelity_check.py` -> `0`
+  - `python3 -c "import json; json.load(open('.claude/settings.json'))"` -> `0`
+  - `git check-ignore -v` against every new Phase 4 path -> `1` (nothing ignored; all evidence is git-visible)
+- Evidence: `.claude/state/roadmap/phase-4-report.md`, `.claude/state/roadmap/phase-4-checkpoint.json`, updated `.claude/state/completion-matrix.md` Phase 4 section.
+- Notes:
+  - Phase 5 is untouched, per instruction not to begin it.
+  - No live `/goal`/`/loop`/routines invocation was scripted from Python; those are product-level session behaviors, so this phase's contribution is limited to the durable, checkpoint-gated, replayable state layer those native features can sit on top of (same posture Phase 3 took toward native foreground/background subagent execution).
+  - Unrelated untracked files remain preserved and untouched.
+

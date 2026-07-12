@@ -16,6 +16,7 @@ REQUIRED_PATHS = [
     ".claude/scripts/phase0_control_plane.py",
     ".claude/scripts/phase2_memory.py",
     ".claude/scripts/phase3_agents.py",
+    ".claude/scripts/phase4_workflows.py",
     ".claude/hooks/pre-tool-use.sh",
     ".claude/hooks/lib/pre-tool-use-guard.js",
     ".claude/hooks/post-tool-use.sh",
@@ -30,9 +31,14 @@ REQUIRED_PATHS = [
     ".claude/agents/planner.md",
     ".claude/agents/builder.md",
     ".claude/agents/verifier.md",
+    ".claude/commands/workflow.md",
+    ".claude/rules/dynamic-workflows.md",
+    ".claude/workflows/defs/linear-static.json",
+    ".claude/workflows/defs/evidence-branch.json",
     ".claude/plans/.gitkeep",
     ".claude/state/compactions/.gitkeep",
     ".claude/state/agents/.gitkeep",
+    ".claude/state/workflows/.gitkeep",
 ]
 PROTECTED_PROBES = [
     {"tool_name": "Write", "tool_input": {"file_path": ".env"}},
@@ -150,6 +156,15 @@ def check_shell_parse() -> None:
             fail(f"{script} failed bash -n: {proc.stderr.strip()}")
 
 
+def check_workflow_defs() -> None:
+    sys.path.insert(0, str(ROOT / ".claude" / "scripts"))
+    import phase4_workflows  # noqa: E402
+
+    for name in ("linear-static", "evidence-branch"):
+        try:
+            phase4_workflows.load_workflow_def(name, workspace=ROOT)
+        except phase4_workflows.Phase4Error as exc:
+            fail(f"workflow definition {name!r} is invalid: {exc}")
 
 
 def main() -> int:
@@ -160,7 +175,7 @@ def main() -> int:
     check_allowed_probes()
     check_guard_probes()
     check_fd_dup_redirects()
-
+    check_workflow_defs()
     print("control-plane-check: PASS")
     return 0
 

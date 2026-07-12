@@ -47,15 +47,15 @@ Legend:
 
 ## Phase 4: Dynamic Workflows
 
-The roadmap section defines workflow selection, graph execution, planner, evaluation gates, and recovery, but it does not include a separate exit-criteria block. This baseline records the phase as partially surfaced through existing commands/workflows and leaves the rest unproven.
+The roadmap section defines workflow selection, graph execution, planner, evaluation gates, and recovery, but it does not include a separate exit-criteria block; this matrix maps each capability row to the implemented engine and its test evidence.
 
 | Criterion | Status | Evidence | Notes |
 |---|---|---|---|
-| Fixed, named workflows are available as the default execution path. | partial | `.claude/commands/control-plane-check.md`; `.claude/commands/create-pr.md`; `.claude/commands/review-pr.md`; `.claude/workflows/issue-to-pr.js` | Workflow entrypoints exist, but the roadmap's broader dynamic-workflow control plane is not implemented. |
-| Dynamic graph execution over bounded checkpoints is available. | missing | No `.claude/state/checkpoints/` graph artifacts or workflow engine state. | No graph runtime exists yet. |
-| A planner can propose bounded plans over approved steps and tools. | missing | `.claude/settings.json` does not set `plansDirectory`; no `.claude/plans/` tree exists. | Plan-mode persistence is not wired. |
-| Evaluation gates can verify transitions before work advances. | partial | `.claude/hooks/stop.sh`; `.claude/scripts/control_plane_check.py` | Stop hooks and validation scripts exist, but no workflow gate state is persisted. |
-| Recovery can re-plan from the last checkpoint and prune failed branches. | missing | No `.claude/state/checkpoints/` or branch records. | Recovery branching is not implemented. |
+| Fixed, named workflows are available as the default execution path. | existing | `.claude/workflows/defs/linear-static.json`; `.claude/commands/workflow.md`; `tests/test_phase4_workflows.py::test_linear_static_workflow_runs_to_completion` | `linear-static` is the default no-branch chain; `.claude/commands/control-plane-check.md`, `create-pr.md`, `review-pr.md`, `.claude/workflows/issue-to-pr.js` remain the other fixed entrypoints. |
+| Dynamic graph execution over bounded checkpoints is available. | existing | `.claude/scripts/phase4_workflows.py` (`advance`, `verify_node`); `.claude/workflows/defs/evidence-branch.json`; `tests/test_phase4_workflows.py::test_evidence_driven_branch_routes_to_debug_then_ships`, `::test_exhausted_retries_produce_explicit_terminal_failure` | Conditional branching (`run-tests -> {ship, debug}`), bounded per-node retries (default 2, matching Phase 0's `MAX_RETRIES`), explicit terminal failure on exhaustion. |
+| A planner can propose bounded plans over approved steps and tools. | existing | `phase4_workflows.propose_next()`; `tests/test_phase4_workflows.py::test_list_and_status_reconstruct_from_disk_alone`; `tests/test_phase4_workflows.py::test_unsupported_branch_is_rejected_and_recorded` | `propose_next()` returns only the current node's declared `allowed_next`; `advance()` structurally rejects any node outside that allowlist and records the rejection. `plansDirectory` was already wired in Phase 2. |
+| Evaluation gates can verify transitions before work advances. | existing | `phase4_workflows.verify_node()`/`advance()` (`UnverifiedNodeError`); `.claude/hooks/stop.sh`; `.claude/scripts/control_plane_check.py` (`check_workflow_defs`) | A node cannot be departed before its own step is verified; high-risk nodes additionally require a real verified Phase 0 checkpoint (`CheckpointRequiredError`), proven by `test_high_risk_transition_requires_a_real_verified_checkpoint`. |
+| Recovery can re-plan from the last checkpoint and prune failed branches. | existing | `phase4_workflows.resume()`; `tests/test_phase4_workflows.py::test_resume_rolls_back_to_last_verified_node_after_interruption` | `resume()` rolls `current_node` back to the last verified node after an interruption, never continuing from an unproven in-flight node; `fallback()` records an explicit pinned-static-path decision as visible state. |
 
 ## Phase 5: Portable Project-Scoped Framework
 

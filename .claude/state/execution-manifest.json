@@ -68,7 +68,7 @@
     "phase_1": "complete",
     "phase_2": "complete",
     "phase_3": "complete",
-    "phase_4": "partial",
+    "phase_4": "complete",
     "phase_5": "partial",
     "phase_6": "partial",
     "phase_7": "not_started"
@@ -318,5 +318,56 @@
       "Phases 4-7 remain incomplete and should not be treated as implicitly validated by the Phase 3 changes."
     ]
   },
-  "next_goal": "Phase 3 is complete. Do not begin Phase 4 until explicitly directed."
+  "phase_4_completion": {
+    "status": "complete",
+    "report": ".claude/state/roadmap/phase-4-report.md",
+    "checkpoint": ".claude/state/roadmap/phase-4-checkpoint.json",
+    "implemented_files": [
+      ".claude/scripts/phase4_workflows.py",
+      ".claude/workflows/defs/linear-static.json",
+      ".claude/workflows/defs/evidence-branch.json",
+      ".claude/commands/workflow.md",
+      ".claude/rules/dynamic-workflows.md",
+      ".claude/state/workflows/.gitkeep",
+      "tests/test_phase4_workflows.py"
+    ],
+    "design_decisions": [
+      "The bounded planner is propose_next(), which returns only the current node's declared allowed_next; advance() structurally cannot accept an undeclared target, and a rejected attempt is recorded in path_trace rather than silently ignored.",
+      "Checkpoint gating for risk:high transitions (write/merge/deploy/delegate/handoff) calls Phase0ControlPlane.load_checkpoint() directly instead of building a second checkpoint mechanism.",
+      "Retries are bounded per node (default 2, matching Phase 0's own MAX_RETRIES); exceeding the bound is the explicit terminal state failed-exhausted-retries, never a silent loop.",
+      "resume() rolls current_node back to the last verified node, never an in-flight unverified one.",
+      "fallback() records a pinned static path as visible run state, not silent behavior.",
+      "No live /goal, /loop, or routines invocation was scripted from Python; those are Claude Code product-level session behaviors this control plane wraps rather than reimplements, consistent with how Phase 3 treated native foreground/background subagent execution."
+    ],
+    "verification_commands": [
+      {
+        "command": "python -m py_compile .claude/scripts/phase4_workflows.py .claude/scripts/control_plane_check.py .claude/scripts/rules_fidelity_check.py tests/test_phase4_workflows.py",
+        "exit_code": 0
+      },
+      {
+        "command": "python -m unittest discover -s tests -v",
+        "exit_code": 0,
+        "notes": "54 tests total (45 prior + 9 new), no regression"
+      },
+      {
+        "command": "python3 .claude/scripts/control_plane_check.py",
+        "exit_code": 0
+      },
+      {
+        "command": "python3 .claude/scripts/rules_fidelity_check.py",
+        "exit_code": 0
+      },
+      {
+        "command": "python3 -c \"import json; json.load(open('.claude/settings.json'))\"",
+        "exit_code": 0
+      }
+    ],
+    "remaining_risks": [
+      "The engine has not yet been driven end-to-end by a live /goal- or /loop-triggered session in this environment; the wrap relationship is a documented design intent, proven at the unit level.",
+      "planner_tokens/planner_cost_usd in run metrics are always null; no token/cost accounting hook exists at script level.",
+      "Only two workflow definitions exist by design, per the roadmap's static-first guidance; add more only when a real, repeated task shape justifies it.",
+      "Phases 5-7 remain incomplete and are not implicitly validated by these Phase 4 changes."
+    ]
+  },
+  "next_goal": "Phase 4 is complete. Do not begin Phase 5 until explicitly directed."
 }
