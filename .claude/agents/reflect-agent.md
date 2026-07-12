@@ -1,7 +1,7 @@
 ---
 name: reflect-agent
 description: Converts recalled HINDSIGHT evidence into a response and opinion candidates.
-tools: [read, grep, git, shell]
+tools: Read, Grep, Bash
 model: sonnet
 ---
 

@@ -1,0 +1,77 @@
+{
+  "phase": 1,
+  "status": "complete",
+  "generated_at": "2026-07-12T17:01:30Z",
+  "roadmap": {
+    "path": "docs/claude-code-control-plane-roadmap-v2.md",
+    "sha256": "7D6F35A16DEE91F0BD8B4DA98EA29F05CDC13003DF1C096BFA620C7610E08AE6",
+    "lines": 384,
+    "note": "sha256 re-verified byte-identical to the Phase 0 checkpoint's recorded hash (no drift since Phase 0); the Phase 0 checkpoint's own 'lines' field (287) was a stale/incorrect measurement pre-dating this phase and is corrected here to the actual wc -l count (384), not evidence of file drift."
+  },
+  "baseline": {
+    "repo_root": "C:/workspaces/CCSIF",
+    "branch": "baseline/roadmap-control-plane",
+    "head": "6be10eee7e91f380a372de0dde12060a30b9d56a"
+  },
+  "prerequisite_check": {
+    "phase_0_status": "complete",
+    "phase_0_checkpoint": ".claude/state/roadmap/phase-0-checkpoint.json",
+    "reverified_commands": [
+      { "command": "python3 .claude/scripts/control_plane_check.py", "exit_code": 0 },
+      { "command": "python3 .claude/scripts/rules_fidelity_check.py", "exit_code": 0 }
+    ]
+  },
+  "fixed_files": [
+    ".claude/settings.json",
+    ".claude/agents/reflect-agent.md",
+    ".claude/agents/upstream-auditor.md",
+    ".claude/rules/claude-code-ecosystem.md"
+  ],
+  "defects_found_and_fixed": [
+    {
+      "file": ".claude/settings.json",
+      "defect": "Used allowedMcpServers (managed-scope-only key, wrong shape) instead of the project-scope key enabledMcpjsonServers to auto-approve .mcp.json servers.",
+      "evidence": ".claude/docs/claude-code-docs-2026-07-12-00-15-46/docs/code-claude-com-docs-en-settings-545f9c5a.md lines 281-283",
+      "fix": "Replaced with \"enabledMcpjsonServers\": [\"graphiti-memory\"]."
+    },
+    {
+      "file": ".claude/agents/reflect-agent.md, .claude/agents/upstream-auditor.md",
+      "defect": "tools: frontmatter used lowercase/invalid tool names ([read, grep, git, shell, ...]); git/shell/github are not real Claude Code tool identifiers.",
+      "evidence": "Contrasted against working tools: Read, Grep, Bash/Edit in implementation-agent.md and pr-reviewer.md.",
+      "fix": "Corrected both to tools: Read, Grep, Bash."
+    },
+    {
+      "file": ".claude/rules/claude-code-ecosystem.md",
+      "defect": "No explicit skill-promotion policy; 'repeated procedures split into skills' criterion had no governing rule, only incidental skill count.",
+      "evidence": ".claude/state/completion-matrix.md prior Phase 1 row marked 'partial'.",
+      "fix": "Added a promotion rule within the file's existing 20-line budget."
+    }
+  ],
+  "verification_commands": [
+    { "command": "python3 -c \"import json; json.load(open('.claude/settings.json'))\"", "exit_code": 0 },
+    { "command": "python3 -c \"import json; json.load(open('.claude/state/execution-manifest.json'))\"", "exit_code": 0 },
+    { "command": "python3 .claude/scripts/control_plane_check.py", "exit_code": 0 },
+    { "command": "python3 .claude/scripts/rules_fidelity_check.py", "exit_code": 0 },
+    { "command": "python -m unittest discover -s tests -v", "exit_code": 0 }
+  ],
+  "live_behavior_evidence": [
+    "PreToolUse block path: Edit on .env.production and Bash rm under migrations/ both exit 2 with stderr reason, tested with a Windows-native cwd payload.",
+    "PreToolUse allow path: Read on README.md exits 0 and is logged by the Phase 0 harness.",
+    "PreToolUse error path: malformed/empty stdin exits 1, a documented non-blocking-but-visible error per the hooks doc's exit-code contract.",
+    "Agent-tool delegation: pr-reviewer spawned via the Agent tool, called Bash and Read, returned real live git status output (tool_uses: 2).",
+    "reflect-agent spawned three times and enforced its own frontmatter-defined rules when declining out-of-role probes, confirming role-definition loading independent of the specific tool-use test outcome."
+  ],
+  "exit_criteria": [
+    "The repo has a clear project CLAUDE.md and .claude/rules/ layout; nothing depends on ~/.claude/.",
+    "Repeated procedures are split into project skills instead of duplicated in chat or root docs.",
+    "Required external tools are available through approved MCP servers declared in .mcp.json.",
+    "Unsafe or out-of-policy tool calls are blocked or annotated by project-scoped hooks before the next loop step.",
+    "Delegated subagent work uses the Agent tool pattern with role definitions in .claude/agents/."
+  ],
+  "remaining_risks": [
+    "reflect-agent's own tool execution under the adversarial-shaped prompts used here remains unconfirmed; its refusals are role-correct behavior, not a defect, but the tools: fix for that file was cross-verified via format parity with pr-reviewer rather than a clean live tool call from reflect-agent itself.",
+    "The Phase 0 harness remains a project-local surrogate for Claude Code's native transcript store, unchanged in this phase.",
+    "Phases 2-7 remain incomplete and are not implicitly validated by these Phase 1 fixes."
+  ],
+  "next_goal": "Phase 1 is complete. Leave Phase 2 untouched until explicitly directed."
+}

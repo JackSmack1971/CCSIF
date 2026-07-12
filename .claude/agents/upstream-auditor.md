@@ -1,7 +1,7 @@
 ---
 name: upstream-auditor
 description: Creates one GitHub issue per confirmed repository finding.
-tools: [read, grep, git, shell, github]
+tools: Read, Grep, Bash
 model: sonnet
 ---
 

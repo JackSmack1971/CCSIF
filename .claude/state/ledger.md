@@ -31,3 +31,27 @@
 - Notes:
   - Phase 1 remains untouched.
   - Unrelated untracked roadmap/docs files remain preserved.
+
+## 2026-07-12 Phase 1 complete
+
+- Goal: close the two "partial" Phase 1 criteria (skill-promotion discipline, subagent delegation proof) and verify the three "existing" criteria against live behavior rather than static presence, per `docs/claude-code-control-plane-roadmap-v2.md`.
+- Read: `docs/claude-code-control-plane-roadmap-v2.md` Phase 1 section; `.claude/state/roadmap/phase-0-report.md` and checkpoint (confirmed evidence-complete before proceeding); `.claude/settings.json`; `.claude/rules/*.md`; `.claude/agents/*.md`; `.claude/hooks/*`; `.mcp.json`.
+- Fixed:
+  - `.claude/settings.json`: replaced the non-standard `allowedMcpServers` key with the documented `enabledMcpjsonServers: ["graphiti-memory"]`, so the project `.mcp.json` server is actually auto-approved instead of re-prompting collaborators.
+  - `.claude/agents/reflect-agent.md`, `.claude/agents/upstream-auditor.md`: corrected `tools:` frontmatter from lowercase/invalid names (`[read, grep, git, shell, ...]`) to canonical Claude Code tool identifiers (`Read, Grep, Bash`), matching the working format already used by `implementation-agent.md` and `pr-reviewer.md`.
+  - `.claude/rules/claude-code-ecosystem.md`: added a skill-promotion rule (check `.claude/skills/` before writing a procedure inline; promote once it recurs; skip a skill for one-off work), kept inside the file's existing 20-line budget.
+- Verified (live behavior, not just static presence):
+  - PreToolUse hook block/allow/error paths, exercised with a Windows-native `cwd` payload matching real Claude Code invocation: block (`Edit` on `.env.production`, `Bash rm` under `migrations/` → exit 2 with stderr reason), allow (`Read` on `README.md` → exit 0), error (malformed/empty stdin → exit 1, visible per the hooks doc's "non-blocking error" contract).
+  - Agent-tool delegation to a `.claude/agents/`-defined role: spawned `pr-reviewer` with a diagnostic task; it called `Bash` and `Read` and returned real, verifiably-accurate live `git status` output (`tool_uses: 2`).
+  - `.mcp.json` fix confirmed valid JSON and both governance checks pass.
+- Verification commands:
+  - `python3 .claude/scripts/control_plane_check.py` -> `0`
+  - `python3 .claude/scripts/rules_fidelity_check.py` -> `0`
+  - `python -m unittest discover -s tests -v` -> `0` (6 tests, no regression)
+  - `python3 -c "import json; json.load(open('.claude/settings.json'))"` -> `0`
+- Evidence: `.claude/state/roadmap/phase-1-report.md`, `.claude/state/roadmap/phase-1-checkpoint.json`, updated `.claude/state/completion-matrix.md` Phase 1 section.
+- Notes:
+  - Phase 2 is untouched, per instruction not to start it.
+  - `reflect-agent` correctly enforced its own narrow role scope during two of three test probes (declining to act as a generic file-echo proxy); this is recorded as a residual note in the completion matrix, not a blocker, since `pr-reviewer` proved the same delegation path executes tools end to end.
+  - Unrelated untracked files (`claude-code-control-plane-roadmap.md` v1, `docs/`) remain preserved and untouched.
+
