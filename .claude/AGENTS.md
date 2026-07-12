@@ -5,12 +5,17 @@ Repository-local control-plane scaffolding for CCSIF. This subtree defines how a
 
 ## Entry Points
 - `README.md` - directory map for the `.claude` subtree.
+- `audits/` - architecture and remediation audit artifacts.
 - `rules/` - path-scoped behavior rules and control-plane policy.
 - `hooks/` - executable gates, guards, and notifications.
 - `memory/` - durable HINDSIGHT state and CLI entrypoint.
 - `docs/` - reference material and architecture notes.
+- `pending/` - in-flight proposals and registries.
 - `skills/` - reusable workflows and skill definitions.
+- `scripts/` - control-plane helper scripts.
 - `agents/`, `commands/`, `output-styles/`, `workflows/` - agent prompts, slash commands, response styles, and deterministic orchestration.
+- `traces/` - generated telemetry.
+- `worktrees/` - isolated branch workspaces for parallel work.
 
 ## Contracts & Invariants
 - `CLAUDE.md` remains the only root-level context file; keep any `AGENTS.md` files below the repository root.
