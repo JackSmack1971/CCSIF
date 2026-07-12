@@ -17,6 +17,7 @@ REQUIRED_PATHS = [
     ".claude/scripts/phase2_memory.py",
     ".claude/scripts/phase3_agents.py",
     ".claude/scripts/phase4_workflows.py",
+    ".claude/scripts/taxonomy_check.py",
     ".claude/hooks/pre-tool-use.sh",
     ".claude/hooks/lib/pre-tool-use-guard.js",
     ".claude/hooks/post-tool-use.sh",
@@ -167,6 +168,16 @@ def check_workflow_defs() -> None:
             fail(f"workflow definition {name!r} is invalid: {exc}")
 
 
+def check_taxonomy() -> None:
+    sys.path.insert(0, str(ROOT / ".claude" / "scripts"))
+    import taxonomy_check  # noqa: E402
+
+    try:
+        taxonomy_check.run_all(ROOT)
+    except taxonomy_check.TaxonomyError as exc:
+        fail(f"taxonomy check failed: {exc}")
+
+
 def main() -> int:
     check_required_paths()
     check_json()
@@ -176,6 +187,7 @@ def main() -> int:
     check_guard_probes()
     check_fd_dup_redirects()
     check_workflow_defs()
+    check_taxonomy()
     print("control-plane-check: PASS")
     return 0
 

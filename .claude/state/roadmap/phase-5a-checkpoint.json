@@ -1,0 +1,68 @@
+{
+  "phase": "5a",
+  "status": "complete",
+  "report": ".claude/state/roadmap/phase-5a-report.md",
+  "prerequisite_check": {
+    "phase_0_status": "complete",
+    "phase_1_status": "complete",
+    "phase_2_status": "complete",
+    "phase_3_status": "complete",
+    "phase_4_status": "complete",
+    "verified_before_start": true
+  },
+  "implemented_files": [
+    ".claude/rules/10-karpathy-guidelines.md",
+    ".claude/rules/20-lifecycle-gates.md",
+    ".claude/rules/30-skill-taxonomy.md",
+    ".claude/rules/00-core-workflow.md",
+    ".claude/rules/AGENTS.md",
+    ".claude/scripts/taxonomy_check.py",
+    ".claude/scripts/control_plane_check.py",
+    ".claude/scripts/rules_fidelity_check.py",
+    "tests/test_taxonomy_check.py",
+    "docs/CONTEXT.md",
+    "docs/adr/0000-template.md",
+    "docs/adr/0001-phase-5a-portable-layout.md",
+    ".claude/state/handoffs/.gitkeep",
+    ".claude/state/research/.gitkeep"
+  ],
+  "consolidation_decisions": [
+    "Extended .claude/rules/00-core-workflow.md instead of adding a competing 00-operating-doctrine.md; it already held that role.",
+    "10-karpathy-guidelines.md contains only content not already in surgical-density.md (assumption-surfacing, verify-before-done, metric-gated experiment loops); surgical-density.md was left untouched.",
+    "20-lifecycle-gates.md documents the five-gate contract only; no /brainstorm, /research, /plan, /build, /ship, /handoff, /status, or /experiment command files were added, per the task's explicit scope limit.",
+    "30-skill-taxonomy.md documents the two-axis convention the existing 57-skill/5-command corpus already followed; it was not a rewrite of that corpus.",
+    "docs/adr/ is a new, distinct location from the pre-existing .claude/docs/decision-log.md; the decision log stays chronological narrative, ADRs are scoped and supersedable records."
+  ],
+  "verification_commands": [
+    { "command": "python -m py_compile .claude/scripts/taxonomy_check.py .claude/scripts/control_plane_check.py .claude/scripts/rules_fidelity_check.py tests/test_taxonomy_check.py", "exit_code": 0 },
+    { "command": "python -m unittest discover -s tests -v", "exit_code": 0, "notes": "65 tests total (54 prior + 11 new), no regression" },
+    { "command": "python3 .claude/scripts/control_plane_check.py", "exit_code": 0, "notes": "includes new check_taxonomy() step" },
+    { "command": "python3 .claude/scripts/rules_fidelity_check.py", "exit_code": 0, "notes": "3 new rule files registered; 00-core-workflow.md re-validated after extension" },
+    { "command": "python3 -c \"import json; json.load(open('.claude/settings.json'))\"", "exit_code": 0 },
+    { "command": "git check-ignore -v <every new Phase 5A path>", "exit_code": 1, "notes": "nothing ignored; all evidence is git-visible" }
+  ],
+  "measured_budgets": {
+    "always_loaded_context_lines": { "measured": 140, "budget": 400, "utilization_pct": 35 },
+    "root_claude_md_lines": { "measured": 74, "budget": 200, "utilization_pct": 37 }
+  },
+  "taxonomy_audit_result": {
+    "command_cross_invocation_violations": 0,
+    "commands_scanned": 5,
+    "duplicate_description_violations": 0,
+    "skills_scanned": 57,
+    "global_path_dependency_violations_in_hooks_scripts_commands": 0
+  },
+  "scope_explicitly_excluded": [
+    "Phase 5B/5C: /bootstrap-control-plane installer, cross-stack proof, main-thread context measurement on multi-plan work",
+    "Phase 6: determinism ladder promotions/demotions, adversarial verification battery",
+    "Phase 7: distribution, versioning, plugin packaging",
+    "Implementing the five lifecycle-gate commands themselves (/brainstorm, /research, /plan, /build, /verify, /ship)"
+  ],
+  "remaining_risks": [
+    "The five-gate lifecycle contract is documentation only; no gate command exists yet.",
+    "The duplicate-responsibility check compares exact description strings, not paraphrase similarity.",
+    "The global-path-dependency check does not scan .claude/skills/ or .claude/agents/; a manual grep found 7 skill files with descriptive (non-functional) ~/.claude mentions, not mechanically verified as non-dependencies.",
+    "Phases 5B, 5C, 6, and 7 remain incomplete and are not implicitly validated by these Phase 5A changes."
+  ],
+  "next_goal": "Phase 5A is complete. Do not begin Phase 5B/5C or Phase 6 until explicitly directed."
+}
