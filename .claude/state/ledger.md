@@ -55,3 +55,30 @@
   - `reflect-agent` correctly enforced its own narrow role scope during two of three test probes (declining to act as a generic file-echo proxy); this is recorded as a residual note in the completion matrix, not a blocker, since `pr-reviewer` proved the same delegation path executes tools end to end.
   - Unrelated untracked files (`claude-code-control-plane-roadmap.md` v1, `docs/`) remain preserved and untouched.
 
+## 2026-07-12 Phase 2 complete
+
+- Goal: implement Phase 2 (Project-Level Memory & State) — make the repo-local memory stack authoritative, add a bootstrap-safe `autoMemoryDirectory` mechanism, tested compaction snapshot/restore, and subagent-summary export — while keeping correctness independent of `~/.claude/*` and any external store, per `docs/claude-code-control-plane-roadmap-v2.md`.
+- Read: roadmap Phase 2 section in full; `.claude/state/execution-manifest.json`; `.claude/state/roadmap/phase-0-report.md` and `phase-1-report.md` (confirmed both `status: complete` before proceeding); effective `CLAUDE.md`/`CLAUDE.local.md`; `.claude/rules/*.md`; `.claude/settings.json`; `.claude/settings.local.json` (existing machine file, left untouched); `.gitignore`; `.claude/scripts/phase0_control_plane.py`; `.claude/scripts/control_plane_check.py`; `.claude/scripts/rules_fidelity_check.py`; `.claude/hooks/*`; the cached official hooks reference (`.claude/docs/.../code-claude-com-docs-en-hooks-88d3d79.md`) for the exact PreCompact/PostCompact/SessionStart/SubagentStop input/output contract.
+- Added:
+  - `.claude/scripts/phase2_memory.py` — bootstrap (`autoMemoryDirectory`), PreCompact snapshot, PostCompact summary, SessionStart validated restore (rejects stale/foreign/corrupt snapshots), SubagentStop export, and a `status` reconstruction/indexing command.
+  - `.claude/hooks/post-compact.sh`, `.claude/hooks/subagent-stop.sh` (new); `.claude/hooks/session-start.sh`, `.claude/hooks/pre-compact.sh` (extended, non-blocking via `|| true`).
+  - `.claude/rules/memory-and-compaction.md` — `.claude/memory/` committed-or-private policy, compaction contract, subagent-export location, prompt-cache stable-prefix/invalidator documentation.
+  - `.claude/plans/.gitkeep`, `.claude/state/compactions/.gitkeep`, `.claude/state/agents/.gitkeep`.
+  - `tests/test_phase2_memory.py` (16 unit tests), `tests/test_phase2_smoke.py` (real-hook subprocess smoke tests).
+  - `.claude/state/roadmap/phase-2-report.md`, `.claude/state/roadmap/phase-2-checkpoint.json`.
+- Fixed: `.claude/scripts/phase2_memory.py` `memory_status()` initially counted `.gitkeep` as a subagent "parent session" (used `iterdir()` without filtering to directories) — corrected before writing this ledger entry; verified with a live `status` run against this repo.
+- Updated: `.claude/settings.json` (`plansDirectory`, `PostCompact`, `SubagentStop` hooks), `.claude/scripts/control_plane_check.py` (new required paths + shell-parse list), `.claude/scripts/rules_fidelity_check.py` (registered the new rule file), `.claude/state/completion-matrix.md` (Phase 2 section), `.claude/state/execution-manifest.json` (`phase_2: complete`, `phase_2_completion` block, `next_goal`).
+- Verification commands:
+  - `python -m py_compile .claude/scripts/phase2_memory.py tests/test_phase2_memory.py tests/test_phase2_smoke.py` -> `0`
+  - `python -m unittest discover -s tests -v` -> `0` (22 tests: 6 Phase 0 + 16 Phase 2, no regression)
+  - `python3 .claude/scripts/control_plane_check.py` -> `0`
+  - `python3 .claude/scripts/rules_fidelity_check.py` -> `0`
+  - `python3 -c "import json; json.load(open('.claude/settings.json'))"` -> `0`
+  - `git check-ignore -v` against every new Phase 2 path -> `1` (nothing ignored; all evidence is git-visible)
+  - `python3 .claude/scripts/phase2_memory.py status` (live, against this repo) -> `0`
+- Evidence: `.claude/state/roadmap/phase-2-report.md`, `.claude/state/roadmap/phase-2-checkpoint.json`, updated `.claude/state/completion-matrix.md` Phase 2 section.
+- Notes:
+  - Phase 3 is untouched, per instruction not to start it.
+  - The real, pre-existing machine-local `.claude/settings.local.json` on this workstation was deliberately left unmodified — the bootstrap mechanism is proven end-to-end against fresh and pre-existing fixtures in `tests/test_phase2_smoke.py` rather than by mutating the user's live local config outside of the native `SessionStart` hook path.
+  - Unrelated untracked files present since before this session (`claude-code-control-plane-roadmap.md` v1, `docs/`, `.claude/state/logs/`, `.claude/state/raw/`, `.claude/state/phase0.sqlite3`, `.claude/state/roadmap/phase-1-*`) remain preserved and untouched.
+

@@ -8,6 +8,7 @@
     ".claude/worktrees/**/CLAUDE.local.md"
   ],
   "disableSkillShellExecution": true,
+  "plansDirectory": "./.claude/plans",
   "permissions": {
     "mode": "ask",
     "allow": [
@@ -54,6 +55,22 @@
         "matcher": "",
         "hooks": [
           { "type": "command", "command": "bash .claude/hooks/pre-compact.sh" }
+        ]
+      }
+    ],
+    "PostCompact": [
+      {
+        "matcher": "",
+        "hooks": [
+          { "type": "command", "command": "bash .claude/hooks/post-compact.sh" }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "matcher": "",
+        "hooks": [
+          { "type": "command", "command": "bash .claude/hooks/subagent-stop.sh" }
         ]
       }
     ],

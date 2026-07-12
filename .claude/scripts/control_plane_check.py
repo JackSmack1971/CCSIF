@@ -14,13 +14,19 @@ REQUIRED_PATHS = [
     "CLAUDE.md",
     ".claude/settings.json",
     ".claude/scripts/phase0_control_plane.py",
+    ".claude/scripts/phase2_memory.py",
     ".claude/hooks/pre-tool-use.sh",
     ".claude/hooks/lib/pre-tool-use-guard.js",
     ".claude/hooks/post-tool-use.sh",
     ".claude/hooks/session-start.sh",
     ".claude/hooks/pre-compact.sh",
+    ".claude/hooks/post-compact.sh",
+    ".claude/hooks/subagent-stop.sh",
     ".claude/hooks/stop.sh",
     ".claude/commands/control-plane-check.md",
+    ".claude/plans/.gitkeep",
+    ".claude/state/compactions/.gitkeep",
+    ".claude/state/agents/.gitkeep",
 ]
 PROTECTED_PROBES = [
     {"tool_name": "Write", "tool_input": {"file_path": ".env"}},
@@ -128,11 +134,15 @@ def check_shell_parse() -> None:
         ".claude/hooks/pre-tool-use.sh",
         ".claude/hooks/post-tool-use.sh",
         ".claude/hooks/pre-compact.sh",
+        ".claude/hooks/post-compact.sh",
+        ".claude/hooks/subagent-stop.sh",
         ".claude/hooks/stop.sh",
     ]:
         proc = run(["bash", "-n", script])
         if proc.returncode != 0:
             fail(f"{script} failed bash -n: {proc.stderr.strip()}")
+
+
 
 
 def main() -> int:
@@ -143,6 +153,7 @@ def main() -> int:
     check_allowed_probes()
     check_guard_probes()
     check_fd_dup_redirects()
+
     print("control-plane-check: PASS")
     return 0
 
