@@ -2,30 +2,85 @@
   "findings": [
     {
       "axis": "context budget",
-      "evidence": "73 lines",
+      "evidence": "85 lines",
       "id": "CCA-001",
       "line": null,
-      "path": ".claude/rules/constitutional-agent-engineering-rules.md",
-      "recommendation": "Trim or split this rule file to keep path-injected context lean.",
+      "path": "CLAUDE.md",
+      "recommendation": "Review for extraction candidates before the file reaches the hard budget.",
       "severity": "medium",
-      "stop_condition": "Rule file is at or below 50 lines or documented as intentionally global.",
-      "title": "Rule file exceeds 50-line target"
+      "stop_condition": "Root manifest is at or below 80 lines or documented as intentionally dense.",
+      "title": "Root manifest exceeds 80-line warning budget"
     },
     {
       "axis": "context budget",
-      "evidence": "55 lines",
+      "evidence": ".claude/worktrees/rules-fidelity-check/CLAUDE.md",
       "id": "CCA-002",
       "line": null,
-      "path": ".claude/rules/surgical-density.md",
-      "recommendation": "Trim or split this rule file to keep path-injected context lean.",
+      "path": ".",
+      "recommendation": "Use claudeMdExcludes or consolidate nested manifests where inheritance creates bloat or conflict.",
       "severity": "medium",
-      "stop_condition": "Rule file is at or below 50 lines or documented as intentionally global.",
-      "title": "Rule file exceeds 50-line target"
+      "stop_condition": "Nested manifests are intentionally included or excluded by settings.",
+      "title": "Nested CLAUDE.md files may add inherited context"
+    },
+    {
+      "axis": "path-scoped rules",
+      "evidence": "No paths key detected in YAML frontmatter.",
+      "id": "CCA-003",
+      "line": 1,
+      "path": ".claude/rules/AGENTS.md",
+      "recommendation": "Add precise paths frontmatter unless this is an intentionally global habit file.",
+      "severity": "medium",
+      "stop_condition": "Rule file has paths frontmatter or a clear global label.",
+      "title": "Rule file lacks paths frontmatter"
+    },
+    {
+      "axis": "context budget",
+      "evidence": "Nested CLAUDE.md files exist and settings lack claudeMdExcludes.",
+      "id": "CCA-005",
+      "line": null,
+      "path": ".claude/settings.json",
+      "recommendation": "Add claudeMdExcludes for irrelevant inherited manifests in complex repositories.",
+      "severity": "medium",
+      "stop_condition": "Exclusion policy exists or nested manifests are confirmed relevant.",
+      "title": "claudeMdExcludes missing with nested CLAUDE.md files"
+    },
+    {
+      "axis": "linguistic architecture",
+      "evidence": "- Tier 0 changes are generated trace summaries, metrics snapshots, and proposal records that do not alter runtime behavior; they may be created automatically when they are git-trackable and reversible.",
+      "id": "CCA-006",
+      "line": 18,
+      "path": "CLAUDE.md",
+      "recommendation": "Rewrite as an affirmative imperative with a measurable target behavior.",
+      "severity": "medium",
+      "stop_condition": "The replacement line states the desired action and includes a verification condition where applicable.",
+      "title": "Negative phrasing found in operational instructions"
+    },
+    {
+      "axis": "linguistic architecture",
+      "evidence": "- Prefer one rule file for one concern; don't duplicate the same directive in multiple places.",
+      "id": "CCA-007",
+      "line": 15,
+      "path": ".claude/rules/AGENTS.md",
+      "recommendation": "Rewrite as an affirmative imperative with a measurable target behavior.",
+      "severity": "medium",
+      "stop_condition": "The replacement line states the desired action and includes a verification condition where applicable.",
+      "title": "Negative phrasing found in operational instructions"
+    },
+    {
+      "axis": "linguistic architecture",
+      "evidence": "- Never write to opinion memory without a confidence score.",
+      "id": "CCA-008",
+      "line": 10,
+      "path": ".claude/rules/hindsight-memory.md",
+      "recommendation": "Rewrite as an affirmative imperative with a measurable target behavior.",
+      "severity": "medium",
+      "stop_condition": "The replacement line states the desired action and includes a verification condition where applicable.",
+      "title": "Negative phrasing found in operational instructions"
     },
     {
       "axis": "security boundaries",
       "evidence": "disableSkillShellExecution is not true.",
-      "id": "CCA-003",
+      "id": "CCA-004",
       "line": null,
       "path": ".claude/settings.json",
       "recommendation": "Set disableSkillShellExecution true in managed or project settings when inline shell in skills is outside policy.",
@@ -34,12 +89,14 @@
       "title": "Skill shell execution is not explicitly disabled"
     }
   ],
-  "generated_at": "2026-07-10T07:34:09",
+  "generated_at": "2026-07-11T21:48:28",
   "repo": "C:\\workspaces\\CCSIF",
   "schema": "claude-code-architecture-audit-v1",
   "summary": {
     "axes": {
-      "context budget": 2,
+      "context budget": 3,
+      "linguistic architecture": 3,
+      "path-scoped rules": 1,
       "security boundaries": 1
     },
     "counts": {
@@ -47,9 +104,9 @@
       "high": 0,
       "info": 0,
       "low": 1,
-      "medium": 2
+      "medium": 7
     },
     "status": "partial",
-    "total": 3
+    "total": 8
   }
 }

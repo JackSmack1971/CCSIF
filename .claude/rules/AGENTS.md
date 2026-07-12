@@ -1,3 +1,8 @@
+---
+paths:
+  - ".claude/rules/**"
+---
+
 # Rules
 
 ## Purpose
@@ -12,7 +17,7 @@ Path-scoped behavior rules for the `.claude/` and `.codex/` control planes. Thes
 
 ## Contracts & Invariants
 - Keep each rule file path-scoped with accurate `paths:` frontmatter.
-- Prefer one rule file for one concern; don't duplicate the same directive in multiple places.
+- Keep one rule file per concern, and duplicate a directive only when a distinct scope needs different guidance.
 - Treat rule edits as control-plane changes and verify them with the existing fidelity checks after writing.
 - Preserve the distinction between policy, procedure, and reference. Rules are enforceable guidance, not background notes.
 
@@ -22,8 +27,8 @@ Path-scoped behavior rules for the `.claude/` and `.codex/` control planes. Thes
 - Update verification commands whenever the rule set changes behavior.
 
 ## Anti-patterns
-- Don't broaden a `paths:` selector just to avoid adding a more specific rule.
-- Don't encode runtime state or history in rule files.
+- Broaden a `paths:` selector only when the broader scope genuinely matches the instruction.
+- Keep runtime state and history out of rule files.
 
 ## Related Context
 - Parent node: `../AGENTS.md`

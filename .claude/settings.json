@@ -8,6 +8,11 @@
   "enabledMcpjsonServers": [
     "graphiti-memory"
   ],
+  "claudeMdExcludes": [
+    ".claude/worktrees/**/CLAUDE.md",
+    ".claude/worktrees/**/CLAUDE.local.md"
+  ],
+  "disableSkillShellExecution": true,
   "permissions": {
     "mode": "ask",
     "allow": [
