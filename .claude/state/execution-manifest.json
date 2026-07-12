@@ -1,0 +1,116 @@
+{
+  "roadmap": {
+    "path": "docs/claude-code-control-plane-roadmap-v2.md",
+    "sha256": "7D6F35A16DEE91F0BD8B4DA98EA29F05CDC13003DF1C096BFA620C7610E08AE6",
+    "lines": 287
+  },
+  "baseline": {
+    "generated_at": "2026-07-12T11:56:26.5894594-04:00",
+    "repo_root": "C:/workspaces/CCSIF",
+    "branch": "main",
+    "head": "e9358b553a9a05c16de00af28e35a9f29e5b16b1"
+  },
+  "detected_stack": {
+    "repo_kind": "Claude Code control-plane repository",
+    "languages_and_tools": [
+      "Markdown documentation",
+      "Python validation scripts",
+      "Bash hook scripts",
+      "Node.js runtime for hook guard evaluation",
+      "Git"
+    ],
+    "root_build_tooling": "none detected at the repository root"
+  },
+  "verification_commands": [
+    {
+      "command": "git rev-parse --show-toplevel; git status --short --branch; git branch --show-current; git rev-parse HEAD",
+      "exit_code": 0,
+      "output_summary": "repo root C:/workspaces/CCSIF; branch main; HEAD e9358b553a9a05c16de00af28e35a9f29e5b16b1; untracked roadmap/docs files already present before baseline scaffolding"
+    },
+    {
+      "command": "Get-FileHash docs/claude-code-control-plane-roadmap-v2.md -Algorithm SHA256",
+      "exit_code": 0,
+      "output_summary": "roadmap hash 7D6F35A16DEE91F0BD8B4DA98EA29F05CDC13003DF1C096BFA620C7610E08AE6"
+    },
+    {
+      "command": "python3 .claude/scripts/control_plane_check.py",
+      "exit_code": 0,
+      "output_summary": "control-plane-check: PASS"
+    },
+    {
+      "command": "python3 .claude/scripts/rules_fidelity_check.py",
+      "exit_code": 0,
+      "output_summary": "rules-fidelity-check: PASS"
+    },
+    {
+      "command": "Get-Content -Raw .claude/state/execution-manifest.json | ConvertFrom-Json | Out-Null; $base = Join-Path (Get-Location) '.claude/state'; $resolved = [System.IO.Path]::GetFullPath((Join-Path $base '../../docs/claude-code-control-plane-roadmap-v2.md')); if (!(Test-Path $resolved)) { throw 'missing roadmap link target' }",
+      "exit_code": 0,
+      "output_summary": "manifest parsed; baseline, matrix, and ledger exist; roadmap link target resolves to docs/claude-code-control-plane-roadmap-v2.md"
+    }
+  ],
+  "phase_status": {
+    "phase_0": "partial",
+    "phase_1": "partial",
+    "phase_2": "partial",
+    "phase_3": "partial",
+    "phase_4": "partial",
+    "phase_5": "partial",
+    "phase_6": "partial",
+    "phase_7": "not_started"
+  },
+  "dependencies": {
+    "project_scoped": [
+      "CLAUDE.md",
+      "CLAUDE.local.md",
+      ".claude/settings.json",
+      ".claude/settings.local.json",
+      ".claude/rules/*.md",
+      ".claude/skills/*",
+      ".claude/commands/*",
+      ".claude/agents/*",
+      ".claude/hooks/*",
+      ".claude/workflows/issue-to-pr.js",
+      ".mcp.json",
+      ".claude/memory/*"
+    ],
+    "machine_global": {
+      "has_dependency": false,
+      "paths_found": [],
+      "notes": "No active repository file requires `~/.claude/*` or other host-specific Claude state. The roadmap text references those paths as dependencies to avoid, not as live requirements. `.claude/settings.local.json` uses only project-local placeholders."
+    }
+  },
+  "evidence_paths": [
+    "CLAUDE.md",
+    "CLAUDE.local.md",
+    ".claude/README.md",
+    ".claude/settings.json",
+    ".claude/settings.local.json",
+    ".claude/rules/00-core-workflow.md",
+    ".claude/rules/control-plane.md",
+    ".claude/rules/testing.md",
+    ".claude/hooks/pre-tool-use.sh",
+    ".claude/hooks/post-tool-use.sh",
+    ".claude/hooks/session-start.sh",
+    ".claude/hooks/stop.sh",
+    ".claude/hooks/lib/pre-tool-use-guard.js",
+    ".claude/commands/control-plane-check.md",
+    ".claude/agents/implementation-agent.md",
+    ".claude/agents/pr-reviewer.md",
+    ".claude/agents/reflect-agent.md",
+    ".claude/agents/upstream-auditor.md",
+    ".claude/skills/",
+    ".claude/workflows/issue-to-pr.js",
+    ".claude/memory/",
+    ".claude/scripts/control_plane_check.py",
+    ".claude/scripts/rules_fidelity_check.py",
+    ".mcp.json",
+    "docs/claude-code-control-plane-roadmap-v2.md"
+  ],
+  "known_risks": [
+    "The repository already has unrelated untracked files outside `.claude/state/`; they were left untouched.",
+    "Phase 0 durable state and the rest of `.claude/state/` are still only scaffolded at the baseline layer.",
+    "The roadmap's Phase 4 section has no explicit exit-criteria block, so the matrix records that gap rather than inventing one.",
+    "Existing files prove repository surface area, not full runtime behavior; the matrix separates presence from verification."
+  ],
+  "next_goal": "Implement the minimum Phase 0 durable-state primitives under `.claude/state/` (logs, checkpoints, session metadata) without broadening scope into later phases."
+}
