@@ -1,6 +1,6 @@
 # Contributing to CCSIF
 
-Thanks for your interest in CCSIF, a repository-local Claude Code scaffold that centralizes shared agent rules, hooks, workflows, and review commands around a single project constitution. Contributions to the constitution, agents, commands, workflows, hooks, rules, and skills under `.claude/` and `.codex/` are all welcome.
+Thanks for your interest in CCSIF, a repository-local Claude Code scaffold that centralizes shared agent rules, hooks, workflows, and review commands around a single project constitution. Contributions to the constitution, agents, commands, workflows, hooks, rules, and skills under `.claude/` are all welcome.
 
 ## Contents
 
@@ -38,8 +38,8 @@ Thanks for your interest in CCSIF, a repository-local Claude Code scaffold that 
 
 - [The repository constitution](./CLAUDE.md) is a Protected Area: edits to it require explicit human approval (Tier 1) under its own tier rules.
 - Other Protected Areas it declares are production configuration, secrets and credentials, database migrations, authentication and authorization, payment or trading logic, and CI/CD deployment workflows.
-- Treat `.claude/` and `.codex/` control-plane sources (agents, commands, hooks, workflows, rules, settings, `.mcp.json`) as governance changes that need tighter review than ordinary documentation edits.
-- `.claude/traces/` and `.codex/traces/` hold generated telemetry, not source; do not hand-edit trace files.
+- Treat `.claude/` control-plane sources (agents, commands, hooks, workflows, rules, settings, `.mcp.json`) as governance changes that need tighter review than ordinary documentation edits.
+- `.claude/traces/` holds generated telemetry, not source; do not hand-edit trace files.
 - `CLAUDE.local.md` and `.claude/settings.local.json` are local-only overrides that are gitignored; do not commit changes to them.
 
 ## Local setup
