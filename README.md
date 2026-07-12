@@ -205,6 +205,7 @@ Grounded verification options:
 ```bash
 git status --short
 git diff --check
+python3 .claude/scripts/control_plane_check.py
 bash .claude/hooks/session-start.sh
 ```
 
