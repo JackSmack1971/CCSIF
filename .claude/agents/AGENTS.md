@@ -4,10 +4,26 @@
 Project-local subagent definitions. This subtree owns the repo's reusable specialized agents.
 
 ## Entry Points
-- `implementation-agent.md` - isolated issue implementation.
-- `pr-reviewer.md` - merge-readiness review.
+- `implementation-agent.md` - isolated issue implementation (branch-per-issue, GitHub flow).
+- `pr-reviewer.md` - merge-readiness review of a finished GitHub PR.
 - `upstream-auditor.md` - audit-only issue discovery.
 - `reflect-agent.md` - HINDSIGHT opinion synthesis.
+- `scout.md` - read-only research/discovery (Phase 3 catalog).
+- `planner.md` - bounded atomic plan proposal (Phase 3 catalog).
+- `builder.md` - scoped executor, worktree-isolated (Phase 3 catalog).
+- `verifier.md` - independent verifier of a builder/implementation-agent handoff (Phase 3 catalog).
+
+## Roles Not Modeled as Files
+- Supervisor/dispatcher: the main Claude Code session itself coordinates subtasks and merges
+  results — this is native behavior, not a subagent definition. `.claude/scripts/phase3_agents.py`
+  and `.claude/rules/subagent-routing.md` govern how the main session routes and tracks that work.
+- Additional reviewer lenses (security/architecture/maintainer): not added. This repo's actual
+  content (governance scripts, hooks, docs) has no evidenced recurring need beyond `pr-reviewer`'s
+  correctness/merge-readiness lens and the new generic `verifier`; add one only when a real,
+  repeated need shows up, per the roadmap's "only lenses justified by the repo" guidance.
+- Collaborative agent teams: not used. No task in this repo has shown a genuine need for
+  workers to exchange state mid-task; the supervisor + one-way-delegation pattern covers every
+  observed case so far.
 
 ## Contracts & Invariants
 - Keep each agent narrowly scoped to one role.

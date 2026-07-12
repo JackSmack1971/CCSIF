@@ -82,3 +82,29 @@
   - The real, pre-existing machine-local `.claude/settings.local.json` on this workstation was deliberately left unmodified — the bootstrap mechanism is proven end-to-end against fresh and pre-existing fixtures in `tests/test_phase2_smoke.py` rather than by mutating the user's live local config outside of the native `SessionStart` hook path.
   - Unrelated untracked files present since before this session (`claude-code-control-plane-roadmap.md` v1, `docs/`, `.claude/state/logs/`, `.claude/state/raw/`, `.claude/state/phase0.sqlite3`, `.claude/state/roadmap/phase-1-*`) remain preserved and untouched.
 
+## 2026-07-12 Phase 3 complete
+
+- Goal: implement Phase 3 (Sub-Agent Orchestration) — a deliberately small worker catalog covering the roadmap's recurring roles, plus parent-child task tracking, role routing, stale-worker detection, and verified merge/handoff under `.claude/state/agents/`, per `docs/claude-code-control-plane-roadmap-v2.md`.
+- Read: roadmap Phase 3 section in full; `.claude/state/execution-manifest.json`; `.claude/state/roadmap/phase-{0,1,2}-report.md` and checkpoints (confirmed all `status: complete` before proceeding); current `.claude/agents/*.md`; `.claude/hooks/*`; `.claude/scripts/phase0_control_plane.py` and `phase2_memory.py`; `.claude/settings.json`; `.claude/rules/subagent-routing.md`; the cached official subagents/hooks references (`.claude/docs/.../code-claude-com-docs-en-sub-agents-ceb0b8dc.md`, `...-hooks-88d3d79.md`) for exact frontmatter fields (`isolation`, `permissionMode`) and the `SubagentStart`/`SubagentStop` input schema.
+- Added:
+  - `.claude/agents/scout.md`, `planner.md` — read-only researcher/planner, `tools: Read, Grep, Glob` only, `permissionMode: plan`.
+  - `.claude/agents/builder.md` — generic scoped executor, `isolation: worktree` (frontmatter-level, runtime-enforced) for non-GitHub work; `implementation-agent.md` left untouched on its existing branch-per-issue isolation.
+  - `.claude/agents/verifier.md` — generic independent verifier, distinct from the GitHub-PR-specific `pr-reviewer.md`.
+  - `.claude/scripts/phase3_agents.py` — `subagent-start`/`subagent-stop` (task tracking wired to native `SubagentStart`/`SubagentStop` hooks), `route` (role lookup read live from each agent's own frontmatter), `handoff` (requires real verification evidence or explicit `--summary-only`; never treats a summary as proof), `sweep` (stale-worker detection), `list` (disk-only reconstruction of all delegated work).
+  - `.claude/hooks/subagent-start.sh` (new); `.claude/hooks/subagent-stop.sh` (extended to also call phase3's `subagent-stop`, alongside the existing Phase 2 export).
+  - `tests/test_phase3_agents.py` (19 unit tests), `tests/test_phase3_smoke.py` (2 real-hook subprocess smoke tests).
+  - `.claude/state/roadmap/phase-3-report.md`, `.claude/state/roadmap/phase-3-checkpoint.json`.
+- Updated: `.claude/agents/AGENTS.md` (catalog index + explicit record of roles deliberately not modeled as files: supervisor/dispatcher is the main session itself; no extra reviewer lenses or agent teams added, with reasons); `.claude/rules/subagent-routing.md` (writer isolation + handoff-not-summary conventions, body only, `paths:` frontmatter untouched); `.claude/settings.json` (new `SubagentStart` hook registration); `.claude/scripts/control_plane_check.py` (new required paths + shell-parse list); `.claude/state/completion-matrix.md` (Phase 3 section); `.claude/state/execution-manifest.json` (`phase_3: complete`, `phase_3_completion` block, `next_goal`).
+- Verification commands:
+  - `python -m py_compile .claude/scripts/phase3_agents.py tests/test_phase3_agents.py tests/test_phase3_smoke.py` -> `0`
+  - `python -m unittest discover -s tests -v` -> `0` (45 tests: 6 Phase 0 + 16 Phase 2 unit + 4 Phase 2 smoke + 19 Phase 3 unit + 2 Phase 3 smoke, no regression)
+  - `python3 .claude/scripts/control_plane_check.py` -> `0`
+  - `python3 .claude/scripts/rules_fidelity_check.py` -> `0`
+  - `python3 -c "import json; json.load(open('.claude/settings.json'))"` -> `0`
+  - `git check-ignore -v` against every new Phase 3 path -> `1` (nothing ignored; all evidence is git-visible)
+- Live proof: spawned `upstream-auditor` (already registered in this session) via the real Agent tool with a diagnostic-only, read-only probe; the real `SubagentStart`/`SubagentStop` hooks fired and wrote a genuine task record under `.claude/state/agents/<real-session-id>/`, routed to `role: read-only-researcher` with the correct live `tool_scope`; `phase3_agents.py list` reconstructed it and `phase3_agents.py handoff --verification-command ... --verification-exit-code 0` marked it `merged` after independent re-verification — proving the routing/tracking/handoff path end to end against real, non-test data.
+- Notes:
+  - The four brand-new role files (`scout`, `planner`, `builder`, `verifier`) were not spawned live under their own names in this session — this session's Agent-tool registry had not refreshed to include files added mid-session, a session-timing gap recorded as a residual risk, not a defect in the shipped files (all pass `control_plane_check.py`'s static checks).
+  - Phase 4 is untouched, per instruction not to start it.
+  - Unrelated untracked files remain preserved and untouched.
+
