@@ -5,9 +5,6 @@
   "allowedMcpServers": [
     { "serverName": "graphiti-memory" }
   ],
-  "enabledMcpjsonServers": [
-    "graphiti-memory"
-  ],
   "claudeMdExcludes": [
     ".claude/worktrees/**/CLAUDE.md",
     ".claude/worktrees/**/CLAUDE.local.md"
