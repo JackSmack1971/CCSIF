@@ -13,6 +13,7 @@ Path-scoped behavior rules for the live `.claude/` control plane. These files de
 - `control-plane.md` - live governance for control-plane changes.
 - `hindsight-memory.md` - memory-specific operating rules.
 - `security.md`, `testing.md`, `subagent-routing.md`, `failure-escalation.md` - domain rules for common edge cases.
+- `../AGENTS.md` - parent navigation node for the `.claude` control plane.
 
 ## Contracts & Invariants
 - Keep each rule file path-scoped with accurate `paths:` frontmatter.
