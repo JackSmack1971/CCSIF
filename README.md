@@ -31,7 +31,7 @@ CCSIF is a repository-local Claude Code scaffold for developers who want shared 
 - Git
 - Claude Code [INFERRED from repository layout and hook/config naming]
 - Bash for the project hook scripts in `.claude/hooks/`
-- Node.js [INFERRED] for `.claude/workflows/*.js` and `.claude/hooks/lib/trace-writer.js`
+- Node.js [INFERRED] for `.claude/workflows/issue-to-pr.js` and `.claude/hooks/lib/trace-writer.js`
 
 ### Clone
 
@@ -228,7 +228,7 @@ Use the narrowest check that matches the change:
 | Layer | Technology | Version | Source | Notes |
 |---|---|---|---|---|
 | Repo type | Claude Code agent scaffold [INFERRED] | Unknown | `CLAUDE.md`, `.claude/` layout | Repository-local automation and policy bundle. |
-| Scripting runtime | Node.js [INFERRED] | Unknown | `.claude/workflows/*.js`, `.claude/hooks/lib/trace-writer.js` | JavaScript workflow and hook helper files use Node shebangs. |
+| Scripting runtime | Node.js [INFERRED] | Unknown | `.claude/workflows/issue-to-pr.js`, `.claude/hooks/lib/trace-writer.js` | JavaScript workflow and hook helper files use Node shebangs. |
 | Hook shell | Bash [INFERRED] | Unknown | `.claude/hooks/*.sh` | Session, pre-tool, post-tool, and stop hooks are shell scripts. |
 | Policy format | Markdown / JSON | N/A | `CLAUDE.md`, `.claude/settings.json`, `.claude/**/*.md` | Human-readable repo instructions and settings. |
 | Telemetry format | JSONL | N/A | `.claude/traces/*.jsonl` | Append-only generated trace corpus. |
