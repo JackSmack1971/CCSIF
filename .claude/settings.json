@@ -16,10 +16,7 @@
       "Bash(git status:*)",
       "Bash(git diff:*)",
       "Bash(git log --oneline -20)",
-      "Bash(python3 .claude/scripts/control_plane_check.py)",
-      "Bash(npm test:*)",
-      "Bash(npm run lint:*)",
-      "Bash(npm run typecheck:*)"
+      "Bash(python3 .claude/scripts/control_plane_check.py)"
     ],
     "deny": [
       "Bash(git push --force:*)",
