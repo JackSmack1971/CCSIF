@@ -72,7 +72,7 @@ Expected for the hook script:
 ## Features
 
 - Shared project constitution in [`CLAUDE.md`](./CLAUDE.md) so agent behavior is anchored to one source of truth.
-- Project permissions and hook wiring in [`.claude/settings.json`](./.claude/settings.json), including shell allow/deny lists and git safety checks.
+- Project permissions and hook wiring in [`.claude/settings.json`](./.claude/settings.json), including shell allow/deny lists and hook registration.
 - Custom slash commands for issue-to-PR, PR review, and upstream audit flows in [`.claude/commands/`](./.claude/commands/).
 - Reusable agent definitions for implementation, PR review, and upstream audit work in [`.claude/agents/`](./.claude/agents/).
 - Deterministic workflow entrypoint in [`.claude/workflows/`](./.claude/workflows/) for issue-to-PR orchestration.
@@ -147,7 +147,7 @@ This repository is best treated as a command center for Claude Code work, not as
 | `permissions.allow` | Yes | Allowlist entries in file | [`.claude/settings.json`](./.claude/settings.json) | Permitted shell commands include `git status`, `git diff`, `git log`, `npm test`, `npm run lint`, and `npm run typecheck`. |
 | `permissions.deny` | Yes | Denylist entries in file | [`.claude/settings.json`](./.claude/settings.json) | Blocks high-risk commands such as `git push --force`, `git reset --hard`, and `rm -rf`. |
 | `hooks.SessionStart` | Yes | `bash .claude/hooks/session-start.sh` | [`.claude/settings.json`](./.claude/settings.json) | Prints session start status and repo state. |
-| `hooks.PreToolUse` | Yes | `bash .claude/hooks/pre-tool-use.sh` | [`.claude/settings.json`](./.claude/settings.json) | Placeholder gate for pre-tool checks. |
+| `hooks.PreToolUse` | Yes | `bash .claude/hooks/pre-tool-use.sh` | [`.claude/settings.json`](./.claude/settings.json) | Protected-area guard for pre-tool checks. |
 | `hooks.PostToolUse` | Yes | `bash .claude/hooks/post-tool-use.sh` | [`.claude/settings.json`](./.claude/settings.json) | Writes trace telemetry after tool use. |
 | `hooks.Stop` | Yes | `bash .claude/hooks/stop.sh` | [`.claude/settings.json`](./.claude/settings.json) | Writes final trace telemetry at stop. |
 | `EXAMPLE_LOCAL_ONLY` | No | `replace-me` | [`.claude/settings.local.json`](./.claude/settings.local.json) | Example machine-local placeholder; do not treat as a shared secret. |
