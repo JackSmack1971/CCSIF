@@ -164,3 +164,31 @@
   - The global-path-dependency check does not scan `.claude/skills/` or `.claude/agents/`; a manual grep found 7 skill files with descriptive, non-functional `~/.claude` mentions (optional install-scope documentation), recorded as a residual risk rather than silently treated as clean.
   - Unrelated untracked files remain preserved and untouched.
 
+## 2026-07-12 Phase 5B complete
+
+- Goal: implement Phase 5B — task-agnostic lifecycle commands, discipline skills, a code-agnostic verify adapter, and durable artifacts — per `docs/claude-code-control-plane-roadmap-v2.md` Phase 5.2/5.3/5.4, without starting Phase 5C or Phase 6.
+- Read: roadmap in full; `.claude/state/execution-manifest.json`; `.claude/state/roadmap/phase-5a-report.md` and checkpoint (confirmed `status: complete` before proceeding); `.claude/rules/{20-lifecycle-gates,30-skill-taxonomy}.md`; `.claude/scripts/{taxonomy_check,control_plane_check,phase0_control_plane,phase3_agents,phase4_workflows}.py`; the full existing `.claude/commands/*.md` (5 files) and a broad sample of `.claude/skills/*/SKILL.md` (handoff, research, tdd, fsv-verify, grill-with-docs, test-strategy, to-spec, git-automation, diagnosing-bugs) to identify which disciplines already had a fitting skill before writing anything new.
+- Added:
+  - 11 thin commands (`.claude/commands/{brainstorm,grill,research,plan,build,verify,ship,handoff,status,debug,experiment}.md`) — each orchestrates skills/agents/scripts, never another command (0 cross-invocation violations, machine-checked).
+  - 4 new model-invoked skills for the disciplines with no existing fit: `alignment-interview` (open/interrogative requirements interviewing), `atomic-planning` (≤3-task plan creation via the lifecycle script), `session-takeover` (durable repo-committed cold-start handoff, distinct from the pre-existing OS-temp-directory `handoff` skill), `metric-gated-experiment` (Karpathy AutoResearch keep/revert loop). Reused unmodified: `research`, `tdd`, `fsv-verify`, `diagnosing-bugs`, `git-automation`, `grill-with-docs`.
+  - `.claude/scripts/phase5b_verify.py` + `.claude/hooks/verify.sh`/`verify.ps1` — a single code-agnostic verify adapter that parses `CLAUDE.md`'s own Source-of-Truth Commands block into named targets (`full`/`lint`/`test`/`<slug>`), plus non-code `rubric`/`citation`/`factcheck` targets that deterministically return exit 2 (defer to model judgment) instead of fabricating a pass/fail. Exit codes are always 0 (pass), 1 (fail), or 2 (unavailable).
+  - `.claude/scripts/phase5b_lifecycle.py` — atomic plan create/validate/list (≤3 tasks, explicit assumptions, per-task verification target, explicit commit boundary, blocking edges validated against real plan files on disk), disk-only status reconstruction, cold-start handoff creation (verification evidence or explicit `summary_only`, mirroring Phase 3's `handoff` pattern), and metric-gated experiment start/record/decide.
+  - `tests/test_phase5b_verify.py` (21 tests), `tests/test_phase5b_lifecycle.py` (20 tests) — parsing, target resolution, pass/fail/unavailable exit-code propagation (including through the real bash hook wrapper), plan-sizing rejection cases, status reconstruction against real fixture state, handoff cold-start content, and experiment keep/revert decisions in both directions.
+  - `.claude/state/roadmap/phase-5b-report.md`, `.claude/state/roadmap/phase-5b-checkpoint.json`.
+- Updated: `.claude/rules/20-lifecycle-gates.md` (replaced a now-stale "command implementations remain future work" sentence with pointers to the real command files and the verify adapter; stayed within its 40-line budget at 39 lines), `.claude/scripts/control_plane_check.py` (registered every new required path, added `verify.sh` to the shell-parse check, added `check_verify_adapter()`), `.claude/state/completion-matrix.md` (Phase 5B section added, Phase 5C section split out from the old combined 5B/5C row), `.claude/state/execution-manifest.json` (`phase_5b: complete`, `phase_5b_completion` block, `next_goal`).
+- Incidents caught and fixed before any test run completed: (1) `check_verify_adapter()` initially called the `control-plane` verify target, which shells out to `control_plane_check.py` itself — infinite self-recursion; fixed to use the non-recursive `rules` target. (2) `test_phase5b_verify.py`'s synthetic `CLAUDE.md` fixture initially pointed its fake "unit tests" command at the real `tests/` directory with `cwd=ROOT`, which would re-run the entire real suite (including itself) as a subprocess; two orphaned `python.exe` processes were observed and killed (not a runaway fork bomb), and the fixture was repointed at a nonexistent `fixture_tests` directory that fails fast instead.
+- Verification commands:
+  - `python -m py_compile .claude/scripts/phase5b_lifecycle.py .claude/scripts/phase5b_verify.py .claude/scripts/control_plane_check.py tests/test_phase5b_lifecycle.py tests/test_phase5b_verify.py` -> `0`
+  - `python -m unittest discover -s tests -v` -> `0` (106 tests: 65 prior + 41 new, no regression)
+  - `python3 .claude/scripts/control_plane_check.py` -> `0`
+  - `python3 .claude/scripts/rules_fidelity_check.py` -> `0`
+  - `python3 .claude/scripts/taxonomy_check.py` -> `0`
+  - `python3 -c "import json; json.load(open('.claude/settings.json'))"` -> `0`
+  - `git check-ignore -v` against every new Phase 5B path -> `1` (nothing ignored; all evidence is git-visible)
+  - `bash .claude/hooks/verify.sh run control-plane` -> `0`; `run rubric` -> `2`; `run does-not-exist` -> `2`
+- Evidence: `.claude/state/roadmap/phase-5b-report.md`, `.claude/state/roadmap/phase-5b-checkpoint.json`, updated `.claude/state/completion-matrix.md` Phase 5B/5C sections.
+- Notes:
+  - Phase 5C (`/bootstrap-control-plane`, cross-stack proof, main-thread context measurement) and Phase 6/7 are untouched, per instruction not to begin them.
+  - `/build` and `/ship`'s delegated agent/skill flows (builder, pr-reviewer, tdd, git-automation) were verified statically (taxonomy, frontmatter) rather than by a real live delegated run in this session.
+  - The `/experiment` gate's revert step is a documented `SKILL.md` instruction, not a script-enforced git action; nothing mechanically verifies the working tree matches a `revert` decision.
+  - Unrelated untracked files remain preserved and untouched.
