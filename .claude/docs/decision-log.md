@@ -13,6 +13,7 @@ Source: `.claude/audits/claude-code-architecture-audit.md` (deterministic, 25 fi
 - **Rewrote** 14 lines of negative-phrasing ("do not", "never", "avoid", "cannot") across `CLAUDE.md` and 9 rule files into affirmative imperatives with measurable completion criteria, per the audit's linguistic-architecture axis.
 - **Deferred** CCA-011 (MCP server governance — `allowedMcpServers`/`deniedMcpServers`): the repo still relies on a local `graphiti-memory` MCP server in `.mcp.json`, and any broader policy should be confirmed before moving the allow/deny list into managed settings.
 - **Resolved** CCA-012 (`disableSkillShellExecution`): no in-repo skills or commands currently use inline `!` blocks, so project settings now disable inline shell execution for user/project/plugin/additional-directory skill sources.
+- **Cleaned up** the remaining speculative `tools.*` settings keys and pinned `.claude/settings.json` to the real Claude Code settings schema URL. Branch-protection behavior is left to the repository's workflow rules and GitHub-side controls instead of pretending the project settings file can enforce it directly.
 - **Confirmed not applicable**: CCA-025 (gitignore memory pattern) — this repo's local Claude auto-memory lives outside the repo at `~/.claude/projects/<hash>/memory/`; the only in-repo local artifact directory (`.claude/traces/`) is already gitignored.
 
 ### Residual risk

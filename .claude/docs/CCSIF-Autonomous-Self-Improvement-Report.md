@@ -22,6 +22,7 @@ The audit findings below are preserved as a 2026-07-10 snapshot of the repo stat
 - `/control-plane-check` now exists at `[.claude/commands/control-plane-check.md](../commands/control-plane-check.md)`.
 - `.claude/workflows/upstream-audit.js` has been deleted.
 - `.claude/workflows/assets/workflow.schema.json` has been deleted.
+- `.claude/settings.json` now uses the real Claude Code settings schema URL and no longer carries speculative `tools.*` keys; branch protection remains enforced by repository policy and workflow rules rather than fake settings entries.
 
 This addendum separates historical observations from current repository state so resolved items are not mistaken for active defects.
 

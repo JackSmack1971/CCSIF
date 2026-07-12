@@ -29,7 +29,7 @@
 
 - `scripts/issue_to_pr.py` performs no writes to GitHub in the `plan`/`validate`/`status` paths — only `gh issue list` and `gh api search/issues` (read-only). `record` only writes a local journal file, never calls `gh`.
 - Actual branch creation, code edits, and `gh pr create` remain the responsibility of `implementation-agent`, which now has an explicit input contract (repository, issue, plan-supplied branch name) so it cannot invent an unreviewed branch name.
-- `implementation-agent`'s contract explicitly forbids merging, pushing to a protected branch, or force-pushing; `pr-reviewer`'s contract is advisory-only (no merge/close authority) — consistent with `.claude/settings.json`'s `tools.git.protectBranches` and this repository's git-workflow rule that PR creation/merge are separate, explicit-request operations.
+- `implementation-agent`'s contract explicitly forbids merging, pushing to a protected branch, or force-pushing; `pr-reviewer`'s contract is advisory-only (no merge/close authority) — consistent with the repository workflow rule that PR creation/merge are separate, explicit-request operations and with the `permissions.deny` rules in `.claude/settings.json`.
 - Destructive-flagged hygiene issues are excluded from automatic implementation by design (see `references/pr-contract.md`), matching this repository's `CLAUDE.md` Tier 1 rule that Protected Areas and destructive/irreversible changes require explicit human approval before apply.
 
 ## Verification boundary
