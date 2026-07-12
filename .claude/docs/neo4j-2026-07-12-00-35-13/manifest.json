@@ -1,0 +1,1387 @@
+{
+  "status": "ok",
+  "generator": "official-docs-pack",
+  "version": "3.0.0",
+  "generated_at": "2026-07-12T00:35:13.393Z",
+  "request": "https://neo4j.com/docs/",
+  "settings": {
+    "max_pages": 39,
+    "max_depth": 3,
+    "timeout_ms": 15000,
+    "allow_hosts": [
+      "neo4j.com"
+    ]
+  },
+  "seeds": [
+    {
+      "url": "https://neo4j.com/docs/",
+      "reason": "user-url:known-docs-host+docs-shaped-path",
+      "score": 120,
+      "host": "neo4j.com",
+      "rootPath": "/docs"
+    },
+    {
+      "url": "https://www.neo4j.com/docs/reference/docs-archive/",
+      "reason": "search-result:known-docs-host+docs-shaped-path",
+      "score": 120,
+      "host": "neo4j.com",
+      "rootPath": "/docs"
+    },
+    {
+      "url": "https://neo4j.com/docs/reference/",
+      "reason": "search-result:known-docs-host+docs-shaped-path",
+      "score": 120,
+      "host": "neo4j.com",
+      "rootPath": "/docs"
+    },
+    {
+      "url": "https://neo4j.com/docs/operations-manual/current/",
+      "reason": "search-result:known-docs-host+docs-shaped-path",
+      "score": 120,
+      "host": "neo4j.com",
+      "rootPath": "/docs"
+    },
+    {
+      "url": "https://neo4j.com/docs/getting-started/",
+      "reason": "search-result:known-docs-host+docs-shaped-path",
+      "score": 120,
+      "host": "neo4j.com",
+      "rootPath": "/docs"
+    },
+    {
+      "url": "https://docs.spring.io/spring-data/neo4j/docs/5.0.0.RELEASE/reference/html/",
+      "reason": "search-result:docs-shaped-host+docs-shaped-path",
+      "score": 75,
+      "host": "docs.spring.io",
+      "rootPath": "/spring-data/neo4j/docs"
+    }
+  ],
+  "pages": [
+    {
+      "path": "docs/neo4j-com-docs-b771fcd6.md",
+      "title": "Neo4j documentation",
+      "url": "https://neo4j.com/docs/",
+      "host": "neo4j.com",
+      "depth": 0,
+      "headings": [
+        "Neo4j documentation",
+        "[](https://neo4j.com/docs/#_getting_started)Getting started",
+        "[](https://neo4j.com/docs/#_cta_cards)CTA cards",
+        "[](https://neo4j.com/docs/#_deployment_options)Deployment options",
+        "[](https://neo4j.com/docs/#_cypher)Cypher",
+        "[](https://neo4j.com/docs/#_neo4j_tools)Neo4j Tools",
+        "[](https://neo4j.com/docs/#_graph_data_science)Graph Data Science",
+        "[](https://neo4j.com/docs/#_create_applications)Create applications",
+        "[](https://neo4j.com/docs/#_connect_data_sources)Connect data sources",
+        "[](https://neo4j.com/docs/#_tailored_for_you)Tailored for you",
+        "[](https://neo4j.com/docs/#_developer)Developer",
+        "[](https://neo4j.com/docs/#_database_admin)Database Admin",
+        "[](https://neo4j.com/docs/#_data_scientist)Data Scientist",
+        "[](https://neo4j.com/docs/#_data_engineer)Data Engineer",
+        "[](https://neo4j.com/docs/#_tutorials_how_to_guides)Tutorials & How-to guides",
+        "[](https://neo4j.com/docs/#_graphacademy_courses)GraphAcademy courses",
+        "[](https://neo4j.com/docs/#_other_resources)Other resources",
+        "[](https://neo4j.com/docs/#_join_forums_and_discussions)Join forums and discussions",
+        "[](https://neo4j.com/docs/#_developer_blogs_articles_and_books)Developer blogs, articles and books"
+      ],
+      "selector": "article,main,[role=main]",
+      "fetched_at": "2026-07-12T00:35:10.007Z"
+    },
+    {
+      "path": "docs/neo4j-com-docs-reference-docs-archive-f791d79a.md",
+      "title": "All documentation",
+      "url": "https://www.neo4j.com/docs/reference/docs-archive/",
+      "host": "neo4j.com",
+      "depth": 0,
+      "headings": [
+        "All documentation",
+        "[](https://www.neo4j.com/docs/reference/docs-archive/#_getting_started)Getting Started",
+        "[](https://www.neo4j.com/docs/reference/docs-archive/#_neo4j_dbms)Neo4j DBMS",
+        "[](https://www.neo4j.com/docs/reference/docs-archive/#_upgrade_and_migration_guide)Upgrade and Migration Guide",
+        "[](https://www.neo4j.com/docs/reference/docs-archive/#_neo4j_aura)Neo4j Aura",
+        "[](https://www.neo4j.com/docs/reference/docs-archive/#_neo4j_tools)Neo4j Tools",
+        "[](https://www.neo4j.com/docs/reference/docs-archive/#_neo4j_graph_data_science)Neo4j Graph Data Science",
+        "[](https://www.neo4j.com/docs/reference/docs-archive/#_neo4j_graph_data_science_client)Neo4j Graph Data Science Client",
+        "[](https://www.neo4j.com/docs/reference/docs-archive/#_cypher_query_language)Cypher Query Language",
+        "[](https://www.neo4j.com/docs/reference/docs-archive/#_apoc_library_core)APOC Library (Core)",
+        "[](https://www.neo4j.com/docs/reference/docs-archive/#_neo4j_drivers)Neo4j Drivers",
+        "[](https://www.neo4j.com/docs/reference/docs-archive/#_neo4j_graphql_library)Neo4j GraphQL Library",
+        "[](https://www.neo4j.com/docs/reference/docs-archive/#_neo4j_http_api)Neo4j HTTP API",
+        "[](https://www.neo4j.com/docs/reference/docs-archive/#_neo4j_ogm_library)Neo4j OGM Library",
+        "[](https://www.neo4j.com/docs/reference/docs-archive/#_neo4j_connector_for_apache_spark)Neo4j Connector for Apache Spark",
+        "[](https://www.neo4j.com/docs/reference/docs-archive/#_neo4j_connector_for_apache_kafka)Neo4j Connector for Apache Kafka"
+      ],
+      "selector": "article,main,[role=main]",
+      "fetched_at": "2026-07-12T00:35:10.258Z"
+    },
+    {
+      "path": "docs/neo4j-com-docs-reference-d8d52284.md",
+      "title": "Reference",
+      "url": "https://neo4j.com/docs/reference/",
+      "host": "neo4j.com",
+      "depth": 0,
+      "headings": [
+        "Reference",
+        "[](https://neo4j.com/docs/reference/#_find_reference_material_and_other_resources_in_documentation)Find reference material and other resources in documentation",
+        "[](https://neo4j.com/docs/reference/#_cypher_cheat_sheet)Cypher Cheat Sheet",
+        "[](https://neo4j.com/docs/reference/#_configuration_settings)Configuration settings",
+        "[](https://neo4j.com/docs/reference/#_status_codes)Status codes",
+        "[](https://neo4j.com/docs/reference/#_procedures)Procedures",
+        "[](https://neo4j.com/docs/reference/#_neo4j_glossary)Neo4j glossary",
+        "[](https://neo4j.com/docs/reference/#_metrics)Metrics",
+        "[](https://neo4j.com/docs/reference/#_security)Security",
+        "[](https://neo4j.com/docs/reference/#_license)License"
+      ],
+      "selector": "article,main,[role=main]",
+      "fetched_at": "2026-07-12T00:35:10.357Z"
+    },
+    {
+      "path": "docs/neo4j-com-docs-operations-manual-current-7cdb4fac.md",
+      "title": "The Neo4j Operations Manual",
+      "url": "https://neo4j.com/docs/operations-manual/current/",
+      "host": "neo4j.com",
+      "depth": 0,
+      "headings": [
+        "The Neo4j Operations Manual"
+      ],
+      "selector": "article,main,[role=main]",
+      "fetched_at": "2026-07-12T00:35:10.414Z"
+    },
+    {
+      "path": "docs/neo4j-com-docs-getting-started-23e73b6f.md",
+      "title": "Get started with Neo4j",
+      "url": "https://neo4j.com/docs/getting-started/",
+      "host": "neo4j.com",
+      "depth": 0,
+      "headings": [
+        "Get started with Neo4j",
+        "[](https://neo4j.com/docs/getting-started/#_explore_the_capabilities_of_graph_databases)Explore the capabilities of graph databases",
+        "[](https://neo4j.com/docs/getting-started/#_what_is_neo4j)What is Neo4j",
+        "[](https://neo4j.com/docs/getting-started/#_what_is_a_graph_database)What is a graph database",
+        "[](https://neo4j.com/docs/getting-started/#_what_is_cypher)What is Cypher",
+        "[](https://neo4j.com/docs/getting-started/#_work_with_data)Work with data",
+        "[](https://neo4j.com/docs/getting-started/#_model_your_data_for_neo4j)Model your data for Neo4j",
+        "[](https://neo4j.com/docs/getting-started/#_import_data_to_neo4j)Import data to Neo4j",
+        "[](https://neo4j.com/docs/getting-started/#_create_applications_with_neo4j)Create applications with Neo4j",
+        "[](https://neo4j.com/docs/getting-started/#_data_science_with_neo4j)Data science with Neo4j",
+        "[](https://neo4j.com/docs/getting-started/#_visualize_data_in_neo4j)Visualize data in Neo4j",
+        "[](https://neo4j.com/docs/getting-started/#_graphacademy_courses)GraphAcademy courses",
+        "[](https://neo4j.com/docs/getting-started/#_licenses_and_disclaimers)Licenses and disclaimers"
+      ],
+      "selector": "article,main,[role=main]",
+      "fetched_at": "2026-07-12T00:35:10.469Z"
+    },
+    {
+      "path": "docs/neo4j-com-docs-getting-started-23e73b6f.md",
+      "title": "Get started with Neo4j",
+      "url": "https://neo4j.com/docs/getting-started/",
+      "host": "neo4j.com",
+      "depth": 1,
+      "headings": [
+        "Get started with Neo4j",
+        "[](https://neo4j.com/docs/getting-started/#_explore_the_capabilities_of_graph_databases)Explore the capabilities of graph databases",
+        "[](https://neo4j.com/docs/getting-started/#_what_is_neo4j)What is Neo4j",
+        "[](https://neo4j.com/docs/getting-started/#_what_is_a_graph_database)What is a graph database",
+        "[](https://neo4j.com/docs/getting-started/#_what_is_cypher)What is Cypher",
+        "[](https://neo4j.com/docs/getting-started/#_work_with_data)Work with data",
+        "[](https://neo4j.com/docs/getting-started/#_model_your_data_for_neo4j)Model your data for Neo4j",
+        "[](https://neo4j.com/docs/getting-started/#_import_data_to_neo4j)Import data to Neo4j",
+        "[](https://neo4j.com/docs/getting-started/#_create_applications_with_neo4j)Create applications with Neo4j",
+        "[](https://neo4j.com/docs/getting-started/#_data_science_with_neo4j)Data science with Neo4j",
+        "[](https://neo4j.com/docs/getting-started/#_visualize_data_in_neo4j)Visualize data in Neo4j",
+        "[](https://neo4j.com/docs/getting-started/#_graphacademy_courses)GraphAcademy courses",
+        "[](https://neo4j.com/docs/getting-started/#_licenses_and_disclaimers)Licenses and disclaimers"
+      ],
+      "selector": "article,main,[role=main]",
+      "fetched_at": "2026-07-12T00:35:10.797Z"
+    },
+    {
+      "path": "docs/neo4j-com-docs-upgrade-migration-guide-current-2affd581.md",
+      "title": "Introduction",
+      "url": "https://neo4j.com/docs/upgrade-migration-guide/current/",
+      "host": "neo4j.com",
+      "depth": 1,
+      "headings": [
+        "Introduction",
+        "[](https://neo4j.com/docs/upgrade-migration-guide/current/#_about_this_guide)About this guide",
+        "[](https://neo4j.com/docs/upgrade-migration-guide/current/#_preparation)Preparation",
+        "[](https://neo4j.com/docs/upgrade-migration-guide/current/#_version_numbers)Version numbers",
+        "[](https://neo4j.com/docs/upgrade-migration-guide/current/#_neo4j_server_versioning)Neo4j server versioning",
+        "[](https://neo4j.com/docs/upgrade-migration-guide/current/#_neo4j_4_and_5_versioning)Neo4j 4 and 5 versioning",
+        "[](https://neo4j.com/docs/upgrade-migration-guide/current/#_cypher_versions)Cypher versions",
+        "[](https://neo4j.com/docs/upgrade-migration-guide/current/#_downtime)Downtime",
+        "[](https://neo4j.com/docs/upgrade-migration-guide/current/#_store_format)Store format",
+        "[](https://neo4j.com/docs/upgrade-migration-guide/current/#_downgrades)Downgrades",
+        "[](https://neo4j.com/docs/upgrade-migration-guide/current/#_continue_reading)Continue reading"
+      ],
+      "selector": "article,main,[role=main]",
+      "fetched_at": "2026-07-12T00:35:10.956Z"
+    },
+    {
+      "path": "docs/neo4j-com-docs-status-codes-current-491414e6.md",
+      "title": "Introduction",
+      "url": "https://neo4j.com/docs/status-codes/current/",
+      "host": "neo4j.com",
+      "depth": 1,
+      "headings": [
+        "Introduction"
+      ],
+      "selector": "article,main,[role=main]",
+      "fetched_at": "2026-07-12T00:35:11.014Z"
+    },
+    {
+      "path": "docs/neo4j-com-docs-java-reference-current-18555111.md",
+      "title": "The Neo4j Java Reference v2026.06",
+      "url": "https://neo4j.com/docs/java-reference/current/",
+      "host": "neo4j.com",
+      "depth": 1,
+      "headings": [
+        "The Neo4j Java Reference v2026.06"
+      ],
+      "selector": "article,main,[role=main]",
+      "fetched_at": "2026-07-12T00:35:11.073Z"
+    },
+    {
+      "path": "docs/neo4j-com-docs-kerberos-add-on-current-9c635f1c.md",
+      "title": "The Neo4j Kerberos Add-on v4.0.0",
+      "url": "https://neo4j.com/docs/kerberos-add-on/current/",
+      "host": "neo4j.com",
+      "depth": 1,
+      "headings": [
+        "The Neo4j Kerberos Add-on v4.0.0",
+        "[](https://neo4j.com/docs/kerberos-add-on/current/#add-on-kerberos-introduction)Introduction"
+      ],
+      "selector": "article,main,[role=main]",
+      "fetched_at": "2026-07-12T00:35:11.115Z"
+    },
+    {
+      "path": "docs/neo4j-com-docs-aura-90415b0e.md",
+      "title": "Neo4j Aura Documentation",
+      "url": "https://neo4j.com/docs/aura/",
+      "host": "neo4j.com",
+      "depth": 1,
+      "headings": [
+        "Neo4j Aura Documentation",
+        "[](https://neo4j.com/docs/aura/#_products_and_tiers)Products and tiers"
+      ],
+      "selector": "article,main,[role=main]",
+      "fetched_at": "2026-07-12T00:35:11.162Z"
+    },
+    {
+      "path": "docs/neo4j-com-docs-bloom-user-guide-current-b1239451.md",
+      "title": "Neo4j Bloom 2.34",
+      "url": "https://neo4j.com/docs/bloom-user-guide/current/",
+      "host": "neo4j.com",
+      "depth": 1,
+      "headings": [
+        "Neo4j Bloom 2.34"
+      ],
+      "selector": "article,main,[role=main]",
+      "fetched_at": "2026-07-12T00:35:11.213Z"
+    },
+    {
+      "path": "docs/neo4j-com-docs-browser-b70f071f.md",
+      "title": "Neo4j Browser",
+      "url": "https://neo4j.com/docs/browser/",
+      "host": "neo4j.com",
+      "depth": 1,
+      "headings": [
+        "Neo4j Browser"
+      ],
+      "selector": "article,main,[role=main]",
+      "fetched_at": "2026-07-12T00:35:11.258Z"
+    },
+    {
+      "path": "docs/neo4j-com-docs-data-importer-current-91ff8be.md",
+      "title": "Neo4j Data Importer",
+      "url": "https://neo4j.com/docs/data-importer/current/",
+      "host": "neo4j.com",
+      "depth": 1,
+      "headings": [
+        "Neo4j Data Importer"
+      ],
+      "selector": "article,main,[role=main]",
+      "fetched_at": "2026-07-12T00:35:11.303Z"
+    },
+    {
+      "path": "docs/neo4j-com-docs-desktop-current-afe6ed99.md",
+      "title": "Neo4j Desktop",
+      "url": "https://neo4j.com/docs/desktop/current/",
+      "host": "neo4j.com",
+      "depth": 1,
+      "headings": [
+        "Neo4j Desktop"
+      ],
+      "selector": "article,main,[role=main]",
+      "fetched_at": "2026-07-12T00:35:11.423Z"
+    },
+    {
+      "path": "docs/neo4j-com-docs-enterprise-studio-current-3fb3e6b1.md",
+      "title": "Neo4j Enterprise Studio",
+      "url": "https://neo4j.com/docs/enterprise-studio/current/",
+      "host": "neo4j.com",
+      "depth": 1,
+      "headings": [
+        "Neo4j Enterprise Studio"
+      ],
+      "selector": "article,main,[role=main]",
+      "fetched_at": "2026-07-12T00:35:11.471Z"
+    },
+    {
+      "path": "docs/neo4j-com-docs-ops-manager-current-be3c4707.md",
+      "title": "Neo4j Ops Manager",
+      "url": "https://neo4j.com/docs/ops-manager/current/",
+      "host": "neo4j.com",
+      "depth": 1,
+      "headings": [
+        "Neo4j Ops Manager"
+      ],
+      "selector": "article,main,[role=main]",
+      "fetched_at": "2026-07-12T00:35:11.517Z"
+    },
+    {
+      "path": "docs/neo4j-com-docs-neodash-commercial-current-6f4c4f44.md",
+      "title": "Introduction",
+      "url": "https://neo4j.com/docs/neodash-commercial/current/",
+      "host": "neo4j.com",
+      "depth": 1,
+      "headings": [
+        "Introduction",
+        "[](https://neo4j.com/docs/neodash-commercial/current/#_features)Features",
+        "[](https://neo4j.com/docs/neodash-commercial/current/#_getting_access_to_neodash_commercial)Getting access to NeoDash commercial"
+      ],
+      "selector": "article,main,[role=main]",
+      "fetched_at": "2026-07-12T00:35:11.559Z"
+    },
+    {
+      "path": "docs/neo4j-com-docs-graph-data-science-current-c23ad7e1.md",
+      "title": "The Neo4j Graph Data Science Library Manual v2026.06",
+      "url": "https://neo4j.com/docs/graph-data-science/current/",
+      "host": "neo4j.com",
+      "depth": 1,
+      "headings": [
+        "The Neo4j Graph Data Science Library Manual v2026.06"
+      ],
+      "selector": "article,main,[role=main]",
+      "fetched_at": "2026-07-12T00:35:11.608Z"
+    },
+    {
+      "path": "docs/neo4j-com-docs-graph-data-science-client-current-129c09fd.md",
+      "title": "Neo4j Graph Data Science Python Client",
+      "url": "https://neo4j.com/docs/graph-data-science-client/current/",
+      "host": "neo4j.com",
+      "depth": 1,
+      "headings": [
+        "Neo4j Graph Data Science Python Client"
+      ],
+      "selector": "article,main,[role=main]",
+      "fetched_at": "2026-07-12T00:35:11.663Z"
+    },
+    {
+      "path": "docs/neo4j-com-docs-snowflake-graph-analytics-current-ed25e725.md",
+      "title": "The Neo4j Graph Analytics for Snowflake manual",
+      "url": "https://neo4j.com/docs/snowflake-graph-analytics/current/",
+      "host": "neo4j.com",
+      "depth": 1,
+      "headings": [
+        "The Neo4j Graph Analytics for Snowflake manual"
+      ],
+      "selector": "article,main,[role=main]",
+      "fetched_at": "2026-07-12T00:35:11.703Z"
+    },
+    {
+      "path": "docs/neo4j-com-docs-cypher-manual-current-introduction-c61fdb16.md",
+      "title": "Introduction",
+      "url": "https://neo4j.com/docs/cypher-manual/current/introduction/",
+      "host": "neo4j.com",
+      "depth": 1,
+      "headings": [
+        "Introduction"
+      ],
+      "selector": "article,main,[role=main]",
+      "fetched_at": "2026-07-12T00:35:11.831Z"
+    },
+    {
+      "path": "docs/neo4j-com-docs-cypher-manual-current-cheat-sheet-6af4c187.md",
+      "title": "Cypher Cheat Sheet",
+      "url": "https://neo4j.com/docs/cypher-manual/current/cheat-sheet/",
+      "host": "neo4j.com",
+      "depth": 1,
+      "headings": [
+        "Cypher Cheat Sheet",
+        "[](https://neo4j.com/docs/cypher-manual/current/cheat-sheet/#_read_query)Read Query",
+        "[](https://neo4j.com/docs/cypher-manual/current/cheat-sheet/#_read_query_structure)Read Query Structure",
+        "[](https://neo4j.com/docs/cypher-manual/current/cheat-sheet/#_match)[MATCH](https://neo4j.com/docs/cypher-manual/25/clauses/match/)",
+        "[](https://neo4j.com/docs/cypher-manual/current/cheat-sheet/#_optional_match)[OPTIONAL MATCH](https://neo4j.com/docs/cypher-manual/25/clauses/optional-match/)",
+        "[](https://neo4j.com/docs/cypher-manual/current/cheat-sheet/#_where)[WHERE](https://neo4j.com/docs/cypher-manual/25/clauses/where/)",
+        "[](https://neo4j.com/docs/cypher-manual/current/cheat-sheet/#_search)[SEARCH](https://neo4j.com/docs/cypher-manual/25/clauses/search/)",
+        "[](https://neo4j.com/docs/cypher-manual/current/cheat-sheet/#_filter)[FILTER](https://neo4j.com/docs/cypher-manual/25/clauses/filter/)",
+        "[](https://neo4j.com/docs/cypher-manual/current/cheat-sheet/#_return)[RETURN](https://neo4j.com/docs/cypher-manual/25/clauses/return/)",
+        "[](https://neo4j.com/docs/cypher-manual/current/cheat-sheet/#_with)[WITH](https://neo4j.com/docs/cypher-manual/25/clauses/with/)",
+        "[](https://neo4j.com/docs/cypher-manual/current/cheat-sheet/#_let)[LET](https://neo4j.com/docs/cypher-manual/25/clauses/let/)",
+        "[](https://neo4j.com/docs/cypher-manual/current/cheat-sheet/#_write_query)Write query",
+        "[](https://neo4j.com/docs/cypher-manual/current/cheat-sheet/#_write_only_query_structure)Write-Only Query Structure",
+        "[](https://neo4j.com/docs/cypher-manual/current/cheat-sheet/#_read_write_query_structure)Read-Write Query Structure",
+        "[](https://neo4j.com/docs/cypher-manual/current/cheat-sheet/#_create)[CREATE](https://neo4j.com/docs/cypher-manual/25/clauses/create/)",
+        "[](https://neo4j.com/docs/cypher-manual/current/cheat-sheet/#_set)[SET](https://neo4j.com/docs/cypher-manual/25/clauses/set/)",
+        "[](https://neo4j.com/docs/cypher-manual/current/cheat-sheet/#_merge)[MERGE](https://neo4j.com/docs/cypher-manual/25/clauses/merge/)",
+        "[](https://neo4j.com/docs/cypher-manual/current/cheat-sheet/#_delete)[DELETE](https://neo4j.com/docs/cypher-manual/25/clauses/delete/)",
+        "[](https://neo4j.com/docs/cypher-manual/current/cheat-sheet/#_remove)[REMOVE](https://neo4j.com/docs/cypher-manual/25/clauses/remove/)",
+        "[](https://neo4j.com/docs/cypher-manual/current/cheat-sheet/#_cypher_query_versioning)Cypher query versioning",
+        "[](https://neo4j.com/docs/cypher-manual/current/cheat-sheet/#_select_cypher_version_for_queries)[Select Cypher version for queries](https://neo4j.com/docs/cypher-manual/25/queries/select-version/)",
+        "[](https://neo4j.com/docs/cypher-manual/current/cheat-sheet/#_composed_queries)Composed queries",
+        "[](https://neo4j.com/docs/cypher-manual/current/cheat-sheet/#_combined_queries_union)[Combined queries (UNION)](https://neo4j.com/docs/cypher-manual/25/queries/composed-queries/combined-queries/)",
+        "[](https://neo4j.com/docs/cypher-manual/current/cheat-sheet/#_conditional_queries_when)[Conditional queries (WHEN)](https://neo4j.com/docs/cypher-manual/25/queries/composed-queries/combined-queries/)"
+      ],
+      "selector": "article,main,[role=main]",
+      "fetched_at": "2026-07-12T00:35:12.002Z"
+    },
+    {
+      "path": "docs/neo4j-com-docs-apoc-current-5676e994.md",
+      "title": "APOC Core 2026.06 Documentation",
+      "url": "https://neo4j.com/docs/apoc/current/",
+      "host": "neo4j.com",
+      "depth": 1,
+      "headings": [
+        "APOC Core 2026.06 Documentation"
+      ],
+      "selector": "article,main,[role=main]",
+      "fetched_at": "2026-07-12T00:35:12.346Z"
+    },
+    {
+      "path": "docs/neo4j-com-docs-neo4j-graphrag-python-current-cd82576f.md",
+      "title": "GraphRAG for Python¶",
+      "url": "https://neo4j.com/docs/neo4j-graphrag-python/current/",
+      "host": "neo4j.com",
+      "depth": 1,
+      "headings": [
+        "GraphRAG for Python[¶](https://neo4j.com/docs/neo4j-graphrag-python/current/#graphrag-for-python \"Link to this heading\")",
+        "Topics[¶](https://neo4j.com/docs/neo4j-graphrag-python/current/#topics \"Link to this heading\")",
+        "Usage[¶](https://neo4j.com/docs/neo4j-graphrag-python/current/#usage \"Link to this heading\")",
+        "Installation[¶](https://neo4j.com/docs/neo4j-graphrag-python/current/#installation \"Link to this heading\")",
+        "Optional Dependencies[¶](https://neo4j.com/docs/neo4j-graphrag-python/current/#optional-dependencies \"Link to this heading\")",
+        "Examples[¶](https://neo4j.com/docs/neo4j-graphrag-python/current/#examples \"Link to this heading\")",
+        "Creating a vector index[¶](https://neo4j.com/docs/neo4j-graphrag-python/current/#creating-a-vector-index \"Link to this heading\")",
+        "Populating the Neo4j Vector Index[¶](https://neo4j.com/docs/neo4j-graphrag-python/current/#populating-the-neo4j-vector-index \"Link to this heading\")",
+        "Performing a similarity search[¶](https://neo4j.com/docs/neo4j-graphrag-python/current/#performing-a-similarity-search \"Link to this heading\")",
+        "Limitations[¶](https://neo4j.com/docs/neo4j-graphrag-python/current/#limitations \"Link to this heading\")",
+        "Development[¶](https://neo4j.com/docs/neo4j-graphrag-python/current/#development \"Link to this heading\")",
+        "Install dependencies[¶](https://neo4j.com/docs/neo4j-graphrag-python/current/#install-dependencies \"Link to this heading\")",
+        "Getting started[¶](https://neo4j.com/docs/neo4j-graphrag-python/current/#getting-started \"Link to this heading\")",
+        "Issues[¶](https://neo4j.com/docs/neo4j-graphrag-python/current/#issues \"Link to this heading\")",
+        "Make changes[¶](https://neo4j.com/docs/neo4j-graphrag-python/current/#make-changes \"Link to this heading\")",
+        "Pull request[¶](https://neo4j.com/docs/neo4j-graphrag-python/current/#pull-request \"Link to this heading\")",
+        "Run tests[¶](https://neo4j.com/docs/neo4j-graphrag-python/current/#run-tests \"Link to this heading\")",
+        "Unit tests[¶](https://neo4j.com/docs/neo4j-graphrag-python/current/#unit-tests \"Link to this heading\")",
+        "E2E tests[¶](https://neo4j.com/docs/neo4j-graphrag-python/current/#e2e-tests \"Link to this heading\")",
+        "Further information[¶](https://neo4j.com/docs/neo4j-graphrag-python/current/#further-information \"Link to this heading\")"
+      ],
+      "selector": "article,main,[role=main]",
+      "fetched_at": "2026-07-12T00:35:12.415Z"
+    },
+    {
+      "path": "docs/neo4j-com-docs-genai-tutorials-current-embeddings-vector-indexes-b29051bd.md",
+      "title": "Introduction",
+      "url": "https://neo4j.com/docs/genai/tutorials/current/embeddings-vector-indexes/",
+      "host": "neo4j.com",
+      "depth": 1,
+      "headings": [
+        "Introduction",
+        "[](https://neo4j.com/docs/genai/tutorials/current/embeddings-vector-indexes/#_requirements)Requirements",
+        "Glossary"
+      ],
+      "selector": "article,main,[role=main]",
+      "fetched_at": "2026-07-12T00:35:12.490Z"
+    },
+    {
+      "path": "docs/neo4j-com-docs-genai-plugin-current-d27b6c0b.md",
+      "title": "Introduction",
+      "url": "https://neo4j.com/docs/genai/plugin/current/",
+      "host": "neo4j.com",
+      "depth": 1,
+      "headings": [
+        "Introduction",
+        "[](https://neo4j.com/docs/genai/plugin/current/#installation)Installation",
+        "[](https://neo4j.com/docs/genai/plugin/current/#setup)Environment setup"
+      ],
+      "selector": "article,main,[role=main]",
+      "fetched_at": "2026-07-12T00:35:12.546Z"
+    },
+    {
+      "path": "docs/neo4j-com-docs-cypher-manual-current-indexes-semantic-indexes-vector-indexes-26c7c18d.md",
+      "title": "Vector indexes",
+      "url": "https://neo4j.com/docs/cypher-manual/current/indexes/semantic-indexes/vector-indexes/",
+      "host": "neo4j.com",
+      "depth": 1,
+      "headings": [
+        "Vector indexes",
+        "[](https://neo4j.com/docs/cypher-manual/current/indexes/semantic-indexes/vector-indexes/#example-graph)Example graph",
+        "[](https://neo4j.com/docs/cypher-manual/current/indexes/semantic-indexes/vector-indexes/#embeddings)Vectors and embeddings in Neo4j",
+        "[](https://neo4j.com/docs/cypher-manual/current/indexes/semantic-indexes/vector-indexes/#create-vector-index)Create vector indexes",
+        "[](https://neo4j.com/docs/cypher-manual/current/indexes/semantic-indexes/vector-indexes/#configuration-settings)Configuration settings",
+        "Advanced configuration settings",
+        "[](https://neo4j.com/docs/cypher-manual/current/indexes/semantic-indexes/vector-indexes/#query-vector-index)Query vector indexes",
+        "[](https://neo4j.com/docs/cypher-manual/current/indexes/semantic-indexes/vector-indexes/#query-vector-index-search)Querying a node vector index using the SEARCH clause",
+        "[](https://neo4j.com/docs/cypher-manual/current/indexes/semantic-indexes/vector-indexes/#_querying_a_node_vector_index_using_the_db_index_vector_querynodes_procedure)Querying a node vector index using the db.index.vector.queryNodes() procedure",
+        "[](https://neo4j.com/docs/cypher-manual/current/indexes/semantic-indexes/vector-indexes/#_querying_a_relationship_vector_index)Querying a relationship vector index",
+        "[](https://neo4j.com/docs/cypher-manual/current/indexes/semantic-indexes/vector-indexes/#performance)Performance suggestions",
+        "[](https://neo4j.com/docs/cypher-manual/current/indexes/semantic-indexes/vector-indexes/#show-vector-indexes)Show vector indexes",
+        "[](https://neo4j.com/docs/cypher-manual/current/indexes/semantic-indexes/vector-indexes/#drop-vector-indexes)Drop vector indexes",
+        "[](https://neo4j.com/docs/cypher-manual/current/indexes/semantic-indexes/vector-indexes/#vector-index-providers)Vector index providers for compatibility",
+        "[](https://neo4j.com/docs/cypher-manual/current/indexes/semantic-indexes/vector-indexes/#similarity-functions)Cosine and Euclidean similarity functions",
+        "[](https://neo4j.com/docs/cypher-manual/current/indexes/semantic-indexes/vector-indexes/#procedures)Vector index procedures",
+        "[](https://neo4j.com/docs/cypher-manual/current/indexes/semantic-indexes/vector-indexes/#limitations-and-issues)Limitations and known issues"
+      ],
+      "selector": "article,main,[role=main]",
+      "fetched_at": "2026-07-12T00:35:12.605Z"
+    },
+    {
+      "path": "docs/neo4j-com-docs-cypher-manual-current-functions-vector-9b7967a9.md",
+      "title": "Vector functions",
+      "url": "https://neo4j.com/docs/cypher-manual/current/functions/vector/",
+      "host": "neo4j.com",
+      "depth": 1,
+      "headings": [
+        "Vector functions",
+        "[](https://neo4j.com/docs/cypher-manual/current/functions/vector/#functions-vector)vector()",
+        "[](https://neo4j.com/docs/cypher-manual/current/functions/vector/#functions-similarity-cosine)vector.similarity.cosine()",
+        "[](https://neo4j.com/docs/cypher-manual/current/functions/vector/#functions-similarity-euclidean)vector.similarity.euclidean()",
+        "[](https://neo4j.com/docs/cypher-manual/current/functions/vector/#functions-vector_dimension_count)vector\\_dimension\\_count()",
+        "[](https://neo4j.com/docs/cypher-manual/current/functions/vector/#functions-vector_distance)vector\\_distance()",
+        "[](https://neo4j.com/docs/cypher-manual/current/functions/vector/#functions-vector_norm)vector\\_norm()"
+      ],
+      "selector": "article,main,[role=main]",
+      "fetched_at": "2026-07-12T00:35:12.725Z"
+    },
+    {
+      "path": "docs/neo4j-com-docs-graphql-current-directives-indexes-and-constraints-6430dedf.md",
+      "title": "Indexes and constraints",
+      "url": "https://neo4j.com/docs/graphql/current/directives/indexes-and-constraints/",
+      "host": "neo4j.com",
+      "depth": 1,
+      "headings": [
+        "Indexes and constraints",
+        "[](https://neo4j.com/docs/graphql/current/directives/indexes-and-constraints/#_fulltext)`@fulltext`",
+        "[](https://neo4j.com/docs/graphql/current/directives/indexes-and-constraints/#_definition)Definition",
+        "[](https://neo4j.com/docs/graphql/current/directives/indexes-and-constraints/#_usage)Usage",
+        "[](https://neo4j.com/docs/graphql/current/directives/indexes-and-constraints/#_vector_index_search)`@vector`",
+        "[](https://neo4j.com/docs/graphql/current/directives/indexes-and-constraints/#_definition_2)Definition",
+        "[](https://neo4j.com/docs/graphql/current/directives/indexes-and-constraints/#_usage_2)Usage"
+      ],
+      "selector": "article,main,[role=main]",
+      "fetched_at": "2026-07-12T00:35:12.820Z"
+    },
+    {
+      "path": "docs/neo4j-com-docs-python-manual-current-a8f013a4.md",
+      "title": "Build applications with Neo4j and Python",
+      "url": "https://neo4j.com/docs/python-manual/current/",
+      "host": "neo4j.com",
+      "depth": 1,
+      "headings": [
+        "Build applications with Neo4j and Python",
+        "[](https://neo4j.com/docs/python-manual/current/#install)Install",
+        "[](https://neo4j.com/docs/python-manual/current/#connect)Connect to the database",
+        "URI examples: \"neo4j://localhost\", \"neo4j+s://xxx.databases.neo4j.io\"",
+        "[](https://neo4j.com/docs/python-manual/current/#create-graph)Create an example graph",
+        "[](https://neo4j.com/docs/python-manual/current/#query-graph)Query a graph",
+        "Loop through results and do something with them",
+        "Summary information",
+        "[](https://neo4j.com/docs/python-manual/current/#close)Close connections and sessions",
+        "session/driver usage",
+        "Glossary"
+      ],
+      "selector": "article,main,[role=main]",
+      "fetched_at": "2026-07-12T00:35:12.881Z"
+    },
+    {
+      "path": "docs/neo4j-com-docs-go-manual-current-9aa81a40.md",
+      "title": "Build applications with Neo4j and Go",
+      "url": "https://neo4j.com/docs/go-manual/current/",
+      "host": "neo4j.com",
+      "depth": 1,
+      "headings": [
+        "Build applications with Neo4j and Go",
+        "[](https://neo4j.com/docs/go-manual/current/#install)Install",
+        "[](https://neo4j.com/docs/go-manual/current/#connect)Connect to the database",
+        "[](https://neo4j.com/docs/go-manual/current/#create-graph)Create an example graph",
+        "[](https://neo4j.com/docs/go-manual/current/#query-graph)Query a graph",
+        "[](https://neo4j.com/docs/go-manual/current/#close)Close connections and sessions",
+        "Glossary"
+      ],
+      "selector": "article,main,[role=main]",
+      "fetched_at": "2026-07-12T00:35:12.934Z"
+    },
+    {
+      "path": "docs/neo4j-com-docs-java-manual-current-9ac805e6.md",
+      "title": "Build applications with Neo4j and Java",
+      "url": "https://neo4j.com/docs/java-manual/current/",
+      "host": "neo4j.com",
+      "depth": 1,
+      "headings": [
+        "Build applications with Neo4j and Java",
+        "[](https://neo4j.com/docs/java-manual/current/#install)Install",
+        "[](https://neo4j.com/docs/java-manual/current/#connect)Connect to the database",
+        "[](https://neo4j.com/docs/java-manual/current/#create-graph)Create an example graph",
+        "[](https://neo4j.com/docs/java-manual/current/#query-graph)Query a graph",
+        "[](https://neo4j.com/docs/java-manual/current/#close)Close connections and sessions",
+        "Glossary"
+      ],
+      "selector": "article,main,[role=main]",
+      "fetched_at": "2026-07-12T00:35:12.992Z"
+    },
+    {
+      "path": "docs/neo4j-com-docs-jdbc-manual-current-2a4c916f.md",
+      "title": "Neo4j JDBC Driver",
+      "url": "https://neo4j.com/docs/jdbc-manual/current/",
+      "host": "neo4j.com",
+      "depth": 1,
+      "headings": [
+        "Neo4j JDBC Driver",
+        "[](https://neo4j.com/docs/jdbc-manual/current/#_abstract)Abstract",
+        "[](https://neo4j.com/docs/jdbc-manual/current/#_introduction)Introduction",
+        "[](https://neo4j.com/docs/jdbc-manual/current/#_features)Features",
+        "[](https://neo4j.com/docs/jdbc-manual/current/#_limitations)Limitations",
+        "[](https://neo4j.com/docs/jdbc-manual/current/#_when_to_use_the_neo4j_jdbc_driver)When to use the Neo4j JDBC Driver?",
+        "[](https://neo4j.com/docs/jdbc-manual/current/#_differences_with_the_previous_versions_of_this_driver_and_other_jdbc_drivers_for_neo4j)Differences with the previous versions of this driver and other JDBC drivers for Neo4j"
+      ],
+      "selector": "article,main,[role=main]",
+      "fetched_at": "2026-07-12T00:35:13.047Z"
+    },
+    {
+      "path": "docs/neo4j-com-docs-javascript-manual-current-a2c30d69.md",
+      "title": "Build applications with Neo4j and JavaScript",
+      "url": "https://neo4j.com/docs/javascript-manual/current/",
+      "host": "neo4j.com",
+      "depth": 1,
+      "headings": [
+        "Build applications with Neo4j and JavaScript",
+        "[](https://neo4j.com/docs/javascript-manual/current/#install)Install",
+        "[](https://neo4j.com/docs/javascript-manual/current/#connect)Connect to the database",
+        "[](https://neo4j.com/docs/javascript-manual/current/#create-graph)Create an example graph",
+        "[](https://neo4j.com/docs/javascript-manual/current/#query-graph)Query a graph",
+        "[](https://neo4j.com/docs/javascript-manual/current/#close)Close connections and sessions",
+        "Glossary"
+      ],
+      "selector": "article,main,[role=main]",
+      "fetched_at": "2026-07-12T00:35:13.095Z"
+    },
+    {
+      "path": "docs/neo4j-com-docs-dotnet-manual-current-6329c594.md",
+      "title": "Build applications with Neo4j and .NET",
+      "url": "https://neo4j.com/docs/dotnet-manual/current/",
+      "host": "neo4j.com",
+      "depth": 1,
+      "headings": [
+        "Build applications with Neo4j and .NET",
+        "[](https://neo4j.com/docs/dotnet-manual/current/#install)Install",
+        "[](https://neo4j.com/docs/dotnet-manual/current/#connect)Connect to the database",
+        "[](https://neo4j.com/docs/dotnet-manual/current/#create-graph)Create an example graph",
+        "[](https://neo4j.com/docs/dotnet-manual/current/#query-graph)Query a graph",
+        "[](https://neo4j.com/docs/dotnet-manual/current/#close)Close connections and sessions",
+        "Glossary"
+      ],
+      "selector": "article,main,[role=main]",
+      "fetched_at": "2026-07-12T00:35:13.145Z"
+    },
+    {
+      "path": "docs/neo4j-com-docs-graphql-current-548c1b2a.md",
+      "title": "Introduction",
+      "url": "https://neo4j.com/docs/graphql/current/",
+      "host": "neo4j.com",
+      "depth": 1,
+      "headings": [
+        "Introduction",
+        "[](https://neo4j.com/docs/graphql/current/#_how_it_works)How it works",
+        "[](https://neo4j.com/docs/graphql/current/#_library_features)Library features",
+        "[](https://neo4j.com/docs/graphql/current/#_resources)Resources",
+        "[](https://neo4j.com/docs/graphql/current/#_license)License"
+      ],
+      "selector": "article,main,[role=main]",
+      "fetched_at": "2026-07-12T00:35:13.285Z"
+    },
+    {
+      "path": "docs/neo4j-com-docs-nvl-current-32a01c85.md",
+      "title": "Neo4j Visualization Library",
+      "url": "https://neo4j.com/docs/nvl/current/",
+      "host": "neo4j.com",
+      "depth": 1,
+      "headings": [
+        "Neo4j Visualization Library"
+      ],
+      "selector": "article,main,[role=main]",
+      "fetched_at": "2026-07-12T00:35:13.336Z"
+    },
+    {
+      "path": "docs/neo4j-com-docs-ogm-manual-current-5c32ed13.md",
+      "title": "Neo4j-OGM - An Object Graph Mapping Library for Neo4j",
+      "url": "https://neo4j.com/docs/ogm-manual/current/",
+      "host": "neo4j.com",
+      "depth": 1,
+      "headings": [
+        "Neo4j-OGM - An Object Graph Mapping Library for Neo4j"
+      ],
+      "selector": "article,main,[role=main]",
+      "fetched_at": "2026-07-12T00:35:13.386Z"
+    }
+  ],
+  "skipped": [
+    {
+      "url": "https://neo4j.com/",
+      "reason": "outside-docs-root"
+    },
+    {
+      "url": "https://neo4j.com/labs/",
+      "reason": "outside-docs-root"
+    },
+    {
+      "url": "https://neo4j.com/labs/genai-ecosystem/",
+      "reason": "outside-docs-root"
+    },
+    {
+      "url": "https://neo4j.com/labs/genai-ecosystem/llm-graph-builder/",
+      "reason": "outside-docs-root"
+    },
+    {
+      "url": "https://neo4j.com/labs/genai-ecosystem/vector-search/",
+      "reason": "outside-docs-root"
+    },
+    {
+      "url": "https://neo4j.com/labs/genai-ecosystem/langchain/",
+      "reason": "outside-docs-root"
+    },
+    {
+      "url": "https://neo4j.com/labs/genai-ecosystem/langchain-js/",
+      "reason": "outside-docs-root"
+    },
+    {
+      "url": "https://neo4j.com/labs/genai-ecosystem/llamaindex/",
+      "reason": "outside-docs-root"
+    },
+    {
+      "url": "https://neo4j.com/labs/genai-ecosystem/haystack/",
+      "reason": "outside-docs-root"
+    },
+    {
+      "url": "https://neo4j.com/labs/genai-ecosystem/dspy/",
+      "reason": "outside-docs-root"
+    },
+    {
+      "url": "https://neo4j.com/labs/apoc/",
+      "reason": "outside-docs-root"
+    },
+    {
+      "url": "https://neo4j.com/labs/aura-cli/",
+      "reason": "outside-docs-root"
+    },
+    {
+      "url": "https://neo4j.com/labs/arrows/",
+      "reason": "outside-docs-root"
+    },
+    {
+      "url": "https://neo4j.com/labs/cypher-workbench/",
+      "reason": "outside-docs-root"
+    },
+    {
+      "url": "https://neo4j.com/labs/etl-tool/",
+      "reason": "outside-docs-root"
+    },
+    {
+      "url": "https://neo4j.com/labs/neodash/",
+      "reason": "outside-docs-root"
+    },
+    {
+      "url": "https://neo4j.com/labs/neo4j-needle-starterkit/",
+      "reason": "outside-docs-root"
+    },
+    {
+      "url": "https://neo4j.com/labs/liquibase/",
+      "reason": "outside-docs-root"
+    },
+    {
+      "url": "https://neo4j.com/labs/neo4j-migrations/",
+      "reason": "outside-docs-root"
+    },
+    {
+      "url": "https://neo4j.com/labs/neomodel/",
+      "reason": "outside-docs-root"
+    },
+    {
+      "url": "https://neo4j.com/labs/neosemantics/",
+      "reason": "outside-docs-root"
+    },
+    {
+      "url": "https://neo4j.com/labs/rdflib-neo4j/",
+      "reason": "outside-docs-root"
+    },
+    {
+      "url": "https://neo4j.com/developer/resources/",
+      "reason": "outside-docs-root"
+    },
+    {
+      "url": "https://dev.neo4j.com/forum",
+      "reason": "bad-path"
+    },
+    {
+      "url": "https://dev.neo4j.com/chat",
+      "reason": "outside-docs-root"
+    },
+    {
+      "url": "http://support.neo4j.com/",
+      "reason": "outside-docs-root"
+    },
+    {
+      "url": "https://neo4j.com/blog/developer/",
+      "reason": "bad-path"
+    },
+    {
+      "url": "https://neo4j.com/videos/",
+      "reason": "outside-docs-root"
+    },
+    {
+      "url": "https://graphacademy.neo4j.com/",
+      "reason": "outside-docs-root"
+    },
+    {
+      "url": "https://graphacademy.neo4j.com/categories/beginners/",
+      "reason": "outside-docs-root"
+    },
+    {
+      "url": "https://graphacademy.neo4j.com/courses/neo4j-fundamentals/",
+      "reason": "outside-docs-root"
+    },
+    {
+      "url": "https://graphacademy.neo4j.com/courses/cypher-fundamentals/",
+      "reason": "outside-docs-root"
+    },
+    {
+      "url": "https://graphacademy.neo4j.com/courses/importing-fundamentals/",
+      "reason": "outside-docs-root"
+    },
+    {
+      "url": "https://graphacademy.neo4j.com/courses/importing-csv-data/",
+      "reason": "outside-docs-root"
+    },
+    {
+      "url": "https://graphacademy.neo4j.com/courses/modeling-fundamentals/",
+      "reason": "outside-docs-root"
+    },
+    {
+      "url": "https://graphacademy.neo4j.com/categories/data-scientist/",
+      "reason": "outside-docs-root"
+    },
+    {
+      "url": "https://graphacademy.neo4j.com/courses/gds-fundamentals/",
+      "reason": "outside-docs-root"
+    },
+    {
+      "url": "https://graphacademy.neo4j.com/courses/gds-shortest-paths/",
+      "reason": "outside-docs-root"
+    },
+    {
+      "url": "https://graphacademy.neo4j.com/categories/llms/",
+      "reason": "outside-docs-root"
+    },
+    {
+      "url": "https://graphacademy.neo4j.com/courses/genai-fundamentals/",
+      "reason": "outside-docs-root"
+    },
+    {
+      "url": "https://graphacademy.neo4j.com/courses/llm-vectors-unstructured/",
+      "reason": "outside-docs-root"
+    },
+    {
+      "url": "https://graphacademy.neo4j.com/courses/genai-graphrag-python/",
+      "reason": "outside-docs-root"
+    },
+    {
+      "url": "https://graphacademy.neo4j.com/courses/aura-agents/",
+      "reason": "outside-docs-root"
+    },
+    {
+      "url": "https://graphacademy.neo4j.com/certification/",
+      "reason": "outside-docs-root"
+    },
+    {
+      "url": "https://graphacademy.neo4j.com/certifications/neo4j-certification/",
+      "reason": "outside-docs-root"
+    },
+    {
+      "url": "https://graphacademy.neo4j.com/certifications/gds-certification/",
+      "reason": "outside-docs-root"
+    },
+    {
+      "url": "https://console.neo4j.io/",
+      "reason": "outside-docs-host"
+    },
+    {
+      "url": "https://graphacademy.neo4j.com/courses/gds-product-introduction/",
+      "reason": "outside-docs-root"
+    },
+    {
+      "url": "https://community.neo4j.com/",
+      "reason": "outside-docs-root"
+    },
+    {
+      "url": "https://discord.com/invite/neo4j",
+      "reason": "rejected-host"
+    },
+    {
+      "url": "https://neo4j.com/developer-blog/",
+      "reason": "outside-docs-root"
+    },
+    {
+      "url": "https://neo4j.com/sandbox/",
+      "reason": "outside-docs-root"
+    },
+    {
+      "url": "https://medium.com/neo4j",
+      "reason": "rejected-host"
+    },
+    {
+      "url": "https://www.youtube.com/neo4j",
+      "reason": "rejected-host"
+    },
+    {
+      "url": "https://neo4j.com/graphacademy/",
+      "reason": "outside-docs-root"
+    },
+    {
+      "url": "https://twitter.com/neo4j",
+      "reason": "outside-docs-host"
+    },
+    {
+      "url": "https://www.meetup.com/Neo4j-Online-Meetup/",
+      "reason": "outside-docs-host"
+    },
+    {
+      "url": "https://github.com/neo4j/neo4j",
+      "reason": "outside-docs-host"
+    },
+    {
+      "url": "https://stackoverflow.com/questions/tagged/neo4j",
+      "reason": "rejected-host"
+    },
+    {
+      "url": "https://docs.google.com/forms/d/e/1FAIpQLSdEcNnMruES5iwvOVYovmS1D_P1ZL_HdUOitFrwrvruv5PZvA/viewform",
+      "reason": "outside-docs-host"
+    },
+    {
+      "url": "https://neo4j.com/contact-us/",
+      "reason": "bad-path"
+    },
+    {
+      "url": "https://neo4j.com/terms/",
+      "reason": "outside-docs-root"
+    },
+    {
+      "url": "https://neo4j.com/privacy-policy/",
+      "reason": "outside-docs-root"
+    },
+    {
+      "url": "https://neo4j.com/sitemap/",
+      "reason": "outside-docs-root"
+    },
+    {
+      "url": "https://www.neo4j.com/",
+      "reason": "outside-docs-root"
+    },
+    {
+      "url": "https://www.neo4j.com/labs/",
+      "reason": "outside-docs-root"
+    },
+    {
+      "url": "https://www.neo4j.com/labs/genai-ecosystem/",
+      "reason": "outside-docs-root"
+    },
+    {
+      "url": "https://www.neo4j.com/labs/genai-ecosystem/llm-graph-builder/",
+      "reason": "outside-docs-root"
+    },
+    {
+      "url": "https://www.neo4j.com/labs/genai-ecosystem/vector-search/",
+      "reason": "outside-docs-root"
+    },
+    {
+      "url": "https://www.neo4j.com/labs/genai-ecosystem/langchain/",
+      "reason": "outside-docs-root"
+    },
+    {
+      "url": "https://www.neo4j.com/labs/genai-ecosystem/langchain-js/",
+      "reason": "outside-docs-root"
+    },
+    {
+      "url": "https://www.neo4j.com/labs/genai-ecosystem/llamaindex/",
+      "reason": "outside-docs-root"
+    },
+    {
+      "url": "https://www.neo4j.com/labs/genai-ecosystem/haystack/",
+      "reason": "outside-docs-root"
+    },
+    {
+      "url": "https://www.neo4j.com/labs/genai-ecosystem/dspy/",
+      "reason": "outside-docs-root"
+    },
+    {
+      "url": "https://www.neo4j.com/labs/apoc/",
+      "reason": "outside-docs-root"
+    },
+    {
+      "url": "https://www.neo4j.com/labs/aura-cli/",
+      "reason": "outside-docs-root"
+    },
+    {
+      "url": "https://www.neo4j.com/labs/arrows/",
+      "reason": "outside-docs-root"
+    },
+    {
+      "url": "https://www.neo4j.com/labs/cypher-workbench/",
+      "reason": "outside-docs-root"
+    },
+    {
+      "url": "https://www.neo4j.com/labs/etl-tool/",
+      "reason": "outside-docs-root"
+    },
+    {
+      "url": "https://www.neo4j.com/labs/neodash/",
+      "reason": "outside-docs-root"
+    },
+    {
+      "url": "https://www.neo4j.com/labs/neo4j-needle-starterkit/",
+      "reason": "outside-docs-root"
+    },
+    {
+      "url": "https://www.neo4j.com/labs/liquibase/",
+      "reason": "outside-docs-root"
+    },
+    {
+      "url": "https://www.neo4j.com/labs/neo4j-migrations/",
+      "reason": "outside-docs-root"
+    },
+    {
+      "url": "https://www.neo4j.com/labs/neomodel/",
+      "reason": "outside-docs-root"
+    },
+    {
+      "url": "https://www.neo4j.com/labs/neosemantics/",
+      "reason": "outside-docs-root"
+    },
+    {
+      "url": "https://www.neo4j.com/labs/rdflib-neo4j/",
+      "reason": "outside-docs-root"
+    },
+    {
+      "url": "https://www.neo4j.com/developer/resources/",
+      "reason": "outside-docs-root"
+    },
+    {
+      "url": "https://www.neo4j.com/videos/",
+      "reason": "outside-docs-root"
+    },
+    {
+      "url": "https://neo4j.com/docs/pdf/neo4j-getting-started.pdf",
+      "reason": "asset"
+    },
+    {
+      "url": "https://neo4j.com/docs/pdf/neo4j-operations-manual-4.4.pdf",
+      "reason": "asset"
+    },
+    {
+      "url": "https://neo4j.com/docs/pdf/neo4j-operations-manual-5.pdf",
+      "reason": "asset"
+    },
+    {
+      "url": "https://neo4j.com/docs/pdf/neo4j-operations-manual-2026.06.pdf",
+      "reason": "asset"
+    },
+    {
+      "url": "https://neo4j.com/docs/pdf/neo4j-status-codes-4.4.pdf",
+      "reason": "asset"
+    },
+    {
+      "url": "https://neo4j.com/docs/pdf/neo4j-status-codes-5.pdf",
+      "reason": "asset"
+    },
+    {
+      "url": "https://neo4j.com/docs/pdf/neo4j-status-codes-2026.06.pdf",
+      "reason": "asset"
+    },
+    {
+      "url": "https://neo4j.com/docs/pdf/neo4j-java-reference-4.4.pdf",
+      "reason": "asset"
+    },
+    {
+      "url": "https://neo4j.com/docs/pdf/neo4j-java-reference-5.pdf",
+      "reason": "asset"
+    },
+    {
+      "url": "https://neo4j.com/docs/pdf/neo4j-java-reference-2026.06.pdf",
+      "reason": "asset"
+    },
+    {
+      "url": "https://neo4j.com/docs/pdf/neo4j-upgrade-migration-guide.pdf",
+      "reason": "asset"
+    },
+    {
+      "url": "https://neo4j.com/docs/pdf/neo4j-aura-current.pdf",
+      "reason": "asset"
+    },
+    {
+      "url": "https://neo4j.com/docs/pdf/neo4j-aura-classic.pdf",
+      "reason": "asset"
+    },
+    {
+      "url": "https://neo4j.com/docs/pdf/neo4j-graph-data-science-manual-2.20.pdf",
+      "reason": "asset"
+    },
+    {
+      "url": "https://neo4j.com/docs/pdf/neo4j-cypher-manual-3.5.pdf",
+      "reason": "asset"
+    },
+    {
+      "url": "https://neo4j.com/docs/pdf/neo4j-cypher-manual-4.0.pdf",
+      "reason": "asset"
+    },
+    {
+      "url": "https://neo4j.com/docs/pdf/neo4j-cypher-manual-4.1.pdf",
+      "reason": "asset"
+    },
+    {
+      "url": "https://neo4j.com/docs/pdf/neo4j-cypher-manual-4.2.pdf",
+      "reason": "asset"
+    },
+    {
+      "url": "https://neo4j.com/docs/pdf/neo4j-cypher-manual-4.3.pdf",
+      "reason": "asset"
+    },
+    {
+      "url": "https://neo4j.com/docs/pdf/neo4j-cypher-manual-4.4.pdf",
+      "reason": "asset"
+    },
+    {
+      "url": "https://neo4j.com/docs/pdf/neo4j-cypher-manual-5.pdf",
+      "reason": "asset"
+    },
+    {
+      "url": "https://neo4j.com/docs/pdf/neo4j-cypher-manual-25.pdf",
+      "reason": "asset"
+    },
+    {
+      "url": "https://neo4j.com/docs/pdf/neo4j-cypher-refcard-3.5.pdf",
+      "reason": "asset"
+    },
+    {
+      "url": "https://neo4j.com/docs/pdf/neo4j-cypher-refcard-4.0.pdf",
+      "reason": "asset"
+    },
+    {
+      "url": "https://neo4j.com/docs/pdf/neo4j-cypher-refcard-4.1.pdf",
+      "reason": "asset"
+    },
+    {
+      "url": "https://neo4j.com/docs/pdf/neo4j-cypher-refcard-4.2.pdf",
+      "reason": "asset"
+    },
+    {
+      "url": "https://neo4j.com/docs/pdf/neo4j-cypher-refcard-4.3.pdf",
+      "reason": "asset"
+    },
+    {
+      "url": "https://neo4j.com/docs/pdf/neo4j-cypher-refcard-4.4.pdf",
+      "reason": "asset"
+    },
+    {
+      "url": "https://neo4j.com/docs/pdf/neo4j-apoc-5.pdf",
+      "reason": "asset"
+    },
+    {
+      "url": "https://neo4j.com/docs/pdf/neo4j-apoc-2026.06.pdf",
+      "reason": "asset"
+    },
+    {
+      "url": "https://neo4j.com/docs/pdf/neo4j-driver-manual-4.0-dotnet.pdf",
+      "reason": "asset"
+    },
+    {
+      "url": "https://neo4j.com/docs/pdf/neo4j-driver-manual-4.1-dotnet.pdf",
+      "reason": "asset"
+    },
+    {
+      "url": "https://neo4j.com/docs/pdf/neo4j-driver-manual-4.2-dotnet.pdf",
+      "reason": "asset"
+    },
+    {
+      "url": "https://neo4j.com/docs/pdf/neo4j-driver-manual-4.3-dotnet.pdf",
+      "reason": "asset"
+    },
+    {
+      "url": "https://neo4j.com/docs/pdf/neo4j-driver-manual-4.4-dotnet.pdf",
+      "reason": "asset"
+    },
+    {
+      "url": "https://neo4j.com/docs/pdf/neo4j-driver-manual-5-dotnet.pdf",
+      "reason": "asset"
+    },
+    {
+      "url": "https://neo4j.com/docs/pdf/neo4j-driver-manual-6-dotnet.pdf",
+      "reason": "asset"
+    },
+    {
+      "url": "https://neo4j.com/docs/pdf/neo4j-driver-manual-1.8-go.pdf",
+      "reason": "asset"
+    },
+    {
+      "url": "https://neo4j.com/docs/pdf/neo4j-driver-manual-4.2-go.pdf",
+      "reason": "asset"
+    },
+    {
+      "url": "https://neo4j.com/docs/pdf/neo4j-driver-manual-4.3-go.pdf",
+      "reason": "asset"
+    },
+    {
+      "url": "https://neo4j.com/docs/pdf/neo4j-driver-manual-4.4-go.pdf",
+      "reason": "asset"
+    },
+    {
+      "url": "https://neo4j.com/docs/pdf/neo4j-driver-manual-5-go.pdf",
+      "reason": "asset"
+    },
+    {
+      "url": "https://neo4j.com/docs/pdf/neo4j-driver-manual-6-go.pdf",
+      "reason": "asset"
+    },
+    {
+      "url": "https://neo4j.com/docs/pdf/neo4j-driver-manual-4.0-java.pdf",
+      "reason": "asset"
+    },
+    {
+      "url": "https://neo4j.com/docs/pdf/neo4j-driver-manual-4.1-java.pdf",
+      "reason": "asset"
+    },
+    {
+      "url": "https://neo4j.com/docs/pdf/neo4j-driver-manual-4.2-java.pdf",
+      "reason": "asset"
+    },
+    {
+      "url": "https://neo4j.com/docs/pdf/neo4j-driver-manual-4.3-java.pdf",
+      "reason": "asset"
+    },
+    {
+      "url": "https://neo4j.com/docs/pdf/neo4j-driver-manual-4.4-java.pdf",
+      "reason": "asset"
+    },
+    {
+      "url": "https://neo4j.com/docs/pdf/neo4j-driver-manual-5-java.pdf",
+      "reason": "asset"
+    },
+    {
+      "url": "https://neo4j.com/docs/pdf/neo4j-driver-manual-6-java.pdf",
+      "reason": "asset"
+    },
+    {
+      "url": "https://neo4j.com/docs/pdf/neo4j-driver-manual-4.0-javascript.pdf",
+      "reason": "asset"
+    },
+    {
+      "url": "https://neo4j.com/docs/pdf/neo4j-driver-manual-4.1-javascript.pdf",
+      "reason": "asset"
+    },
+    {
+      "url": "https://neo4j.com/docs/pdf/neo4j-driver-manual-4.2-javascript.pdf",
+      "reason": "asset"
+    },
+    {
+      "url": "https://neo4j.com/docs/pdf/neo4j-driver-manual-4.3-javascript.pdf",
+      "reason": "asset"
+    },
+    {
+      "url": "https://neo4j.com/docs/pdf/neo4j-driver-manual-4.4-javascript.pdf",
+      "reason": "asset"
+    },
+    {
+      "url": "https://neo4j.com/docs/pdf/neo4j-driver-manual-5-javascript.pdf",
+      "reason": "asset"
+    },
+    {
+      "url": "https://neo4j.com/docs/pdf/neo4j-driver-manual-6-javascript.pdf",
+      "reason": "asset"
+    },
+    {
+      "url": "https://neo4j.com/docs/pdf/neo4j-driver-manual-4.0-python.pdf",
+      "reason": "asset"
+    },
+    {
+      "url": "https://neo4j.com/docs/pdf/neo4j-driver-manual-4.1-python.pdf",
+      "reason": "asset"
+    },
+    {
+      "url": "https://neo4j.com/docs/pdf/neo4j-driver-manual-4.2-python.pdf",
+      "reason": "asset"
+    },
+    {
+      "url": "https://neo4j.com/docs/pdf/neo4j-driver-manual-4.3-python.pdf",
+      "reason": "asset"
+    },
+    {
+      "url": "https://neo4j.com/docs/pdf/neo4j-driver-manual-4.4-python.pdf",
+      "reason": "asset"
+    },
+    {
+      "url": "https://neo4j.com/docs/pdf/neo4j-driver-manual-5-python.pdf",
+      "reason": "asset"
+    },
+    {
+      "url": "https://neo4j.com/docs/pdf/neo4j-driver-manual-6-python.pdf",
+      "reason": "asset"
+    },
+    {
+      "url": "https://github.com/neo4j/docs-operations/issues/new/?title=Docs%20Feedback%20modules/ROOT/pages/index.adoc%20(ref:%20main)&body=%3E%20Do%20not%20include%20confidential%20information,%20personal%20data,%20sensitive%20data,%20or%20other%20regulated%20data.",
+      "reason": "outside-docs-host"
+    },
+    {
+      "url": "https://neo4j.com/aura/",
+      "reason": "outside-docs-root"
+    },
+    {
+      "url": "https://sessionize.com/nodes26/",
+      "reason": "outside-docs-host"
+    },
+    {
+      "url": "https://neo4j.com/docs/getting-started/languages-guides/community-drivers/",
+      "reason": "bad-path"
+    },
+    {
+      "url": "https://neo4j.com/docs/upgrade-migration-guide/current/version-5/changelogs/procedures/",
+      "reason": "bad-path"
+    },
+    {
+      "url": "https://neo4j.com/docs/upgrade-migration-guide/current/version-5/changelogs/java-api/",
+      "reason": "bad-path"
+    },
+    {
+      "url": "https://neo4j.com/docs/upgrade-migration-guide/current/version-5/changelogs/configuration-settings/",
+      "reason": "bad-path"
+    },
+    {
+      "url": "https://neo4j.com/docs/upgrade-migration-guide/current/version-4/supported-paths/",
+      "reason": "bad-path"
+    },
+    {
+      "url": "https://neo4j.com/docs/upgrade-migration-guide/current/version-4/changelogs/configuration-settings/",
+      "reason": "bad-path"
+    },
+    {
+      "url": "https://neo4j.com/docs/upgrade-migration-guide/current/version-4/changelogs/procedures/",
+      "reason": "bad-path"
+    },
+    {
+      "url": "https://neo4j.com/cloud/aura/",
+      "reason": "outside-docs-root"
+    }
+  ],
+  "failures": [
+    {
+      "url": "https://docs.spring.io/spring-data/neo4j/docs/5.0.0.RELEASE/reference/html/",
+      "reason": "markdown-output-too-short"
+    }
+  ]
+}

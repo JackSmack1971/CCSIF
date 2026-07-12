@@ -1,0 +1,40 @@
+path,title,url,host,depth,status
+docs/neo4j-com-docs-apoc-current-5676e994.md,APOC Core 2026.06 Documentation,https://neo4j.com/docs/apoc/current/,neo4j.com,1,packaged
+docs/neo4j-com-docs-aura-90415b0e.md,Neo4j Aura Documentation,https://neo4j.com/docs/aura/,neo4j.com,1,packaged
+docs/neo4j-com-docs-b771fcd6.md,Neo4j documentation,https://neo4j.com/docs/,neo4j.com,0,packaged
+docs/neo4j-com-docs-bloom-user-guide-current-b1239451.md,Neo4j Bloom 2.34,https://neo4j.com/docs/bloom-user-guide/current/,neo4j.com,1,packaged
+docs/neo4j-com-docs-browser-b70f071f.md,Neo4j Browser,https://neo4j.com/docs/browser/,neo4j.com,1,packaged
+docs/neo4j-com-docs-cypher-manual-current-cheat-sheet-6af4c187.md,Cypher Cheat Sheet,https://neo4j.com/docs/cypher-manual/current/cheat-sheet/,neo4j.com,1,packaged
+docs/neo4j-com-docs-cypher-manual-current-functions-vector-9b7967a9.md,Vector functions,https://neo4j.com/docs/cypher-manual/current/functions/vector/,neo4j.com,1,packaged
+docs/neo4j-com-docs-cypher-manual-current-indexes-semantic-indexes-vector-indexes-26c7c18d.md,Vector indexes,https://neo4j.com/docs/cypher-manual/current/indexes/semantic-indexes/vector-indexes/,neo4j.com,1,packaged
+docs/neo4j-com-docs-cypher-manual-current-introduction-c61fdb16.md,Introduction,https://neo4j.com/docs/cypher-manual/current/introduction/,neo4j.com,1,packaged
+docs/neo4j-com-docs-data-importer-current-91ff8be.md,Neo4j Data Importer,https://neo4j.com/docs/data-importer/current/,neo4j.com,1,packaged
+docs/neo4j-com-docs-desktop-current-afe6ed99.md,Neo4j Desktop,https://neo4j.com/docs/desktop/current/,neo4j.com,1,packaged
+docs/neo4j-com-docs-dotnet-manual-current-6329c594.md,Build applications with Neo4j and .NET,https://neo4j.com/docs/dotnet-manual/current/,neo4j.com,1,packaged
+docs/neo4j-com-docs-enterprise-studio-current-3fb3e6b1.md,Neo4j Enterprise Studio,https://neo4j.com/docs/enterprise-studio/current/,neo4j.com,1,packaged
+docs/neo4j-com-docs-genai-plugin-current-d27b6c0b.md,Introduction,https://neo4j.com/docs/genai/plugin/current/,neo4j.com,1,packaged
+docs/neo4j-com-docs-genai-tutorials-current-embeddings-vector-indexes-b29051bd.md,Introduction,https://neo4j.com/docs/genai/tutorials/current/embeddings-vector-indexes/,neo4j.com,1,packaged
+docs/neo4j-com-docs-getting-started-23e73b6f.md,Get started with Neo4j,https://neo4j.com/docs/getting-started/,neo4j.com,0,packaged
+docs/neo4j-com-docs-getting-started-23e73b6f.md,Get started with Neo4j,https://neo4j.com/docs/getting-started/,neo4j.com,1,packaged
+docs/neo4j-com-docs-go-manual-current-9aa81a40.md,Build applications with Neo4j and Go,https://neo4j.com/docs/go-manual/current/,neo4j.com,1,packaged
+docs/neo4j-com-docs-graph-data-science-client-current-129c09fd.md,Neo4j Graph Data Science Python Client,https://neo4j.com/docs/graph-data-science-client/current/,neo4j.com,1,packaged
+docs/neo4j-com-docs-graph-data-science-current-c23ad7e1.md,The Neo4j Graph Data Science Library Manual v2026.06,https://neo4j.com/docs/graph-data-science/current/,neo4j.com,1,packaged
+docs/neo4j-com-docs-graphql-current-548c1b2a.md,Introduction,https://neo4j.com/docs/graphql/current/,neo4j.com,1,packaged
+docs/neo4j-com-docs-graphql-current-directives-indexes-and-constraints-6430dedf.md,Indexes and constraints,https://neo4j.com/docs/graphql/current/directives/indexes-and-constraints/,neo4j.com,1,packaged
+docs/neo4j-com-docs-java-manual-current-9ac805e6.md,Build applications with Neo4j and Java,https://neo4j.com/docs/java-manual/current/,neo4j.com,1,packaged
+docs/neo4j-com-docs-java-reference-current-18555111.md,The Neo4j Java Reference v2026.06,https://neo4j.com/docs/java-reference/current/,neo4j.com,1,packaged
+docs/neo4j-com-docs-javascript-manual-current-a2c30d69.md,Build applications with Neo4j and JavaScript,https://neo4j.com/docs/javascript-manual/current/,neo4j.com,1,packaged
+docs/neo4j-com-docs-jdbc-manual-current-2a4c916f.md,Neo4j JDBC Driver,https://neo4j.com/docs/jdbc-manual/current/,neo4j.com,1,packaged
+docs/neo4j-com-docs-kerberos-add-on-current-9c635f1c.md,The Neo4j Kerberos Add-on v4.0.0,https://neo4j.com/docs/kerberos-add-on/current/,neo4j.com,1,packaged
+docs/neo4j-com-docs-neo4j-graphrag-python-current-cd82576f.md,GraphRAG for Python¶,https://neo4j.com/docs/neo4j-graphrag-python/current/,neo4j.com,1,packaged
+docs/neo4j-com-docs-neodash-commercial-current-6f4c4f44.md,Introduction,https://neo4j.com/docs/neodash-commercial/current/,neo4j.com,1,packaged
+docs/neo4j-com-docs-nvl-current-32a01c85.md,Neo4j Visualization Library,https://neo4j.com/docs/nvl/current/,neo4j.com,1,packaged
+docs/neo4j-com-docs-ogm-manual-current-5c32ed13.md,Neo4j-OGM - An Object Graph Mapping Library for Neo4j,https://neo4j.com/docs/ogm-manual/current/,neo4j.com,1,packaged
+docs/neo4j-com-docs-operations-manual-current-7cdb4fac.md,The Neo4j Operations Manual,https://neo4j.com/docs/operations-manual/current/,neo4j.com,0,packaged
+docs/neo4j-com-docs-ops-manager-current-be3c4707.md,Neo4j Ops Manager,https://neo4j.com/docs/ops-manager/current/,neo4j.com,1,packaged
+docs/neo4j-com-docs-python-manual-current-a8f013a4.md,Build applications with Neo4j and Python,https://neo4j.com/docs/python-manual/current/,neo4j.com,1,packaged
+docs/neo4j-com-docs-reference-d8d52284.md,Reference,https://neo4j.com/docs/reference/,neo4j.com,0,packaged
+docs/neo4j-com-docs-reference-docs-archive-f791d79a.md,All documentation,https://www.neo4j.com/docs/reference/docs-archive/,neo4j.com,0,packaged
+docs/neo4j-com-docs-snowflake-graph-analytics-current-ed25e725.md,The Neo4j Graph Analytics for Snowflake manual,https://neo4j.com/docs/snowflake-graph-analytics/current/,neo4j.com,1,packaged
+docs/neo4j-com-docs-status-codes-current-491414e6.md,Introduction,https://neo4j.com/docs/status-codes/current/,neo4j.com,1,packaged
+docs/neo4j-com-docs-upgrade-migration-guide-current-2affd581.md,Introduction,https://neo4j.com/docs/upgrade-migration-guide/current/,neo4j.com,1,packaged
