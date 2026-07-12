@@ -43,6 +43,16 @@ EXPECTED_SCOPES = {
         ".claude/skills/**",
         "CLAUDE.md",
     ],
+    "40-determinism-ladder.md": [
+        ".claude/**",
+        "CLAUDE.md",
+        "CLAUDE.local.md",
+        "AGENTS.md",
+        "README.md",
+        "CONTRIBUTING.md",
+        "SECURITY.md",
+        ".github/**",
+    ],
     "architecture.md": [
         ".claude/**",
         "CLAUDE.md",
@@ -140,6 +150,7 @@ MAX_LINES = {
     "10-karpathy-guidelines.md": 30,
     "20-lifecycle-gates.md": 40,
     "30-skill-taxonomy.md": 25,
+    "40-determinism-ladder.md": 100,
 }
 
 
