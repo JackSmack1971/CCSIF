@@ -15,6 +15,16 @@ CCSIF is further along than most "self-improving agent" scaffolds: it has a deli
 
 The path to autonomy is not "let the model edit its own files." It is: **generalize the 7axes propose→deterministic-apply→measure→rollback pattern to the whole control plane, wire the 2026 hook surface (SubagentStop, PostToolUseFailure, ConfigChange, Stop-gating, prompt/agent hooks, async hooks) as the sensor and actuator layer, and close the loop with a scheduler (SessionStart cadence + nightly GitHub Action).** Section 4 gives 34 concrete improvements; Section 6 sequences them into four phases, from safety hardening (a hard prerequisite — several current gaps make autonomy actively dangerous) to scheduled unattended cycles.
 
+## 1.1 Current-State Update
+
+The audit findings below are preserved as a 2026-07-10 snapshot of the repo state. Since that assessment, the live tree has changed:
+
+- `/control-plane-check` now exists at `[.claude/commands/control-plane-check.md](../commands/control-plane-check.md)`.
+- `.claude/workflows/upstream-audit.js` has been deleted.
+- `.claude/workflows/assets/workflow.schema.json` has been deleted.
+
+This addendum separates historical observations from current repository state so resolved items are not mistaken for active defects.
+
 ---
 
 ## 2. Current State: Where Each Component Sits on the Autonomy Ladder
@@ -27,7 +37,7 @@ Autonomy ladder used below: **L0** manual · **L1** instrumented (observes itsel
 | `/self-improve` skill | L2 | Proposal-only; `disable-model-invocation: true`; "never edits production files" `[OBSERVED: SKILL.md]` |
 | 7axes audit subsystem | **L3** | `evolve.py` applies bounded patches (directives ≤12/axis, weights clamped [0.5,2.0]); `feedback.py` learns from closed issues; ledger dedup `[OBSERVED]` |
 | Hooks (4 of ~30 events) | L1 | SessionStart/PreToolUse/PostToolUse/Stop only; PreToolUse guard **fails open** when node absent `[OBSERVED: pre-tool-use.sh]` |
-| Workflows (`issue-to-pr.js`, `upstream-audit.js`) | L0 | Return static scaffold objects; no execution logic `[OBSERVED]` |
+| Workflows (`issue-to-pr.js`) | L2 | Live workflow entrypoint with deterministic plan/implement/review/record orchestration; the deleted `upstream-audit.js` and `workflow.schema.json` rows below are historical audit observations, not current files `[OBSERVED]` |
 | Agents (implementation, pr-reviewer, upstream-auditor) | L0 | Prose contracts only; no hook-enforced output contracts `[OBSERVED]` |
 | Skill evals (21 × `evals.json`) | L0 | No runner, no CI — evals are inert documents `[OBSERVED: no .github/, no run script found]` |
 | KPI system (`kpi-defaults.md`) | L0 | Definitions and targets exist; nothing measures them; `/self-improve` *estimates* deltas `[OBSERVED]` |
