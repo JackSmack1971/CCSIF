@@ -198,8 +198,6 @@ No required environment variables were discovered in committed repo files.
 
 No repo-level automated test suite, build pipeline, or CI workflow was found in the repository.
 
-Skill-local tests, verification logs, and evals live under `.claude/skills/` and are the right place to look for workflow-specific validation.
-
 Grounded verification options:
 
 ```bash
