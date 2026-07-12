@@ -28,3 +28,4 @@ Executable gates and notifications for the repo-local control plane. Hooks are b
 ## Related Context
 - Parent node: `../AGENTS.md`
 - Control-plane rules: `../rules/AGENTS.md`
+- Hook entrypoint docs: `pre-tool-use.sh`, `post-tool-use.sh`, `session-start.sh`, `stop.sh`
