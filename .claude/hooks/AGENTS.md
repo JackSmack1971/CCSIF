@@ -4,7 +4,6 @@
 Executable gates and notifications for the repo-local control plane. Hooks are behavior, not documentation: they must be portable, deterministic, and safe to run repeatedly.
 
 ## Entry Points
-- `README.md` - hook inventory and setup notes.
 - `pre-tool-use.sh` - guard that blocks protected-area writes when dependencies are missing.
 - `post-tool-use.sh` - post-action hook entrypoint.
 - `session-start.sh` - startup visibility and environment check.
@@ -29,3 +28,4 @@ Executable gates and notifications for the repo-local control plane. Hooks are b
 ## Related Context
 - Parent node: `../AGENTS.md`
 - Control-plane rules: `../rules/AGENTS.md`
+- Hook entrypoint docs: `pre-tool-use.sh`, `post-tool-use.sh`, `session-start.sh`, `stop.sh`
