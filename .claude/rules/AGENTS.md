@@ -9,11 +9,11 @@ paths:
 Path-scoped behavior rules for the `.claude/` and `.codex/` control planes. These files define how agents should behave in this repo and which areas are protected.
 
 ## Entry Points
-- `README.md` - quick index for the rule set.
 - `00-core-workflow.md` - first read for general repo workflow.
 - `control-plane.md` - live governance for control-plane changes.
 - `hindsight-memory.md` - memory-specific operating rules.
 - `security.md`, `testing.md`, `subagent-routing.md`, `failure-escalation.md` - domain rules for common edge cases.
+- `../AGENTS.md` - parent navigation node for the `.claude` control plane.
 
 ## Contracts & Invariants
 - Keep each rule file path-scoped with accurate `paths:` frontmatter.
