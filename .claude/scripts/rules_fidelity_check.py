@@ -65,7 +65,9 @@ EXPECTED_SCOPES = {
         ".github/**",
     ],
     "failure-escalation.md": ["**/*"],
+    "hindsight-memory.md": ["**/*"],
     "mcp-resilience.md": [".mcp.json", ".claude/**", ".codex/**", "CLAUDE.md", "CLAUDE.local.md", "AGENTS.md"],
+    "persona-profile.md": ["**/*"],
     "security.md": [
         ".claude/**",
         ".codex/**",
@@ -150,7 +152,7 @@ def main() -> int:
         fail("missing .claude/rules directory")
 
     for path in sorted(RULES_DIR.glob("*.md")):
-        if path.name == "README.md":
+        if path.name in {"README.md", "AGENTS.md"}:
             continue
         text = path.read_text(encoding="utf-8")
         frontmatter, body = split_frontmatter(text)
