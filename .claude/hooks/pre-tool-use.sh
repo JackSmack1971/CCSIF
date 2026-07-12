@@ -10,13 +10,13 @@ if [ -z "$node_bin" ]; then
   exit 2
 fi
 
-case "$node_bin" in
-  *.exe) script_path="$(wslpath -w "$script_path")" ;;
-esac
+if [[ "$node_bin" == *.exe ]]; then
+  script_path="$(wslpath -w "$script_path")"
+fi
 
 if "$node_bin" "$script_path"; then
   exit 0
+else
+  status=$?
+  exit "$status"
 fi
-
-status=$?
-exit "$status"

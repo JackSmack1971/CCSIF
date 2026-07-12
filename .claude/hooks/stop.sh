@@ -10,8 +10,17 @@ if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
   exit 0
 fi
 
-# ponytail: keep stop-hook verification to deterministic control-plane checks; repo-wide whitespace scans are manual because autocrlf noise makes them unreliable here.
-# Run the deterministic control-plane verifier before ending the session.
-python3 .claude/scripts/control_plane_check.py
+set +e
+unstaged_check="$(git diff --check 2>&1)" || unstaged_status=$?
+staged_check="$(git diff --cached --check 2>&1)" || staged_status=$?
+set -e
+
+: "${unstaged_status:=0}"
+: "${staged_status:=0}"
+
+if [ "$unstaged_status" -ne 0 ] || [ "$staged_status" -ne 0 ]; then
+  printf '%s\n' 'Blocked: git diff --check found unresolved conflict markers or whitespace errors.' >&2
+  exit 2
+fi
 
 exit 0
