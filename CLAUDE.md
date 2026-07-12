@@ -28,17 +28,17 @@ Tier rules:
 Update these commands to match the repository:
 
 ```bash
-# install
-npm install
+# control-plane
+python3 .claude/scripts/control_plane_check.py
 
-# test
-npm test
+# rules
+python3 .claude/scripts/rules_fidelity_check.py
 
-# lint
-npm run lint
+# memory tests
+python3 -m unittest discover -s .claude/memory/tests -v
 
-# typecheck
-npm run typecheck
+# issue-to-pr tests
+python3 -m unittest discover -s .claude/skills/issue-to-pr/tests -v
 ```
 
 ## Read First
