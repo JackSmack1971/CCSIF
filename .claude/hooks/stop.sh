@@ -10,8 +10,8 @@ if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
   exit 0
 fi
 
-# ponytail: keep stop-hook verification to deterministic control-plane checks; repo-wide whitespace scans are manual because autocrlf noise makes them unreliable here.
-# Run the deterministic control-plane verifier before ending the session.
+# ponytail: keep stop-hook verification to deterministic repo checks; broader test runs can be invoked manually when a task needs them.
 python3 .claude/scripts/control_plane_check.py
+python3 .claude/scripts/rules_fidelity_check.py
 
 exit 0
