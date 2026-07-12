@@ -25,6 +25,6 @@ To record a new control-plane decision:
 - Don't hand-edit `decision-log.md` history to "clean it up"; it's an append-only audit trail.
 
 ## Related Context
-- Skills library: `../skills/AGENTS.md`
+- Skills library: `../skills/`
 - Control-plane rules: `../rules/`
 - Root constitution and Tier rules: `../../CLAUDE.md`
