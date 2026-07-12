@@ -1,7 +1,7 @@
 # .claude Control Plane
 
 ## Purpose
-Repository-local control-plane scaffolding for CCSIF. This subtree defines how agents, rules, hooks, memory, commands, skills, docs, and workflows fit together. It is the first stop for any edit under `.claude/` or `.codex/`.
+Repository-local control-plane scaffolding for CCSIF. This subtree defines how agents, rules, hooks, memory, commands, skills, docs, and workflows fit together. It is the first stop for any edit under `.claude/`.
 
 ## Entry Points
 - `README.md` - directory map for the `.claude` subtree.
@@ -16,7 +16,7 @@ Repository-local control-plane scaffolding for CCSIF. This subtree defines how a
 - `CLAUDE.md` remains the only root-level context file; keep any `AGENTS.md` files below the repository root.
 - Read the nearest node before changing a child subtree. For example, read `rules/AGENTS.md` before editing rule files and `skills/AGENTS.md` before adding or changing a skill.
 - Treat `.claude/rules/`, `.claude/hooks/`, and `.claude/memory/` as live control surfaces, not passive documentation.
-- Keep edits narrow and preserve mirrored behavior between `.claude/` and `.codex/` when the same control-plane file exists in both trees.
+- Keep edits narrow and preserve behavior within the live `.claude/` control plane.
 
 ## Patterns
 - For control-plane changes, update the closest node first, then run the repo's validation for that area.

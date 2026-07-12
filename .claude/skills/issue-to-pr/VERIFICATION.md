@@ -5,7 +5,7 @@
 - Skill: `issue-to-pr`
 - Verification date: 2026-07-11
 - Runtime: Python 3 (standard library only); GitHub CLI (`gh`) required for the `plan` subcommand's remote reads
-- Companion changes: `.claude/agents/implementation-agent.md`, `.claude/agents/pr-reviewer.md` (and `.codex/` mirrors) fleshed out with real input/output contracts; `.claude/workflows/issue-to-pr.js` (and `.codex/` mirror) rewritten from a scaffold stub into a real agent-orchestrated pipeline.
+- Companion changes: `.claude/agents/implementation-agent.md`, `.claude/agents/pr-reviewer.md` fleshed out with real input/output contracts; `.claude/workflows/issue-to-pr.js` rewritten from a scaffold stub into a real agent-orchestrated pipeline.
 
 ## Checks performed
 
@@ -13,7 +13,7 @@
 - [x] Unit tests: `python -m unittest discover -s tests -v` — 13/13 passed (marker parsing, dependency-token parsing, destructive-flag parsing, deterministic branch naming, digest attach/verify/tamper-detection, plan validation duplicate detection, idempotent journal recording, unknown-issue rejection).
 - [x] `evals/evals.json` is valid JSON.
 - [x] `python3 .claude/scripts/control_plane_check.py` — `control-plane-check: PASS` (required after any edit to agents/workflows/skills under `.claude/`).
-- [x] `.claude/agents/implementation-agent.md` and `.codex/agents/implementation-agent.md` are byte-identical after edit (same for `pr-reviewer.md`), preserving this repository's dual-CLI mirroring convention.
+- [x] `.claude/agents/implementation-agent.md` and `.claude/agents/pr-reviewer.md` were updated together so the contract set stays aligned.
 - [x] `node --check .claude/workflows/issue-to-pr.js` — exits 0.
 
 ## Evaluated failure modes
@@ -34,4 +34,4 @@
 
 ## Verification boundary
 
-No live GitHub repository with real `repository-hygiene`-labeled issues was available in this session, so `plan`'s `gh`-calling paths (`build_plan`, `find_existing_pr`, `github_slug`) were not exercised end-to-end against a real remote — only their pure/parsing logic (`parse_issue`, `branch_name`, digest functions, `validate_plan`, `record_result`) has direct unit-test coverage. `.claude/workflows/issue-to-pr.js` (and its `.codex` mirror) passed a syntax check only; it has not been executed via the Workflow tool, since doing so requires explicit user opt-in and a real issue backlog to act on. A dry-run acceptance pass against a repository with real hygiene issues should be the first real-world run before broader use.
+No live GitHub repository with real `repository-hygiene`-labeled issues was available in this session, so `plan`'s `gh`-calling paths (`build_plan`, `find_existing_pr`, `github_slug`) were not exercised end-to-end against a real remote — only their pure/parsing logic (`parse_issue`, `branch_name`, digest functions, `validate_plan`, `record_result`) has direct unit-test coverage. `.claude/workflows/issue-to-pr.js` passed a syntax check only; it has not been executed via the Workflow tool, since doing so requires explicit user opt-in and a real issue backlog to act on. A dry-run acceptance pass against a repository with real hygiene issues should be the first real-world run before broader use.

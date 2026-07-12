@@ -3,7 +3,6 @@ name: architecture
 description: Architecture boundaries and dependency direction.
 paths:
   - ".claude/**"
-  - ".codex/**"
   - "CLAUDE.md"
   - "CLAUDE.local.md"
   - "AGENTS.md"

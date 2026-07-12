@@ -3,7 +3,6 @@ name: testing
 description: Testing expectations for source changes.
 paths:
   - ".claude/**"
-  - ".codex/**"
   - "CLAUDE.md"
   - "CLAUDE.local.md"
   - "AGENTS.md"

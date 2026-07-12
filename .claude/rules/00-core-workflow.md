@@ -1,7 +1,6 @@
 ---
 paths:
   - ".claude/**"
-  - ".codex/**"
   - "CLAUDE.md"
   - "CLAUDE.local.md"
   - "AGENTS.md"

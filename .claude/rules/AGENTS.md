@@ -6,7 +6,7 @@ paths:
 # Rules
 
 ## Purpose
-Path-scoped behavior rules for the `.claude/` and `.codex/` control planes. These files define how agents should behave in this repo and which areas are protected.
+Path-scoped behavior rules for the live `.claude/` control plane. These files define how agents should behave in this repo and which areas are protected.
 
 ## Entry Points
 - `README.md` - quick index for the rule set.
