@@ -1,0 +1,57 @@
+{
+  "phase": 0,
+  "status": "complete",
+  "generated_at": "2026-07-12T12:28:16.6722781-04:00",
+  "roadmap": {
+    "path": "docs/claude-code-control-plane-roadmap-v2.md",
+    "sha256": "7D6F35A16DEE91F0BD8B4DA98EA29F05CDC13003DF1C096BFA620C7610E08AE6",
+    "lines": 287
+  },
+  "implemented_files": [
+    ".claude/scripts/phase0_control_plane.py",
+    ".claude/hooks/session-start.sh",
+    ".claude/hooks/pre-tool-use.sh",
+    ".claude/hooks/post-tool-use.sh",
+    ".claude/hooks/pre-compact.sh",
+    ".claude/scripts/control_plane_check.py",
+    ".claude/state/completion-matrix.md",
+    ".claude/state/execution-manifest.json",
+    ".claude/state/ledger.md",
+    "tests/test_phase0_control_plane.py",
+    "tests/test_phase0_smoke.py"
+  ],
+  "design_decisions": [
+    "Use the repo's existing Python and Bash stack rather than a new runtime.",
+    "Persist session metadata in SQLite and keep raw hook payloads as JSONL exports under .claude/state/.",
+    "Normalize tool requests/results into structured events with session, turn, step, and tool-call correlation.",
+    "Require verified checkpoints before resume and compaction."
+  ],
+  "commands": [
+    {
+      "command": "python -m py_compile .claude/scripts/phase0_control_plane.py tests/test_phase0_control_plane.py tests/test_phase0_smoke.py",
+      "exit_code": 0
+    },
+    {
+      "command": "python -m unittest discover -s tests -v",
+      "exit_code": 0
+    },
+    {
+      "command": "python3 .claude/scripts/control_plane_check.py",
+      "exit_code": 0
+    },
+    {
+      "command": "python3 .claude/scripts/rules_fidelity_check.py",
+      "exit_code": 0
+    }
+  ],
+  "exit_criteria": [
+    "A single Claude Code session can be started, resumed, compacted, and verified end to end.",
+    "Every Agent tool call has a durable request/result record under .claude/state/.",
+    "Session state can be reconstructed after restart without guessing.",
+    "Failures are visible, attributable, and recoverable before the next turn runs."
+  ],
+  "remaining_risks": [
+    "The harness is intentionally thin and file-backed; it does not emulate Claude Code's native transcript store.",
+    "Later phases remain incomplete and require their own verification."
+  ]
+}

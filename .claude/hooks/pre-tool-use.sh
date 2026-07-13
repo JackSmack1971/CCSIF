@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+payload="$(cat)"
 script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+phase0_script="$script_dir/../scripts/phase0_control_plane.py"
 node_bin="$(command -v node 2>/dev/null || command -v node.exe 2>/dev/null || true)"
 script_path="$script_dir/lib/pre-tool-use-guard.js"
 
@@ -14,9 +16,11 @@ case "$node_bin" in
   *.exe) script_path="$(wslpath -w "$script_path")" ;;
 esac
 
-if "$node_bin" "$script_path"; then
-  exit 0
+if printf '%s' "$payload" | "$node_bin" "$script_path"; then
+  :
+else
+  status=$?
+  exit "$status"
 fi
 
-status=$?
-exit "$status"
+printf '%s' "$payload" | python3 "$phase0_script" request >/dev/null
