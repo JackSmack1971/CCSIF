@@ -55,6 +55,7 @@
   - `reflect-agent` correctly enforced its own narrow role scope during two of three test probes (declining to act as a generic file-echo proxy); this is recorded as a residual note in the completion matrix, not a blocker, since `pr-reviewer` proved the same delegation path executes tools end to end.
   - Unrelated untracked files (`claude-code-control-plane-roadmap.md` v1, `docs/`) remain preserved and untouched.
 
+<<<<<<< HEAD
 ## 2026-07-12 Phase 2 complete
 
 - Goal: implement Phase 2 (Project-Level Memory & State) — make the repo-local memory stack authoritative, add a bootstrap-safe `autoMemoryDirectory` mechanism, tested compaction snapshot/restore, and subagent-summary export — while keeping correctness independent of `~/.claude/*` and any external store, per `docs/claude-code-control-plane-roadmap-v2.md`.
@@ -82,3 +83,5 @@
   - The real, pre-existing machine-local `.claude/settings.local.json` on this workstation was deliberately left unmodified — the bootstrap mechanism is proven end-to-end against fresh and pre-existing fixtures in `tests/test_phase2_smoke.py` rather than by mutating the user's live local config outside of the native `SessionStart` hook path.
   - Unrelated untracked files present since before this session (`claude-code-control-plane-roadmap.md` v1, `docs/`, `.claude/state/logs/`, `.claude/state/raw/`, `.claude/state/phase0.sqlite3`, `.claude/state/roadmap/phase-1-*`) remain preserved and untouched.
 
+=======
+>>>>>>> origin/main

@@ -66,7 +66,11 @@
   "phase_status": {
     "phase_0": "complete",
     "phase_1": "complete",
+<<<<<<< HEAD
     "phase_2": "complete",
+=======
+    "phase_2": "partial",
+>>>>>>> origin/main
     "phase_3": "partial",
     "phase_4": "partial",
     "phase_5": "partial",
@@ -210,6 +214,7 @@
       "Phases 2-7 remain incomplete and should not be treated as implicitly validated by the Phase 1 fixes."
     ]
   },
+<<<<<<< HEAD
   "phase_2_completion": {
     "status": "complete",
     "report": ".claude/state/roadmap/phase-2-report.md",
@@ -264,4 +269,7 @@
     ]
   },
   "next_goal": "Phase 2 is complete. Do not begin Phase 3 until explicitly directed."
+=======
+  "next_goal": "Phase 1 is complete. Do not begin Phase 2 until explicitly directed."
+>>>>>>> origin/main
 }
