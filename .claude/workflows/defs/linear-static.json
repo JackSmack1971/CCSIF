@@ -1,0 +1,44 @@
+{
+  "workflow": "linear-static",
+  "version": 1,
+  "description": "Fixed gather-context -> implement -> verify -> ship chain with no branching. The default execution path for predictable, low-branching-value work.",
+  "start": "gather-context",
+  "nodes": {
+    "gather-context": {
+      "description": "Read relevant files and prior state before acting.",
+      "risk": "low",
+      "checkpoint_required": false,
+      "required_inputs": [],
+      "required_outputs": ["context_summary"],
+      "verifier": "manual",
+      "allowed_next": ["implement"]
+    },
+    "implement": {
+      "description": "Make the smallest coherent change.",
+      "risk": "medium",
+      "checkpoint_required": false,
+      "required_inputs": ["context_summary"],
+      "required_outputs": ["diff"],
+      "verifier": "manual",
+      "allowed_next": ["verify"]
+    },
+    "verify": {
+      "description": "Run the narrowest decisive check against the diff.",
+      "risk": "low",
+      "checkpoint_required": false,
+      "required_inputs": ["diff"],
+      "required_outputs": ["verification_result"],
+      "verifier": "command",
+      "allowed_next": ["ship"]
+    },
+    "ship": {
+      "description": "Write/merge transition. High risk: requires a verified Phase 0 checkpoint before entry.",
+      "risk": "high",
+      "checkpoint_required": true,
+      "required_inputs": ["verification_result"],
+      "required_outputs": [],
+      "verifier": null,
+      "allowed_next": []
+    }
+  }
+}

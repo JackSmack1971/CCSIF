@@ -1,0 +1,57 @@
+{
+  "phase": 4,
+  "status": "complete",
+  "report": ".claude/state/roadmap/phase-4-report.md",
+  "prerequisite_check": {
+    "phase_0_status": "complete",
+    "phase_1_status": "complete",
+    "phase_2_status": "complete",
+    "phase_3_status": "complete",
+    "verified_before_start": true
+  },
+  "implemented_files": [
+    ".claude/scripts/phase4_workflows.py",
+    ".claude/workflows/defs/linear-static.json",
+    ".claude/workflows/defs/evidence-branch.json",
+    ".claude/commands/workflow.md",
+    ".claude/rules/dynamic-workflows.md",
+    ".claude/state/workflows/.gitkeep",
+    ".claude/scripts/control_plane_check.py",
+    ".claude/scripts/rules_fidelity_check.py",
+    ".claude/commands/AGENTS.md",
+    ".claude/rules/AGENTS.md",
+    ".claude/workflows/AGENTS.md",
+    "tests/test_phase4_workflows.py"
+  ],
+  "verification_commands": [
+    { "command": "python -m py_compile .claude/scripts/phase4_workflows.py .claude/scripts/control_plane_check.py .claude/scripts/rules_fidelity_check.py tests/test_phase4_workflows.py", "exit_code": 0 },
+    { "command": "python -m unittest discover -s tests -v", "exit_code": 0, "notes": "54 tests total (45 prior + 9 new), no regression" },
+    { "command": "python3 .claude/scripts/control_plane_check.py", "exit_code": 0, "notes": "includes new check_workflow_defs() step" },
+    { "command": "python3 .claude/scripts/rules_fidelity_check.py", "exit_code": 0 },
+    { "command": "python3 -c \"import json; json.load(open('.claude/settings.json'))\"", "exit_code": 0 },
+    { "command": "git check-ignore -v <every new Phase 4 path>", "exit_code": 1, "notes": "nothing ignored; all evidence is git-visible" }
+  ],
+  "required_scenario_evidence": {
+    "linear_static_workflow": "tests/test_phase4_workflows.py::Phase4WorkflowTests::test_linear_static_workflow_runs_to_completion",
+    "evidence_driven_branch": "tests/test_phase4_workflows.py::Phase4WorkflowTests::test_evidence_driven_branch_routes_to_debug_then_ships",
+    "rejected_unsupported_branch": "tests/test_phase4_workflows.py::Phase4WorkflowTests::test_unsupported_branch_is_rejected_and_recorded",
+    "interrupted_resume": "tests/test_phase4_workflows.py::Phase4WorkflowTests::test_resume_rolls_back_to_last_verified_node_after_interruption",
+    "exhausted_retry_failure": "tests/test_phase4_workflows.py::Phase4WorkflowTests::test_exhausted_retries_produce_explicit_terminal_failure",
+    "high_risk_checkpoint_gate": "tests/test_phase4_workflows.py::Phase4WorkflowTests::test_high_risk_transition_requires_a_real_verified_checkpoint"
+  },
+  "design_summary": [
+    "Bounded planner is propose_next(), returning only the current node's declared allowed_next; advance() structurally cannot accept an undeclared target.",
+    "Checkpoint gating calls Phase0ControlPlane.load_checkpoint() directly; no parallel checkpoint system was built.",
+    "Retries are bounded per node (default 2, matching Phase 0's own MAX_RETRIES); exhaustion is the explicit terminal state failed-exhausted-retries.",
+    "resume() rolls back to the last verified node, never an in-flight unverified one.",
+    "fallback() records a pinned static path as visible state, not silent behavior.",
+    "No live /goal or /loop invocation was scripted; those are product-level session behaviors this control plane wraps rather than reimplements."
+  ],
+  "remaining_risks": [
+    "The engine has not yet been driven end-to-end by a live /goal- or /loop-triggered session in this environment; the wrap relationship is a documented design intent, proven at the unit level, not via a live-session trace.",
+    "planner_tokens/planner_cost_usd in run metrics are always null; no token/cost accounting hook exists at script level.",
+    "Only two workflow definitions exist by design; add more only when a real, repeated task shape justifies it, per the roadmap's static-first guidance.",
+    "Phases 5-7 remain incomplete and are not implicitly validated by these Phase 4 changes."
+  ],
+  "next_goal": "Phase 4 is complete. Do not begin Phase 5 until explicitly directed."
+}

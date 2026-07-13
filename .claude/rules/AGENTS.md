@@ -12,7 +12,7 @@ Path-scoped behavior rules for the live `.claude/` control plane. These files de
 - `00-core-workflow.md` - first read for general repo workflow.
 - `control-plane.md` - live governance for control-plane changes.
 - `hindsight-memory.md` - memory-specific operating rules.
-- `security.md`, `testing.md`, `subagent-routing.md`, `failure-escalation.md` - domain rules for common edge cases.
+- `security.md`, `testing.md`, `subagent-routing.md`, `failure-escalation.md`, `dynamic-workflows.md` - domain rules for common edge cases.
 - `../AGENTS.md` - parent navigation node for the `.claude` control plane.
 
 ## Contracts & Invariants

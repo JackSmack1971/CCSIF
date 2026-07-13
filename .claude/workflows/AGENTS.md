@@ -1,10 +1,11 @@
 # Workflows
 
 ## Purpose
-Deterministic orchestration for repository control-plane workflows. This subtree currently owns the `issue-to-pr` fan-out runner.
+Deterministic orchestration for repository control-plane workflows. This subtree owns the `issue-to-pr` fan-out runner and the Phase 4 declarative workflow-graph definitions.
 
 ## Entry Points
 - `issue-to-pr.js` - batch workflow that discovers ready issues, delegates implementation and review, and records outcomes.
+- `defs/*.json` - small declarative workflow graphs (stable step IDs, `allowed_next` allowlist, risk, checkpoint requirement) executed by `.claude/scripts/phase4_workflows.py`.
 
 ## Contracts & Invariants
 - Keep orchestration deterministic and reviewable.

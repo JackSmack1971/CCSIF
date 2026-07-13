@@ -1,0 +1,36 @@
+{
+  "workflow": "evidence-branch",
+  "version": 1,
+  "description": "Run tests; branch on the evidence. Passing tests may proceed to a checkpoint-gated ship; failing tests route to a bounded debug-and-retry loop. Any transition outside {ship, debug} from run-tests is rejected as an unsupported branch.",
+  "start": "run-tests",
+  "nodes": {
+    "run-tests": {
+      "description": "Execute the test suite; the result decides the branch.",
+      "risk": "low",
+      "checkpoint_required": false,
+      "max_retries": 2,
+      "required_inputs": ["diff"],
+      "required_outputs": ["test_result"],
+      "verifier": "command",
+      "allowed_next": ["ship", "debug"]
+    },
+    "debug": {
+      "description": "Investigate and fix the failure, then re-run tests. Bounded by run-tests' max_retries.",
+      "risk": "medium",
+      "checkpoint_required": false,
+      "required_inputs": ["test_result"],
+      "required_outputs": ["diff"],
+      "verifier": "manual",
+      "allowed_next": ["run-tests"]
+    },
+    "ship": {
+      "description": "Write/merge transition. High risk: requires a verified Phase 0 checkpoint before entry.",
+      "risk": "high",
+      "checkpoint_required": true,
+      "required_inputs": ["test_result"],
+      "required_outputs": [],
+      "verifier": null,
+      "allowed_next": []
+    }
+  }
+}

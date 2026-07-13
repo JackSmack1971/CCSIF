@@ -8,6 +8,7 @@ Single-file slash commands that package focused, user-invoked workflows. This su
 - `review-pr.md` - review one PR for merge readiness.
 - `audit-upstream.md` - audit-only issue discovery.
 - `control-plane-check.md` - deterministic control-plane validation.
+- `workflow.md` - Phase 4 static-first workflow engine entrypoint.
 
 ## Contracts & Invariants
 - Keep each command narrow, explicit, and readable as a standalone prompt.
