@@ -66,6 +66,14 @@
         ]
       }
     ],
+    "SubagentStart": [
+      {
+        "matcher": "",
+        "hooks": [
+          { "type": "command", "command": "bash .claude/hooks/subagent-start.sh" }
+        ]
+      }
+    ],
     "SubagentStop": [
       {
         "matcher": "",

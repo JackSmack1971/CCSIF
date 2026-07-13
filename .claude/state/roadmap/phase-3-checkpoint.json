@@ -1,0 +1,47 @@
+{
+  "phase": 3,
+  "status": "complete",
+  "report": ".claude/state/roadmap/phase-3-report.md",
+  "prerequisite_check": {
+    "phase_0_status": "complete",
+    "phase_1_status": "complete",
+    "phase_2_status": "complete",
+    "verified_before_start": true
+  },
+  "implemented_files": [
+    ".claude/agents/scout.md",
+    ".claude/agents/planner.md",
+    ".claude/agents/builder.md",
+    ".claude/agents/verifier.md",
+    ".claude/agents/AGENTS.md",
+    ".claude/scripts/phase3_agents.py",
+    ".claude/hooks/subagent-start.sh",
+    ".claude/hooks/subagent-stop.sh",
+    ".claude/rules/subagent-routing.md",
+    ".claude/settings.json",
+    ".claude/scripts/control_plane_check.py",
+    "tests/test_phase3_agents.py",
+    "tests/test_phase3_smoke.py"
+  ],
+  "verification_commands": [
+    { "command": "python -m py_compile .claude/scripts/phase3_agents.py tests/test_phase3_agents.py tests/test_phase3_smoke.py", "exit_code": 0 },
+    { "command": "python -m unittest discover -s tests -v", "exit_code": 0, "notes": "45 tests total, no regression" },
+    { "command": "python3 .claude/scripts/control_plane_check.py", "exit_code": 0 },
+    { "command": "python3 .claude/scripts/rules_fidelity_check.py", "exit_code": 0 },
+    { "command": "python3 -c \"import json; json.load(open('.claude/settings.json'))\"", "exit_code": 0 }
+  ],
+  "live_delegation_proof": {
+    "agent_used": "upstream-auditor",
+    "reason": "the four new Phase 3 role files were not yet visible to this session's Agent-tool registry (session-timing gap, not a file defect)",
+    "task_record_created": true,
+    "role_routed": "read-only-researcher",
+    "handoff_result": "merged",
+    "state_path_pattern": ".claude/state/agents/<parent_session_id>/<agent_id>.task.json"
+  },
+  "remaining_risks": [
+    "scout/planner/builder/verifier were not spawned live under their own names in this session; a follow-up session should confirm once the Agent-tool registry picks them up.",
+    "Task 'checkpoint' field is best-effort (only populated when the parent session has a verified Phase 0 checkpoint).",
+    "Phases 4-7 remain incomplete and are not implicitly validated by these Phase 3 changes."
+  ],
+  "next_goal": "Phase 3 is complete. Leave Phase 4 untouched until explicitly directed."
+}

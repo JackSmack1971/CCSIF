@@ -66,12 +66,8 @@
   "phase_status": {
     "phase_0": "complete",
     "phase_1": "complete",
-<<<<<<< HEAD
     "phase_2": "complete",
-=======
-    "phase_2": "partial",
->>>>>>> origin/main
-    "phase_3": "partial",
+    "phase_3": "complete",
     "phase_4": "partial",
     "phase_5": "partial",
     "phase_6": "partial",
@@ -214,7 +210,6 @@
       "Phases 2-7 remain incomplete and should not be treated as implicitly validated by the Phase 1 fixes."
     ]
   },
-<<<<<<< HEAD
   "phase_2_completion": {
     "status": "complete",
     "report": ".claude/state/roadmap/phase-2-report.md",
@@ -268,8 +263,60 @@
       "Phases 3-7 remain incomplete and should not be treated as implicitly validated by the Phase 2 changes."
     ]
   },
-  "next_goal": "Phase 2 is complete. Do not begin Phase 3 until explicitly directed."
-=======
-  "next_goal": "Phase 1 is complete. Do not begin Phase 2 until explicitly directed."
->>>>>>> origin/main
+  "phase_3_completion": {
+    "status": "complete",
+    "report": ".claude/state/roadmap/phase-3-report.md",
+    "checkpoint": ".claude/state/roadmap/phase-3-checkpoint.json",
+    "implemented_files": [
+      ".claude/agents/scout.md",
+      ".claude/agents/planner.md",
+      ".claude/agents/builder.md",
+      ".claude/agents/verifier.md",
+      ".claude/agents/AGENTS.md",
+      ".claude/scripts/phase3_agents.py",
+      ".claude/hooks/subagent-start.sh",
+      ".claude/hooks/subagent-stop.sh",
+      ".claude/rules/subagent-routing.md",
+      "tests/test_phase3_agents.py",
+      "tests/test_phase3_smoke.py"
+    ],
+    "design_decisions": [
+      "Task tracking writes a separate <agent_id>.task.json rather than extending Phase 2's <agent_id>.json export schema, so a completed phase's file format is never touched.",
+      "Tool scope is parsed live from each agent's own frontmatter, never hand-duplicated, so routing cannot drift from the real enforced tool list.",
+      "SubagentStart cannot block per the documented hook contract, so an unrouted agent_type is recorded for visibility, not blocked; enforcement lives entirely in each agent's own tools:/permissionMode: frontmatter.",
+      "handoff requires real verification evidence or an explicit --summary-only flag; omitting both is a hard error, preventing a summary from silently being treated as proof.",
+      "builder.md uses frontmatter isolation: worktree (runtime-enforced); implementation-agent.md is left on its existing branch-per-issue convention rather than retrofitted, since it already has equivalent conflict safety for its specific GitHub flow.",
+      "No custom background/resume scheduler was built; Claude Code's native foreground/background execution and SendMessage-based resume already satisfy this, and the tracking script only records what that native mechanism produces.",
+      "Collaborative agent teams were not implemented; no tested scenario in this repo needs mid-task worker coordination."
+    ],
+    "verification_commands": [
+      {
+        "command": "python -m py_compile .claude/scripts/phase3_agents.py tests/test_phase3_agents.py tests/test_phase3_smoke.py",
+        "exit_code": 0
+      },
+      {
+        "command": "python -m unittest discover -s tests -v",
+        "exit_code": 0,
+        "notes": "45 tests, no regression"
+      },
+      {
+        "command": "python3 .claude/scripts/control_plane_check.py",
+        "exit_code": 0
+      },
+      {
+        "command": "python3 .claude/scripts/rules_fidelity_check.py",
+        "exit_code": 0
+      },
+      {
+        "command": "python3 -c \"import json; json.load(open('.claude/settings.json'))\"",
+        "exit_code": 0
+      }
+    ],
+    "remaining_risks": [
+      "scout/planner/builder/verifier were not spawned live under their own names in this session (Agent-tool registry hadn't refreshed); routing/tracking/handoff was proven live instead via the already-registered upstream-auditor.",
+      "Task 'checkpoint' field is best-effort and only populated when the parent session has a verified Phase 0 checkpoint.",
+      "Phases 4-7 remain incomplete and should not be treated as implicitly validated by the Phase 3 changes."
+    ]
+  },
+  "next_goal": "Phase 3 is complete. Do not begin Phase 4 until explicitly directed."
 }
