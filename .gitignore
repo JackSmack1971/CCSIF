@@ -25,6 +25,25 @@ CLAUDE.local.md
 *credentials*
 *service-account*
 
+# Phase 0 control-plane runtime state: generated locally per session.
+# Tracked ledgers/reports/roadmap evidence under .claude/state/ (ledger.md,
+# baseline.md, completion-matrix.md, execution-manifest.json, roadmap/**,
+# research/**, handoffs/**, and every .gitkeep) remain committed.
+.claude/state/phase0.sqlite3
+.claude/state/phase0.sqlite3-wal
+.claude/state/phase0.sqlite3-shm
+.claude/state/phase0.sqlite3-journal
+.claude/state/raw/
+.claude/state/logs/
+.claude/state/checkpoints/
+.claude/state/archive/
+.claude/state/compactions/*
+!.claude/state/compactions/.gitkeep
+.claude/state/agents/*
+!.claude/state/agents/.gitkeep
+.claude/state/workflows/*
+!.claude/state/workflows/.gitkeep
+
 # Common build artifacts
 node_modules/
 dist/

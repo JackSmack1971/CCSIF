@@ -4,7 +4,9 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 import sqlite3
+import subprocess
 import sys
 import time
 import uuid
@@ -22,6 +24,156 @@ RAW_EXPORT_NAME = "raw-events.jsonl"
 DB_NAME = "phase0.sqlite3"
 
 MAX_RETRIES = 2
+
+# Retention/size bounds for generated .claude/state/ artifacts (raw exports,
+# session logs, checkpoints, archives). None of these are git-tracked
+# (.gitignore), but they still accumulate on local disk forever without a
+# bound.
+DEFAULT_RETENTION_DAYS = 14
+DEFAULT_MAX_FILE_BYTES = 5 * 1024 * 1024
+
+REDACTED = "<redacted>"
+
+# Canonical secret-shape pattern list. Mirrors
+# .claude/hooks/lib/trace-writer.js's SECRET_PATTERNS — keep both lists in
+# sync; this is the single source of truth for Python-side redaction and the
+# secret-scan CLI subcommand below.
+SECRET_PATTERNS = [
+    # Bearer-scheme values must be matched before the generic key:value
+    # pattern below — otherwise the generic pattern's narrower value charset
+    # (no spaces) consumes only the literal word "Bearer" as if it were the
+    # value, leaving the actual token exposed after it.
+    re.compile(r"Bearer\s+[A-Za-z0-9\-_.]{10,}", re.IGNORECASE),
+    re.compile(
+        r"(api[_-]?key|secret|token|password|passwd|authoriz(?:ation)?)\s*[:=]\s*"
+        r"['\"]?[A-Za-z0-9_\-./+=]{6,}['\"]?",
+        re.IGNORECASE,
+    ),
+    re.compile(r"sk-[A-Za-z0-9]{10,}"),
+    re.compile(r"gh[pousr]_[A-Za-z0-9]{20,}"),
+    re.compile(r"AKIA[0-9A-Z]{16}"),
+]
+
+# Dict keys that are always redacted regardless of value shape (headers,
+# cookies, credential fields that may not match a SECRET_PATTERNS regex).
+SENSITIVE_KEYS = {
+    "authorization",
+    "cookie",
+    "set-cookie",
+    "api_key",
+    "apikey",
+    "x-api-key",
+    "secret",
+    "token",
+    "password",
+    "passwd",
+}
+
+
+def redact_text(value: str) -> str:
+    stripped = value.strip()
+    if stripped[:1] in "{[":
+        try:
+            parsed = json.loads(value)
+        except Exception:
+            parsed = None
+        if parsed is not None:
+            return stable_json(redact_value(parsed))
+    out = value
+    for pattern in SECRET_PATTERNS:
+        out = pattern.sub(REDACTED, out)
+    return out
+
+
+def redact_value(value: Any) -> Any:
+    if isinstance(value, str):
+        return redact_text(value)
+    if isinstance(value, dict):
+        result: dict[str, Any] = {}
+        for key, inner in value.items():
+            if isinstance(key, str) and key.strip().lower() in SENSITIVE_KEYS:
+                result[key] = REDACTED
+            else:
+                result[key] = redact_value(inner)
+        return result
+    if isinstance(value, list):
+        return [redact_value(item) for item in value]
+    return value
+
+
+def raw_capture_enabled() -> bool:
+    return os.getenv("PHASE0_CAPTURE_RAW_PAYLOADS", "").strip().lower() in {"1", "true", "yes", "on"}
+
+
+def _secure_chmod(path: Path) -> None:
+    try:
+        os.chmod(path, 0o600)
+    except OSError:
+        pass
+
+
+def _rotate_if_oversized(path: Path, max_bytes: int = DEFAULT_MAX_FILE_BYTES) -> None:
+    try:
+        if path.exists() and path.stat().st_size > max_bytes:
+            rotated = path.with_name(path.name + ".1")
+            if rotated.exists():
+                rotated.unlink()
+            path.rename(rotated)
+    except OSError:
+        pass
+
+
+# Default in-scope paths for the history secret-scan (mirrors the issue-06
+# in-scope path list: .gitignore containment + Phase 0 persistence surface).
+SECRET_SCAN_PATHS = [
+    ".gitignore",
+    ".claude/scripts/phase0_control_plane.py",
+    ".claude/hooks/lib/trace-writer.js",
+    ".claude/memory/hindsight.py",
+    ".claude/state",
+    ".claude/traces",
+    "tests/test_phase0_control_plane.py",
+    ".claude/memory/tests/test_hindsight.py",
+]
+
+
+def _added_lines_from_diff(diff_text: str) -> list[str]:
+    return [line[1:] for line in diff_text.splitlines() if line.startswith("+") and not line.startswith("+++")]
+
+
+def _scan_text_for_secrets(text: str) -> list[str]:
+    findings: list[str] = []
+    for pattern in SECRET_PATTERNS:
+        findings.extend(match.group(0) for match in pattern.finditer(text))
+    return findings
+
+
+def scan_staged_diff(cwd: Path | None = None) -> list[str]:
+    proc = subprocess.run(
+        ["git", "diff", "--cached", "-U0", "--"],
+        cwd=str(cwd or workspace_root()),
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    findings: list[str] = []
+    for line in _added_lines_from_diff(proc.stdout):
+        findings.extend(_scan_text_for_secrets(line))
+    return findings
+
+
+def scan_history(paths: list[str] | None = None, cwd: Path | None = None) -> list[str]:
+    proc = subprocess.run(
+        ["git", "log", "--all", "-p", "--", *(paths or SECRET_SCAN_PATHS)],
+        cwd=str(cwd or workspace_root()),
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    findings: list[str] = []
+    for line in _added_lines_from_diff(proc.stdout):
+        findings.extend(_scan_text_for_secrets(line))
+    return findings
 
 
 class Phase0Error(RuntimeError):
@@ -146,6 +298,7 @@ class Phase0ControlPlane:
         self.checkpoints_dir.mkdir(parents=True, exist_ok=True)
         self.archive_dir.mkdir(parents=True, exist_ok=True)
         self._ensure_schema()
+        _secure_chmod(self.db_path)
 
     @contextmanager
     def _db(self) -> sqlite3.Connection:
@@ -260,13 +413,17 @@ class Phase0ControlPlane:
     def _write_raw_event(self, session_id: str, payload: dict[str, Any]) -> None:
         path = self._raw_export_path(session_id)
         path.parent.mkdir(parents=True, exist_ok=True)
+        _rotate_if_oversized(path)
         with path.open("a", encoding="utf-8") as fh:
             fh.write(stable_json(payload) + "\n")
+        _secure_chmod(path)
 
     def _write_structured_event(self, session_id: str, event: EventRecord) -> None:
         path = self._log_path(session_id)
+        _rotate_if_oversized(path)
         with path.open("a", encoding="utf-8") as fh:
             fh.write(stable_json(asdict(event)) + "\n")
+        _secure_chmod(path)
         with self._db() as conn:
             conn.execute(
                 """
@@ -304,6 +461,7 @@ class Phase0ControlPlane:
         raw_payload: dict[str, Any] | None = None,
         duration_ms: int | None = None,
     ) -> EventRecord:
+        capture_raw = raw_payload is not None and raw_capture_enabled()
         event = EventRecord(
             event_id=make_id("evt"),
             event_type=event_type,
@@ -315,9 +473,9 @@ class Phase0ControlPlane:
             duration_ms=duration_ms,
             status=status,
             payload=payload,
-            raw_payload=raw_payload,
+            raw_payload=raw_payload if capture_raw else None,
         )
-        if raw_payload is not None:
+        if capture_raw:
             self._write_raw_event(session_id, raw_payload)
         self._write_structured_event(session_id, event)
         return event
@@ -495,7 +653,7 @@ class Phase0ControlPlane:
             "cwd": payload.get("cwd") or str(workspace_root()),
             "hook_event_name": payload.get("hook_event_name"),
             "permission_mode": payload.get("permission_mode"),
-            "tool_input": tool_input,
+            "tool_input": redact_value(tool_input),
         }
 
     def result_tool(self, payload: dict[str, Any]) -> EventRecord:
@@ -542,8 +700,8 @@ class Phase0ControlPlane:
             "tool_name": payload.get("tool_name"),
             "status": payload.get("status") or "success",
             "duration_ms": payload.get("duration_ms"),
-            "result": tool_result,
-            "error": payload.get("error"),
+            "result": redact_value(tool_result),
+            "error": redact_value(payload.get("error")),
         }
 
     def verify(self, session_id: str, *, passed: bool, details: str | None = None) -> EventRecord:
@@ -658,6 +816,29 @@ class Phase0ControlPlane:
         session = asdict(self.load_session(session_id))
         events = self.replay(session_id)
         return {"session": session, "events": events}
+
+    def prune(self, *, retention_days: int = DEFAULT_RETENTION_DAYS) -> list[str]:
+        cutoff = time.time() - retention_days * 86400
+        removed: list[str] = []
+        for directory in (self.raw_dir, self.logs_dir, self.archive_dir, self.checkpoints_dir):
+            if not directory.exists():
+                continue
+            for path in directory.rglob("*"):
+                if not path.is_file():
+                    continue
+                try:
+                    if path.stat().st_mtime < cutoff:
+                        path.unlink()
+                        removed.append(str(path))
+                except OSError:
+                    continue
+            for sub in sorted(directory.glob("*"), reverse=True):
+                if sub.is_dir():
+                    try:
+                        sub.rmdir()
+                    except OSError:
+                        pass
+        return removed
 
     def execute_tool(
         self,
@@ -826,6 +1007,30 @@ def command_reconstruct(args: argparse.Namespace) -> int:
     return 0
 
 
+def command_prune(args: argparse.Namespace) -> int:
+    control = Phase0ControlPlane()
+    removed = control.prune(retention_days=args.retention_days)
+    print(stable_json({"removed": removed, "count": len(removed)}))
+    return 0
+
+
+def command_secret_scan(args: argparse.Namespace) -> int:
+    if args.staged:
+        findings = scan_staged_diff()
+        label = "staged diff"
+    else:
+        findings = scan_history(args.paths or None)
+        label = "git history"
+    if findings:
+        print(
+            f"secret-scan: FAIL ({len(findings)} secret-shaped match(es) found in {label})",
+            file=sys.stderr,
+        )
+        return 1
+    print(f"secret-scan: PASS (no secret-shaped content found in {label})")
+    return 0
+
+
 def command_self_test(_: argparse.Namespace) -> int:
     control = Phase0ControlPlane()
     session = control.start(notes="self-test")
@@ -919,6 +1124,15 @@ def build_parser() -> argparse.ArgumentParser:
 
     p = sub.add_parser("self-test")
     p.set_defaults(func=command_self_test)
+
+    p = sub.add_parser("prune")
+    p.add_argument("--retention-days", type=int, default=DEFAULT_RETENTION_DAYS)
+    p.set_defaults(func=command_prune)
+
+    p = sub.add_parser("secret-scan")
+    p.add_argument("--staged", action="store_true")
+    p.add_argument("--paths", nargs="*")
+    p.set_defaults(func=command_secret_scan)
 
     return parser
 
