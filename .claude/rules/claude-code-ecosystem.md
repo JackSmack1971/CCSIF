@@ -17,3 +17,4 @@ paths:
 - Keep portable instructions code-agnostic: prefer relative paths, environment variables, and repository metadata over project-specific assumptions.
 - Read the nearest existing instruction file before adding a new one, and keep filenames descriptive.
 - Verify governance edits with `.claude/scripts/rules_fidelity_check.py` and `/control-plane-check`.
+- Check `.claude/skills/` before writing a multi-step procedure inline; extend an existing skill, or promote a recurring procedure into `.claude/skills/<name>/SKILL.md` instead of re-typing it, but skip a skill for one-off work.

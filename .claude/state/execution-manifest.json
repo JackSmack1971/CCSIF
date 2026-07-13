@@ -65,7 +65,7 @@
   ],
   "phase_status": {
     "phase_0": "complete",
-    "phase_1": "partial",
+    "phase_1": "complete",
     "phase_2": "partial",
     "phase_3": "partial",
     "phase_4": "partial",
@@ -172,5 +172,43 @@
       "Later phases still need their own verification and should not inherit trust from the Phase 0 smoke tests."
     ]
   },
-  "next_goal": "Phase 0 is complete. Leave Phase 1 untouched until explicitly directed."
+  "phase_1_completion": {
+    "status": "complete",
+    "report": ".claude/state/roadmap/phase-1-report.md",
+    "checkpoint": ".claude/state/roadmap/phase-1-checkpoint.json",
+    "fixed_files": [
+      ".claude/settings.json",
+      ".claude/agents/reflect-agent.md",
+      ".claude/agents/upstream-auditor.md",
+      ".claude/rules/claude-code-ecosystem.md"
+    ],
+    "design_decisions": [
+      "Fix defects found during Phase 1 verification in place rather than re-scaffolding an already-mature .claude/ tree.",
+      "Prove hook and agent behavior with live invocations (Windows-native cwd payloads, real Agent-tool spawns) instead of trusting static file presence.",
+      "Keep the skill-promotion rule inside the existing 20-line rule budget rather than raising the ceiling."
+    ],
+    "verification_commands": [
+      {
+        "command": "python3 .claude/scripts/control_plane_check.py",
+        "exit_code": 0
+      },
+      {
+        "command": "python3 .claude/scripts/rules_fidelity_check.py",
+        "exit_code": 0
+      },
+      {
+        "command": "python -m unittest discover -s tests -v",
+        "exit_code": 0
+      },
+      {
+        "command": "python3 -c \"import json; json.load(open('.claude/settings.json'))\"",
+        "exit_code": 0
+      }
+    ],
+    "remaining_risks": [
+      "reflect-agent's narrow role scope caused it to decline two of three diagnostic tool-use probes; delegation was instead proven end to end via pr-reviewer. reflect-agent's own tool execution under adversarial-shaped prompts remains unconfirmed.",
+      "Phases 2-7 remain incomplete and should not be treated as implicitly validated by the Phase 1 fixes."
+    ]
+  },
+  "next_goal": "Phase 1 is complete. Do not begin Phase 2 until explicitly directed."
 }
