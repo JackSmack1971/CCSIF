@@ -62,6 +62,7 @@ EXPECTED_SCOPES = {
     "failure-escalation.md": ["**/*"],
     "hindsight-memory.md": ["**/*"],
     "mcp-resilience.md": [".mcp.json", ".claude/**", "CLAUDE.md", "CLAUDE.local.md", "AGENTS.md"],
+    "memory-and-compaction.md": [".claude/**", "CLAUDE.md", "CLAUDE.local.md", "AGENTS.md"],
     "persona-profile.md": ["**/*"],
     "security.md": [
         ".claude/**",
@@ -99,6 +100,7 @@ MAX_LINES = {
     "control-plane.md": 20,
     "security.md": 20,
     "testing.md": 20,
+    "memory-and-compaction.md": 30,
 }
 
 

@@ -66,7 +66,11 @@
   "phase_status": {
     "phase_0": "complete",
     "phase_1": "complete",
+<<<<<<< HEAD
+    "phase_2": "complete",
+=======
     "phase_2": "partial",
+>>>>>>> origin/main
     "phase_3": "partial",
     "phase_4": "partial",
     "phase_5": "partial",
@@ -210,5 +214,62 @@
       "Phases 2-7 remain incomplete and should not be treated as implicitly validated by the Phase 1 fixes."
     ]
   },
+<<<<<<< HEAD
+  "phase_2_completion": {
+    "status": "complete",
+    "report": ".claude/state/roadmap/phase-2-report.md",
+    "checkpoint": ".claude/state/roadmap/phase-2-checkpoint.json",
+    "implemented_files": [
+      ".claude/scripts/phase2_memory.py",
+      ".claude/hooks/post-compact.sh",
+      ".claude/hooks/subagent-stop.sh",
+      ".claude/hooks/session-start.sh",
+      ".claude/hooks/pre-compact.sh",
+      ".claude/rules/memory-and-compaction.md",
+      ".claude/plans/.gitkeep",
+      ".claude/state/compactions/.gitkeep",
+      ".claude/state/agents/.gitkeep",
+      "tests/test_phase2_memory.py",
+      "tests/test_phase2_smoke.py"
+    ],
+    "design_decisions": [
+      "Reuse Phase 0's PHASE0_STATE_ROOT/PHASE0_WORKSPACE_ROOT env-overridable helpers instead of inventing new environment variables.",
+      "Bootstrap is additive-only: sets autoMemoryDirectory, never touches other keys in an existing settings.local.json, refuses to overwrite an unreadable file.",
+      "Compaction restoration validates snapshot session_id before reuse; foreign/corrupt/missing snapshots are rejected and the rejection is itself persisted as evidence.",
+      "Restoration happens at the following SessionStart (source=compact/resume) rather than PostCompact, because PostCompact has no decision-control channel per the documented hook contract.",
+      "No external memory index was built; status always reports recovery.source == \"native-files\" and external_index_configured == false."
+    ],
+    "verification_commands": [
+      {
+        "command": "python -m py_compile .claude/scripts/phase2_memory.py tests/test_phase2_memory.py tests/test_phase2_smoke.py",
+        "exit_code": 0
+      },
+      {
+        "command": "python -m unittest discover -s tests -v",
+        "exit_code": 0
+      },
+      {
+        "command": "python3 .claude/scripts/control_plane_check.py",
+        "exit_code": 0
+      },
+      {
+        "command": "python3 .claude/scripts/rules_fidelity_check.py",
+        "exit_code": 0
+      },
+      {
+        "command": "python3 -c \"import json; json.load(open('.claude/settings.json'))\"",
+        "exit_code": 0
+      }
+    ],
+    "remaining_risks": [
+      "The real workstation's pre-existing .claude/settings.local.json was intentionally left unmodified by this session; bootstrap runs on the next real SessionStart hook invocation.",
+      "PostCompact has no decision-control channel per the documented hook contract; restoration happens at the following SessionStart by design.",
+      "No external memory index was built.",
+      "Phases 3-7 remain incomplete and should not be treated as implicitly validated by the Phase 2 changes."
+    ]
+  },
+  "next_goal": "Phase 2 is complete. Do not begin Phase 3 until explicitly directed."
+=======
   "next_goal": "Phase 1 is complete. Do not begin Phase 2 until explicitly directed."
+>>>>>>> origin/main
 }
