@@ -1,0 +1,88 @@
+{
+  "phase": "5b",
+  "status": "complete",
+  "report": ".claude/state/roadmap/phase-5b-report.md",
+  "prerequisite_check": {
+    "phase_5a_status": "complete",
+    "verified_before_start": true
+  },
+  "implemented_files": [
+    ".claude/commands/brainstorm.md",
+    ".claude/commands/grill.md",
+    ".claude/commands/research.md",
+    ".claude/commands/plan.md",
+    ".claude/commands/build.md",
+    ".claude/commands/verify.md",
+    ".claude/commands/ship.md",
+    ".claude/commands/handoff.md",
+    ".claude/commands/status.md",
+    ".claude/commands/debug.md",
+    ".claude/commands/experiment.md",
+    ".claude/skills/alignment-interview/SKILL.md",
+    ".claude/skills/atomic-planning/SKILL.md",
+    ".claude/skills/session-takeover/SKILL.md",
+    ".claude/skills/metric-gated-experiment/SKILL.md",
+    ".claude/scripts/phase5b_verify.py",
+    ".claude/scripts/phase5b_lifecycle.py",
+    ".claude/hooks/verify.sh",
+    ".claude/hooks/verify.ps1",
+    ".claude/scripts/control_plane_check.py",
+    ".claude/rules/20-lifecycle-gates.md",
+    "tests/test_phase5b_verify.py",
+    "tests/test_phase5b_lifecycle.py"
+  ],
+  "reused_not_duplicated": [
+    "research skill (Gate 2 citations)",
+    "tdd skill (TDD where tests apply)",
+    "fsv-verify skill (independent verification)",
+    "diagnosing-bugs skill (/debug)",
+    "git-automation and git-commit skills (commit hygiene)",
+    "grill-with-docs skill (doc-grounded stress testing, layered under /grill)",
+    "verifier agent (Phase 3, independent re-derivation)",
+    "builder agent (Phase 3, worktree-isolated execution)",
+    "pr-reviewer agent (adversarial review lens for /ship)"
+  ],
+  "design_decisions": [
+    "Verify adapter parses CLAUDE.md's own Source-of-Truth Commands block into named targets rather than hardcoding a language/toolchain; full/lint/test are keyword-matched aggregates, individual slugs are addressable directly.",
+    "Non-code verifiers (rubric/citation/factcheck) deterministically return exit 2 with a protocol pointer rather than fabricating a pass/fail signal, since no shell check can judge model-graded review.",
+    "control_plane_check.py's new check_verify_adapter() calls the 'rules' target, not 'control-plane', to avoid the adapter shelling back into the very script that invoked it.",
+    "Atomic plans are capped at 3 tasks and validated at creation and re-validation time; larger work must become a second plan file connected via blocking_edges.",
+    "session-takeover is a new skill distinct from the pre-existing handoff skill: the lifecycle contract requires a durable, repo-committed artifact under .claude/state/handoffs/, while the existing handoff skill's documented behavior (OS temp directory) was left unmodified for its own callers.",
+    "Metric-gated experiment decisions are derived from a recorded observation vs. baseline via a separate decide step, never asserted directly, and cannot be re-decided once made.",
+    "Commands never reference another command with a leading slash (e.g. '/build'); cross-gate pointers use backticked file paths or gate names to keep taxonomy_check.py's cross-invocation detector from false-triggering on normal prose."
+  ],
+  "verification_commands": [
+    { "command": "python -m py_compile .claude/scripts/phase5b_lifecycle.py .claude/scripts/phase5b_verify.py .claude/scripts/control_plane_check.py tests/test_phase5b_lifecycle.py tests/test_phase5b_verify.py", "exit_code": 0 },
+    { "command": "python -m unittest discover -s tests -v", "exit_code": 0, "notes": "106 tests total (65 prior + 41 new), no regression" },
+    { "command": "python3 .claude/scripts/control_plane_check.py", "exit_code": 0, "notes": "includes new check_verify_adapter() step" },
+    { "command": "python3 .claude/scripts/rules_fidelity_check.py", "exit_code": 0, "notes": "20-lifecycle-gates.md re-validated at 39/40 lines" },
+    { "command": "python3 .claude/scripts/taxonomy_check.py", "exit_code": 0, "notes": "0 cross-invocation violations across 16 commands; 0 duplicate descriptions across 61 skills + 16 commands" },
+    { "command": "python3 -c \"import json; json.load(open('.claude/settings.json'))\"", "exit_code": 0 },
+    { "command": "git check-ignore -v <every new Phase 5B path>", "exit_code": 1, "notes": "nothing ignored; all evidence is git-visible" },
+    { "command": "bash .claude/hooks/verify.sh run control-plane", "exit_code": 0 },
+    { "command": "bash .claude/hooks/verify.sh run rubric", "exit_code": 2, "notes": "deterministic non-code-verifier signal" },
+    { "command": "bash .claude/hooks/verify.sh run does-not-exist", "exit_code": 2, "notes": "deterministic unavailable-target signal" }
+  ],
+  "test_counts": {
+    "test_phase5b_verify.py": 21,
+    "test_phase5b_lifecycle.py": 20,
+    "total_new": 41,
+    "total_repo": 106
+  },
+  "incidents_caught_during_implementation": [
+    "check_verify_adapter() initially called the 'control-plane' verify target, which shells out to control_plane_check.py itself -- infinite self-recursion. Caught before any full test run completed (2 orphaned python.exe processes observed and killed, not a runaway fork bomb). Fixed by using the non-recursive 'rules' target for the self-check.",
+    "test_phase5b_verify.py's synthetic CLAUDE.md fixture originally pointed its 'unit tests' fake command at the real 'tests' directory with cwd=ROOT, which would re-run the entire real suite (including itself) as a subprocess -- caught before any full test run completed, killed the one runaway background process, and fixed by repointing at a nonexistent 'fixture_tests' directory that fails fast."
+  ],
+  "scope_explicitly_excluded": [
+    "Phase 5C: /bootstrap-control-plane installer, cross-stack proof against two unrelated stacks, main-thread context measurement on multi-plan work",
+    "Phase 6: determinism ladder promotions/demotions, adversarial verification battery",
+    "Phase 7: distribution, versioning, plugin packaging"
+  ],
+  "remaining_risks": [
+    "The verify adapter's lint target maps to this repo's own 'rules' fidelity check because no separate per-file linter exists here; --files scoping is accepted by the CLI but has no effect beyond running the full matched command in this repo, since none of its commands take file arguments.",
+    "/build and /ship describe dispatching to the builder/pr-reviewer agents and tdd/git-automation skills, but those delegated flows were not live end-to-end invoked in this session; verified statically (frontmatter, taxonomy) rather than by a real delegated run.",
+    "The /experiment gate's revert step is a documented SKILL.md instruction, not a script-enforced git action; decide_experiment() records the decision deterministically but nothing mechanically verifies the working tree matches a 'revert' decision.",
+    "Phases 5C, 6, and 7 remain incomplete and are not implicitly validated by these Phase 5B changes."
+  ],
+  "next_goal": "Phase 5B is complete. Do not begin Phase 5C or Phase 6 until explicitly directed."
+}

@@ -69,10 +69,11 @@
     "phase_2": "complete",
     "phase_3": "complete",
     "phase_4": "complete",
+    "phase_5a": "complete",
+    "phase_5b": "complete",
     "phase_5": "partial",
     "phase_6": "partial",
-    "phase_7": "not_started",
-    "phase_5a": "complete"
+    "phase_7": "not_started"
   },
   "dependencies": {
     "project_scoped": [
@@ -116,15 +117,37 @@
     ".claude/agents/pr-reviewer.md",
     ".claude/agents/reflect-agent.md",
     ".claude/agents/upstream-auditor.md",
+    ".claude/agents/scout.md",
+    ".claude/agents/planner.md",
+    ".claude/agents/builder.md",
+    ".claude/agents/verifier.md",
     ".claude/skills/",
     ".claude/workflows/issue-to-pr.js",
+    ".claude/workflows/defs/linear-static.json",
+    ".claude/workflows/defs/evidence-branch.json",
+    ".claude/scripts/phase4_workflows.py",
+    ".claude/commands/workflow.md",
+    ".claude/rules/dynamic-workflows.md",
+    ".claude/state/workflows/",
     ".claude/memory/",
     ".claude/scripts/control_plane_check.py",
     ".claude/scripts/rules_fidelity_check.py",
+    ".claude/scripts/phase2_memory.py",
+    ".claude/scripts/phase3_agents.py",
+    ".claude/hooks/subagent-start.sh",
     ".claude/state/completion-matrix.md",
     ".claude/state/ledger.md",
     ".claude/state/roadmap/phase-0-checkpoint.json",
     ".claude/state/roadmap/phase-0-report.md",
+    ".claude/state/roadmap/phase-1-checkpoint.json",
+    ".claude/state/roadmap/phase-1-report.md",
+    ".claude/state/roadmap/phase-2-checkpoint.json",
+    ".claude/state/roadmap/phase-2-report.md",
+    ".claude/state/roadmap/phase-3-checkpoint.json",
+    ".claude/state/roadmap/phase-3-report.md",
+    ".claude/state/compactions/",
+    ".claude/state/agents/",
+    ".claude/plans/",
     ".mcp.json",
     "docs/claude-code-control-plane-roadmap-v2.md"
   ],
@@ -189,22 +212,10 @@
       "Keep the skill-promotion rule inside the existing 20-line rule budget rather than raising the ceiling."
     ],
     "verification_commands": [
-      {
-        "command": "python3 .claude/scripts/control_plane_check.py",
-        "exit_code": 0
-      },
-      {
-        "command": "python3 .claude/scripts/rules_fidelity_check.py",
-        "exit_code": 0
-      },
-      {
-        "command": "python -m unittest discover -s tests -v",
-        "exit_code": 0
-      },
-      {
-        "command": "python3 -c \"import json; json.load(open('.claude/settings.json'))\"",
-        "exit_code": 0
-      }
+      { "command": "python3 .claude/scripts/control_plane_check.py", "exit_code": 0 },
+      { "command": "python3 .claude/scripts/rules_fidelity_check.py", "exit_code": 0 },
+      { "command": "python -m unittest discover -s tests -v", "exit_code": 0 },
+      { "command": "python3 -c \"import json; json.load(open('.claude/settings.json'))\"", "exit_code": 0 }
     ],
     "remaining_risks": [
       "reflect-agent's narrow role scope caused it to decline two of three diagnostic tool-use probes; delegation was instead proven end to end via pr-reviewer. reflect-agent's own tool execution under adversarial-shaped prompts remains unconfirmed.",
@@ -236,26 +247,11 @@
       "No external memory index was built; status always reports recovery.source == \"native-files\" and external_index_configured == false."
     ],
     "verification_commands": [
-      {
-        "command": "python -m py_compile .claude/scripts/phase2_memory.py tests/test_phase2_memory.py tests/test_phase2_smoke.py",
-        "exit_code": 0
-      },
-      {
-        "command": "python -m unittest discover -s tests -v",
-        "exit_code": 0
-      },
-      {
-        "command": "python3 .claude/scripts/control_plane_check.py",
-        "exit_code": 0
-      },
-      {
-        "command": "python3 .claude/scripts/rules_fidelity_check.py",
-        "exit_code": 0
-      },
-      {
-        "command": "python3 -c \"import json; json.load(open('.claude/settings.json'))\"",
-        "exit_code": 0
-      }
+      { "command": "python -m py_compile .claude/scripts/phase2_memory.py tests/test_phase2_memory.py tests/test_phase2_smoke.py", "exit_code": 0 },
+      { "command": "python -m unittest discover -s tests -v", "exit_code": 0 },
+      { "command": "python3 .claude/scripts/control_plane_check.py", "exit_code": 0 },
+      { "command": "python3 .claude/scripts/rules_fidelity_check.py", "exit_code": 0 },
+      { "command": "python3 -c \"import json; json.load(open('.claude/settings.json'))\"", "exit_code": 0 }
     ],
     "remaining_risks": [
       "The real workstation's pre-existing .claude/settings.local.json was intentionally left unmodified by this session; bootstrap runs on the next real SessionStart hook invocation.",
@@ -291,27 +287,11 @@
       "Collaborative agent teams were not implemented; no tested scenario in this repo needs mid-task worker coordination."
     ],
     "verification_commands": [
-      {
-        "command": "python -m py_compile .claude/scripts/phase3_agents.py tests/test_phase3_agents.py tests/test_phase3_smoke.py",
-        "exit_code": 0
-      },
-      {
-        "command": "python -m unittest discover -s tests -v",
-        "exit_code": 0,
-        "notes": "45 tests, no regression"
-      },
-      {
-        "command": "python3 .claude/scripts/control_plane_check.py",
-        "exit_code": 0
-      },
-      {
-        "command": "python3 .claude/scripts/rules_fidelity_check.py",
-        "exit_code": 0
-      },
-      {
-        "command": "python3 -c \"import json; json.load(open('.claude/settings.json'))\"",
-        "exit_code": 0
-      }
+      { "command": "python -m py_compile .claude/scripts/phase3_agents.py tests/test_phase3_agents.py tests/test_phase3_smoke.py", "exit_code": 0 },
+      { "command": "python -m unittest discover -s tests -v", "exit_code": 0, "notes": "45 tests, no regression" },
+      { "command": "python3 .claude/scripts/control_plane_check.py", "exit_code": 0 },
+      { "command": "python3 .claude/scripts/rules_fidelity_check.py", "exit_code": 0 },
+      { "command": "python3 -c \"import json; json.load(open('.claude/settings.json'))\"", "exit_code": 0 }
     ],
     "remaining_risks": [
       "scout/planner/builder/verifier were not spawned live under their own names in this session (Agent-tool registry hadn't refreshed); routing/tracking/handoff was proven live instead via the already-registered upstream-auditor.",
@@ -341,27 +321,11 @@
       "No live /goal, /loop, or routines invocation was scripted from Python; those are Claude Code product-level session behaviors this control plane wraps rather than reimplements, consistent with how Phase 3 treated native foreground/background subagent execution."
     ],
     "verification_commands": [
-      {
-        "command": "python -m py_compile .claude/scripts/phase4_workflows.py .claude/scripts/control_plane_check.py .claude/scripts/rules_fidelity_check.py tests/test_phase4_workflows.py",
-        "exit_code": 0
-      },
-      {
-        "command": "python -m unittest discover -s tests -v",
-        "exit_code": 0,
-        "notes": "54 tests total (45 prior + 9 new), no regression"
-      },
-      {
-        "command": "python3 .claude/scripts/control_plane_check.py",
-        "exit_code": 0
-      },
-      {
-        "command": "python3 .claude/scripts/rules_fidelity_check.py",
-        "exit_code": 0
-      },
-      {
-        "command": "python3 -c \"import json; json.load(open('.claude/settings.json'))\"",
-        "exit_code": 0
-      }
+      { "command": "python -m py_compile .claude/scripts/phase4_workflows.py .claude/scripts/control_plane_check.py .claude/scripts/rules_fidelity_check.py tests/test_phase4_workflows.py", "exit_code": 0 },
+      { "command": "python -m unittest discover -s tests -v", "exit_code": 0, "notes": "54 tests total (45 prior + 9 new), no regression" },
+      { "command": "python3 .claude/scripts/control_plane_check.py", "exit_code": 0 },
+      { "command": "python3 .claude/scripts/rules_fidelity_check.py", "exit_code": 0 },
+      { "command": "python3 -c \"import json; json.load(open('.claude/settings.json'))\"", "exit_code": 0 }
     ],
     "remaining_risks": [
       "The engine has not yet been driven end-to-end by a live /goal- or /loop-triggered session in this environment; the wrap relationship is a documented design intent, proven at the unit level.",
@@ -394,42 +358,16 @@
       "docs/adr/ is a new, distinct location from the pre-existing .claude/docs/decision-log.md; the log stays chronological narrative, ADRs are scoped and supersedable records."
     ],
     "verification_commands": [
-      {
-        "command": "python -m py_compile .claude/scripts/taxonomy_check.py .claude/scripts/control_plane_check.py .claude/scripts/rules_fidelity_check.py tests/test_taxonomy_check.py",
-        "exit_code": 0
-      },
-      {
-        "command": "python -m unittest discover -s tests -v",
-        "exit_code": 0,
-        "notes": "65 tests total (54 prior + 11 new), no regression"
-      },
-      {
-        "command": "python3 .claude/scripts/control_plane_check.py",
-        "exit_code": 0
-      },
-      {
-        "command": "python3 .claude/scripts/rules_fidelity_check.py",
-        "exit_code": 0
-      },
-      {
-        "command": "python3 -c \"import json; json.load(open('.claude/settings.json'))\"",
-        "exit_code": 0
-      },
-      {
-        "command": "git check-ignore -v <every new Phase 5A path>",
-        "exit_code": 1,
-        "notes": "nothing ignored; all evidence is git-visible"
-      }
+      { "command": "python -m py_compile .claude/scripts/taxonomy_check.py .claude/scripts/control_plane_check.py .claude/scripts/rules_fidelity_check.py tests/test_taxonomy_check.py", "exit_code": 0 },
+      { "command": "python -m unittest discover -s tests -v", "exit_code": 0, "notes": "65 tests total (54 prior + 11 new), no regression" },
+      { "command": "python3 .claude/scripts/control_plane_check.py", "exit_code": 0 },
+      { "command": "python3 .claude/scripts/rules_fidelity_check.py", "exit_code": 0 },
+      { "command": "python3 -c \"import json; json.load(open('.claude/settings.json'))\"", "exit_code": 0 },
+      { "command": "git check-ignore -v <every new Phase 5A path>", "exit_code": 1, "notes": "nothing ignored; all evidence is git-visible" }
     ],
     "measured_budgets": {
-      "always_loaded_context_lines": {
-        "measured": 140,
-        "budget": 400
-      },
-      "root_claude_md_lines": {
-        "measured": 74,
-        "budget": 200
-      }
+      "always_loaded_context_lines": { "measured": 140, "budget": 400 },
+      "root_claude_md_lines": { "measured": 74, "budget": 200 }
     },
     "remaining_risks": [
       "The five-gate lifecycle contract is documentation only; no gate command exists yet (Phase 5B/5C).",
@@ -438,5 +376,60 @@
       "Phases 5B, 5C, 6, and 7 remain incomplete and are not implicitly validated by these Phase 5A changes."
     ]
   },
-  "next_goal": "Phase 5A is complete. Do not begin Phase 5B/5C or Phase 6 until explicitly directed."
+  "phase_5b_completion": {
+    "status": "complete",
+    "report": ".claude/state/roadmap/phase-5b-report.md",
+    "checkpoint": ".claude/state/roadmap/phase-5b-checkpoint.json",
+    "implemented_files": [
+      ".claude/commands/brainstorm.md",
+      ".claude/commands/grill.md",
+      ".claude/commands/research.md",
+      ".claude/commands/plan.md",
+      ".claude/commands/build.md",
+      ".claude/commands/verify.md",
+      ".claude/commands/ship.md",
+      ".claude/commands/handoff.md",
+      ".claude/commands/status.md",
+      ".claude/commands/debug.md",
+      ".claude/commands/experiment.md",
+      ".claude/skills/alignment-interview/SKILL.md",
+      ".claude/skills/atomic-planning/SKILL.md",
+      ".claude/skills/session-takeover/SKILL.md",
+      ".claude/skills/metric-gated-experiment/SKILL.md",
+      ".claude/scripts/phase5b_verify.py",
+      ".claude/scripts/phase5b_lifecycle.py",
+      ".claude/hooks/verify.sh",
+      ".claude/hooks/verify.ps1",
+      "tests/test_phase5b_verify.py",
+      "tests/test_phase5b_lifecycle.py"
+    ],
+    "design_decisions": [
+      "Verify adapter parses CLAUDE.md's own Source-of-Truth Commands block into named targets instead of hardcoding a language/toolchain.",
+      "Non-code verifiers (rubric/citation/factcheck) deterministically return exit 2 with a protocol pointer rather than fabricating a pass/fail signal.",
+      "control_plane_check.py's check_verify_adapter() uses the non-recursive 'rules' target, not 'control-plane', to avoid self-recursion.",
+      "Atomic plans capped at 3 tasks; larger work becomes a second plan file connected via blocking_edges.",
+      "session-takeover is a new skill distinct from the pre-existing OS-temp-directory handoff skill, since the lifecycle contract requires a durable repo-committed artifact.",
+      "Reused 6 existing skills (research, tdd, fsv-verify, diagnosing-bugs, git-automation, grill-with-docs) and 3 existing agents (verifier, builder, pr-reviewer) instead of duplicating their disciplines."
+    ],
+    "verification_commands": [
+      { "command": "python -m py_compile .claude/scripts/phase5b_lifecycle.py .claude/scripts/phase5b_verify.py .claude/scripts/control_plane_check.py tests/test_phase5b_lifecycle.py tests/test_phase5b_verify.py", "exit_code": 0 },
+      { "command": "python -m unittest discover -s tests -v", "exit_code": 0, "notes": "106 tests total (65 prior + 41 new), no regression" },
+      { "command": "python3 .claude/scripts/control_plane_check.py", "exit_code": 0 },
+      { "command": "python3 .claude/scripts/rules_fidelity_check.py", "exit_code": 0 },
+      { "command": "python3 .claude/scripts/taxonomy_check.py", "exit_code": 0 },
+      { "command": "python3 -c \"import json; json.load(open('.claude/settings.json'))\"", "exit_code": 0 },
+      { "command": "git check-ignore -v <every new Phase 5B path>", "exit_code": 1, "notes": "nothing ignored; all evidence is git-visible" }
+    ],
+    "incidents_caught_during_implementation": [
+      "check_verify_adapter() initially recursed into control_plane_check.py via the 'control-plane' target; fixed to use the 'rules' target before any test run completed.",
+      "test_phase5b_verify.py's fixture originally re-ran the real repo test suite as a subprocess (self-invoking); fixed to point at a nonexistent fixture directory before any test run completed."
+    ],
+    "remaining_risks": [
+      "The verify adapter's lint target maps to this repo's own 'rules' fidelity check since no separate per-file linter exists here.",
+      "/build and /ship's delegated agent/skill flows were verified statically, not via a live end-to-end run.",
+      "The /experiment gate's revert step is a documented skill instruction, not a script-enforced git action.",
+      "Phases 5C, 6, and 7 remain incomplete and are not implicitly validated by these Phase 5B changes."
+    ]
+  },
+  "next_goal": "Phase 5B is complete. Do not begin Phase 5C or Phase 6 until explicitly directed."
 }

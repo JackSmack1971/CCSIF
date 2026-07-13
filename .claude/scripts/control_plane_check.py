@@ -40,6 +40,25 @@ REQUIRED_PATHS = [
     ".claude/state/compactions/.gitkeep",
     ".claude/state/agents/.gitkeep",
     ".claude/state/workflows/.gitkeep",
+    ".claude/scripts/phase5b_lifecycle.py",
+    ".claude/scripts/phase5b_verify.py",
+    ".claude/hooks/verify.sh",
+    ".claude/hooks/verify.ps1",
+    ".claude/commands/brainstorm.md",
+    ".claude/commands/grill.md",
+    ".claude/commands/research.md",
+    ".claude/commands/plan.md",
+    ".claude/commands/build.md",
+    ".claude/commands/verify.md",
+    ".claude/commands/ship.md",
+    ".claude/commands/handoff.md",
+    ".claude/commands/status.md",
+    ".claude/commands/debug.md",
+    ".claude/commands/experiment.md",
+    ".claude/skills/alignment-interview/SKILL.md",
+    ".claude/skills/atomic-planning/SKILL.md",
+    ".claude/skills/session-takeover/SKILL.md",
+    ".claude/skills/metric-gated-experiment/SKILL.md",
 ]
 PROTECTED_PROBES = [
     {"tool_name": "Write", "tool_input": {"file_path": ".env"}},
@@ -151,6 +170,7 @@ def check_shell_parse() -> None:
         ".claude/hooks/subagent-start.sh",
         ".claude/hooks/subagent-stop.sh",
         ".claude/hooks/stop.sh",
+        ".claude/hooks/verify.sh",
     ]:
         proc = run(["bash", "-n", script])
         if proc.returncode != 0:
@@ -178,6 +198,23 @@ def check_taxonomy() -> None:
         fail(f"taxonomy check failed: {exc}")
 
 
+def check_verify_adapter() -> None:
+    sys.path.insert(0, str(ROOT / ".claude" / "scripts"))
+    import phase5b_verify  # noqa: E402
+
+    try:
+        targets = phase5b_verify.list_targets(claude_md=ROOT / "CLAUDE.md")
+    except phase5b_verify.VerifyAdapterError as exc:
+        fail(f"verify adapter cannot parse CLAUDE.md source-of-truth commands: {exc}")
+    if not targets["individual_targets"]:
+        fail("verify adapter parsed zero source-of-truth commands from CLAUDE.md")
+    # Use the "rules" target, not "control-plane": the latter would shell
+    # out to this very script and recurse.
+    result = phase5b_verify.run_target("rules", claude_md=ROOT / "CLAUDE.md", cwd=ROOT)
+    if result["exit_code"] != 0:
+        fail(f"verify adapter's own 'rules' target did not pass: {result}")
+
+
 def main() -> int:
     check_required_paths()
     check_json()
@@ -188,6 +225,7 @@ def main() -> int:
     check_fd_dup_redirects()
     check_workflow_defs()
     check_taxonomy()
+    check_verify_adapter()
     print("control-plane-check: PASS")
     return 0
 
