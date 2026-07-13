@@ -63,6 +63,11 @@ REQUIRED_PATHS = [
     ".claude/commands/bootstrap-control-plane.md",
     ".claude/scripts/phase5c_portability_proof.py",
     ".claude/scripts/phase5c_context_pressure.py",
+    ".claude/rules/40-determinism-ladder.md",
+    ".claude/scripts/ledger_append.py",
+    ".claude/scripts/phase6a_lint_on_edit.py",
+    ".claude/scripts/phase6a_stop_gate.py",
+    ".claude/scripts/phase6a_metrics.py",
 ]
 PROTECTED_PROBES = [
     {"tool_name": "Write", "tool_input": {"file_path": ".env"}},
@@ -70,12 +75,16 @@ PROTECTED_PROBES = [
     {"tool_name": "Write", "tool_input": {"file_path": "migrations/001_init.sql"}},
     {"tool_name": "Bash", "tool_input": {"command": "cat x >> .env"}},
     {"tool_name": "Bash", "tool_input": {"command": "cat x >> .github/workflows/release.yml"}},
+    {"tool_name": "Write", "tool_input": {"file_path": ".claude/state/ledger.md"}},
+    {"tool_name": "Write", "tool_input": {"file_path": "../../etc/passwd"}},
 ]
 ALLOWED_PROBES = [
     {"tool_name": "Write", "tool_input": {"file_path": "CLAUDE.md"}},
     {"tool_name": "Write", "tool_input": {"file_path": ".claude/settings.json"}},
     {"tool_name": "Write", "tool_input": {"file_path": ".claude/hooks/pre-tool-use.sh"}},
     {"tool_name": "Write", "tool_input": {"file_path": ".7axes/ledger.jsonl"}},
+    {"tool_name": "Bash", "tool_input": {"command": "npm install lodash"}},
+    {"tool_name": "Bash", "tool_input": {"command": "git push origin main"}},
     {"tool_name": "Bash", "tool_input": {"command": "cat x >> .claude/settings.json"}},
 ]
 

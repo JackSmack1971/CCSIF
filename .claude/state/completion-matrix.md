@@ -94,12 +94,16 @@ The roadmap section defines workflow selection, graph execution, planner, evalua
 
 ## Phase 6: Determinism Ladder & Adversarial Verification
 
+Phase 6A (determinism ladder + baseline guardrails) is complete; Phase 6B
+(deeper adversarial verification battery) is not started. See
+`.claude/state/roadmap/phase-6a-report.md` / `phase-6a-checkpoint.json`.
+
 | Criterion | Status | Evidence | Notes |
 |---|---|---|---|
-| Every must-happen behavior lives at rung 3+ and demonstrably fires, not just documented. | partial | `.claude/hooks/*.sh`; `.claude/hooks/lib/pre-tool-use-guard.js`; `.claude/scripts/control_plane_check.py` | Hooks exist and are checked, but event-logged proof of all must-happen behaviors is absent. |
-| No destructive git or filesystem action is reachable without a deterministic block or explicit human approval. | existing | `.claude/settings.json`; `.claude/hooks/lib/pre-tool-use-guard.js`; `.claude/scripts/control_plane_check.py` | The guard blocks protected probes and the settings file deny-lists destructive patterns. |
-| Verifier disagreement with builder self-reports is measured and nonzero. | missing | No verifier metrics, no ledger, no disagreement report. | Nothing measures verifier-vs-builder drift yet. |
-| Gate metrics exist and have driven at least one ladder promotion and one demotion. | missing | No `.claude/state/ledger.md` history existed before this baseline. | There is no metrics loop yet. |
+| Every must-happen behavior lives at rung 3+ and demonstrably fires, not just documented. | existing | `.claude/rules/40-determinism-ladder.md`; `.claude/hooks/lib/pre-tool-use-guard.js`; `.claude/hooks/{post-tool-use,stop}.sh`; `.claude/scripts/{phase6a_stop_gate,phase6a_lint_on_edit,phase6a_metrics}.py`; `tests/test_phase6a_guardrails.py` (44), `tests/test_phase6a_stop_gate.py` (8) | `phase6a_metrics.py` reports 293 real guardrail events (184 allow / 42 ask / 62 block / 5 error) plus real Stop-gate and lint-on-edit events from this session, not synthetic-only claims. |
+| No destructive git or filesystem action is reachable without a deterministic block or explicit human approval. | existing | `.claude/settings.json` (rung 5, unconditional); `.claude/hooks/lib/pre-tool-use-guard.js`'s `GIT_DESTRUCTIVE_RULES` + path-traversal check (rung 4, `ask`/`block`) | Rung 5 blocks literal-prefix spellings unconditionally; rung 4 catches bypass variants (`-f`, `--force-with-lease`, compound/env-prefixed commands, `clean -fdx`, `branch -D`, `filter-branch`/`rebase`, remote ref/tag delete) and surfaces the native `ask` approval prompt. Proven by `tests/test_phase6a_guardrails.py::GitGuardrailTests` (18 cases) and `PathTraversalTests`. |
+| Verifier disagreement with builder self-reports is measured and nonzero. | missing | Not built in Phase 6A (explicitly out of scope; assigned to Phase 6B's adversarial-verification battery). | No verifier-vs-builder disagreement metric exists yet; tracked as a Phase 6A remaining risk, not silently claimed complete. |
+| Gate metrics exist and have driven at least one ladder promotion and one demotion. | existing | `.claude/state/ledger.md` (`## Phase 6 ladder promotion: git force-push/...` and `## Phase 6 ladder demotion/refinement: fd-duplication redirect carve-out`, both written via `.claude/scripts/ledger_append.py`); `.claude/scripts/phase6a_metrics.py`'s `ledger_ladder_changes` | Measured: `promotions: 1`, `demotions: 1`. The promotion is this phase's own change (git guardrails moved rung-1/5 -> rung-4); the demotion is real pre-existing code (the fd-dup carve-out) retroactively logged per the audit rule. |
 
 ## Phase 7: Distribution, Versioning & Continuous Improvement
 

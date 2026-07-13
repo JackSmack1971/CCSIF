@@ -1,0 +1,68 @@
+{
+  "phase": "6a",
+  "status": "complete",
+  "report": ".claude/state/roadmap/phase-6a-report.md",
+  "prerequisite_check": {
+    "phase_5_status": "complete",
+    "verified_before_start": true
+  },
+  "implemented_files": [
+    ".claude/rules/40-determinism-ladder.md",
+    ".claude/scripts/ledger_append.py",
+    ".claude/scripts/phase6a_lint_on_edit.py",
+    ".claude/scripts/phase6a_stop_gate.py",
+    ".claude/scripts/phase6a_metrics.py",
+    "tests/test_phase6a_guardrails.py",
+    "tests/test_phase6a_stop_gate.py",
+    "tests/test_phase6a_metrics.py",
+    "tests/test_phase6a_ledger_append.py",
+    "tests/test_phase6a_lint_on_edit.py"
+  ],
+  "extended_files": [
+    ".claude/hooks/lib/pre-tool-use-guard.js",
+    ".claude/hooks/post-tool-use.sh",
+    ".claude/hooks/stop.sh",
+    ".claude/scripts/control_plane_check.py",
+    ".claude/scripts/rules_fidelity_check.py"
+  ],
+  "design_decisions": [
+    "Rung 5 (permissions.deny) keeps its existing unconditional literal-prefix denies unchanged; rung 4 (pre-tool-use-guard.js) adds GIT_DESTRUCTIVE_RULES to catch bypass variants (-f shorthand, --force-with-lease, compound/env-prefixed commands) and returns permissionDecision: ask, Claude Code's own native human-approval prompt -- no separate bypass token was invented.",
+    "Protected-path severity is per-category: existing block categories are unchanged (zero regressions); the new lockfile category is ask (a package manager can legitimately regenerate a lockfile); the new ledger category is block (nothing should legitimately hand-edit an append-only ledger directly).",
+    "Path traversal (a `..` segment) is an unconditional block, since a relative escape attempt has no legitimate case in this guard's scope, unlike git ops or lockfile edits which do have legitimate forms.",
+    "ledger_append.py is structurally append-only ('a' mode only, no other write path in the module); the guard blocks every direct Write/Edit/Bash-redirect to ledger.md, making the script the only sanctioned path.",
+    "phase6a_lint_on_edit.py imports phase5b_verify.run_target in-process instead of shelling out to verify.sh, after observing a bare `bash` on Windows PATH resolve to a non-git-bash interpreter (exit 127) for a native Windows path passed as an argument.",
+    "phase6a_stop_gate.py owns retry-count state per session_id, the stop_hook_active short-circuit, and ledger escalation, independently unit-testable via STATE_ROOT/RETRY_DIR/EVENT_LOG/LEDGER_PATH overrides and a monkeypatchable run_checks; stop.sh shrank to a thin dispatcher.",
+    "Two real ladder-change ledger entries were written via ledger_append.py: a promotion (git force-push/reset/branch-delete guidance moved from rung-1/5 to rung-4 enforcement, this phase's own change) and a demotion/refinement (the pre-existing fd-duplication-redirect carve-out in MUTATING_BASH_TOKEN, retroactively logged since it predates this phase's formal ladder documentation but is real prior code, not fabricated)."
+  ],
+  "verification_commands": [
+    { "command": "node -c .claude/hooks/lib/pre-tool-use-guard.js", "exit_code": 0 },
+    { "command": "python -m unittest discover -s tests -v", "exit_code": 0, "notes": "193 tests total (127 prior + 66 new), no regression" },
+    { "command": "python3 .claude/scripts/control_plane_check.py", "exit_code": 0 },
+    { "command": "python3 .claude/scripts/rules_fidelity_check.py", "exit_code": 0 },
+    { "command": "python3 .claude/scripts/taxonomy_check.py", "exit_code": 0 },
+    { "command": "python3 .claude/scripts/phase6a_metrics.py", "exit_code": 0, "notes": "293 guardrail events: 184 allow / 42 ask / 62 block / 5 error; p50 2ms, p95 4ms, max 13ms; ledger_ladder_changes: promotions=1, demotions=1" },
+    { "command": "python3 -c \"import json; json.load(open('.claude/settings.json'))\"", "exit_code": 0 }
+  ],
+  "test_counts": {
+    "test_phase6a_guardrails.py": 44,
+    "test_phase6a_stop_gate.py": 8,
+    "test_phase6a_metrics.py": 6,
+    "test_phase6a_ledger_append.py": 5,
+    "test_phase6a_lint_on_edit.py": 3,
+    "total_new": 66,
+    "total_repo": 193
+  },
+  "scope_explicitly_excluded": [
+    "Phase 6B: verifier-vs-builder disagreement measurement, review-lens agents, red-team pass, metric-gated experiment enforcement beyond the existing skill",
+    "Phase 7: distribution, versioning, plugin packaging of the stable core"
+  ],
+  "remaining_risks": [
+    "Verifier-vs-builder disagreement measurement (Phase 6.3) is out of scope for Phase 6A; execution-manifest.json records phase_6a: complete but phase_6: partial for this reason.",
+    "The secrets-path regex is intentionally imprecise (deterministic, fail-closed); false_block_review_candidates in phase6a_metrics.py's output is the designed compensating control, not a fix applied in this phase.",
+    "Hook-timeout handling is Claude Code's own documented hook-execution contract; this phase's defense is the logged latency field (p50/p95/max), not a synthetic multi-second-delay test.",
+    "phase6a_lint_on_edit.py always runs the repo's whole lint target (rules_fidelity_check.py), not a file-scoped linter; cheap here but would not scale as-is to an expensive whole-repo lint step.",
+    "The Stop-gate's escalation path is proven only via monkeypatched unit tests, not a real MAX_RETRIES-exceeding session in this environment (the repo's real checks currently pass).",
+    "Phase 6B and Phase 7 remain unimplemented and are not implicitly validated by these Phase 6A changes."
+  ],
+  "next_goal": "Phase 6A is complete. Do not begin Phase 6B or Phase 7 until explicitly directed."
+}
