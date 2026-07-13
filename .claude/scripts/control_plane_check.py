@@ -87,6 +87,28 @@ ALLOWED_PROBES = [
     {"tool_name": "Bash", "tool_input": {"command": "git push origin main"}},
     {"tool_name": "Bash", "tool_input": {"command": "cat x >> .claude/settings.json"}},
 ]
+GENERATED_STATE_PATHS = [
+    ".claude/state/phase0.sqlite3",
+    ".claude/state/raw",
+    ".claude/state/logs",
+    ".claude/state/checkpoints",
+    ".claude/state/archive",
+    ".claude/state/compactions/example-restore.json",
+    ".claude/state/agents/example-session/example-agent.json",
+    ".claude/state/workflows/example-run.json",
+]
+TRACKED_STATE_PATHS = [
+    ".claude/state/ledger.md",
+    ".claude/state/baseline.md",
+    ".claude/state/completion-matrix.md",
+    ".claude/state/execution-manifest.json",
+    ".claude/state/roadmap/phase-0-checkpoint.json",
+    ".claude/state/compactions/.gitkeep",
+    ".claude/state/agents/.gitkeep",
+    ".claude/state/workflows/.gitkeep",
+    ".claude/state/research/.gitkeep",
+    ".claude/state/handoffs/.gitkeep",
+]
 
 
 def run(cmd: list[str], *, input_text: str | None = None) -> subprocess.CompletedProcess[str]:
@@ -140,6 +162,18 @@ def check_git_visibility() -> None:
     proc = run(["git", "check-ignore", *REQUIRED_PATHS])
     if proc.stdout.strip():
         fail(f"required control-plane paths are ignored by git: {proc.stdout.strip()}")
+
+
+def check_state_privacy_ignore() -> None:
+    proc = run(["git", "check-ignore", *GENERATED_STATE_PATHS])
+    ignored = set(proc.stdout.split())
+    missing = [path for path in GENERATED_STATE_PATHS if path not in ignored]
+    if missing:
+        fail(f"generated .claude/state/ paths are not gitignored: {', '.join(missing)}")
+
+    proc = run(["git", "check-ignore", *TRACKED_STATE_PATHS])
+    if proc.stdout.strip():
+        fail(f"tracked .claude/state/ paths are unexpectedly gitignored: {proc.stdout.strip()}")
 
 
 def check_guard_probes() -> None:
@@ -232,6 +266,7 @@ def main() -> int:
     check_required_paths()
     check_json()
     check_git_visibility()
+    check_state_privacy_ignore()
     check_shell_parse()
     check_allowed_probes()
     check_guard_probes()

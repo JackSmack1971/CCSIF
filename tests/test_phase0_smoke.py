@@ -23,6 +23,10 @@ class Phase0SmokeTests(unittest.TestCase):
             {
                 "PHASE0_STATE_ROOT": str(self.state_root),
                 "PHASE0_WORKSPACE_ROOT": str(self.workspace),
+                # Raw payload capture is opt-in and off by default (issue #154);
+                # this smoke test explicitly opts in to exercise the full
+                # raw-export path end to end.
+                "PHASE0_CAPTURE_RAW_PAYLOADS": "true",
             }
         )
 

@@ -13,12 +13,17 @@
 const fs = require('fs');
 const path = require('path');
 
+// Bearer-scheme values are matched before the generic key:value pattern
+// below — otherwise the generic pattern's narrower value charset (no
+// spaces) consumes only the literal word "Bearer" as if it were the value,
+// leaving the actual token exposed after it. Keep this list in sync with
+// .claude/scripts/phase0_control_plane.py's SECRET_PATTERNS (Python port).
 const SECRET_PATTERNS = [
+  /Bearer\s+[A-Za-z0-9\-_.]{10,}/gi,
   /(api[_-]?key|secret|token|password|passwd|authoriz(?:ation)?)\s*[:=]\s*['"]?[A-Za-z0-9_\-.\/+=]{6,}['"]?/gi,
   /sk-[A-Za-z0-9]{10,}/g,
   /gh[pousr]_[A-Za-z0-9]{20,}/g,
   /AKIA[0-9A-Z]{16}/g,
-  /Bearer\s+[A-Za-z0-9\-_.]{10,}/gi,
 ];
 
 function redact(str) {
