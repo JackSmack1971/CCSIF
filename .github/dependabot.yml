@@ -1,0 +1,27 @@
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/.claude/skills/official-docs-pack/scripts"
+    schedule:
+      interval: "weekly"
+    groups:
+      npm-dependencies:
+        patterns:
+          - "*"
+    labels:
+      - "dependencies"
+      - "javascript-typescript"
+    open-pull-requests-limit: 5
+
+  - package-ecosystem: "pip"
+    directory: "/.claude/memory"
+    schedule:
+      interval: "weekly"
+    groups:
+      pip-dependencies:
+        patterns:
+          - "*"
+    labels:
+      - "dependencies"
+      - "python"
+    open-pull-requests-limit: 5
