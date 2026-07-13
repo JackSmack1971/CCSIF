@@ -9,7 +9,10 @@ paths:
 Path-scoped behavior rules for the live `.claude/` control plane. These files define how agents should behave in this repo and which areas are protected.
 
 ## Entry Points
-- `00-core-workflow.md` - first read for general repo workflow.
+- `00-core-workflow.md` - first read for general repo workflow; the operating-doctrine file (loop discipline, scope doctrine pointer).
+- `10-karpathy-guidelines.md` - assumption-surfacing, verify-before-done, metric-gated experiment loops.
+- `20-lifecycle-gates.md` - the five-gate Align/Research/Plan/Build/Verify-Ship contract.
+- `30-skill-taxonomy.md` - the two-axis rule: commands orchestrate, never invoke each other; skills are single-purpose.
 - `control-plane.md` - live governance for control-plane changes.
 - `hindsight-memory.md` - memory-specific operating rules.
 - `security.md`, `testing.md`, `subagent-routing.md`, `failure-escalation.md`, `dynamic-workflows.md` - domain rules for common edge cases.

@@ -134,3 +134,33 @@
   - No live `/goal`/`/loop`/routines invocation was scripted from Python; those are product-level session behaviors, so this phase's contribution is limited to the durable, checkpoint-gated, replayable state layer those native features can sit on top of (same posture Phase 3 took toward native foreground/background subagent execution).
   - Unrelated untracked files remain preserved and untouched.
 
+## 2026-07-12 Phase 5A complete
+
+- Goal: complete Roadmap Phase 5A — establish the portable "Control Plane in a Folder" core, layout, operating doctrine, and skill taxonomy — by auditing the existing `.claude/` tree first and consolidating rather than duplicating, per `docs/claude-code-control-plane-roadmap-v2.md` Phase 5 and the task's explicit instruction.
+- Read: roadmap in full; `.claude/state/execution-manifest.json`; `.claude/state/roadmap/phase-{0,1,2,3,4}-report.md` and checkpoints (confirmed all `status: complete` before proceeding); the full existing `.claude/rules/*.md` corpus (16 files), all 5 `.claude/commands/*.md` bodies, and a sample of `.claude/skills/*/SKILL.md` frontmatter (57 skills) to audit for existing taxonomy compliance before writing new rules; `.claude/scripts/rules_fidelity_check.py` and `control_plane_check.py` to understand the existing fidelity-check mechanics before registering new files.
+- Added:
+  - `.claude/rules/10-karpathy-guidelines.md` — assumption-surfacing, verify-before-done, metric-gated experiment loops; deliberately excludes content already in `surgical-density.md`.
+  - `.claude/rules/20-lifecycle-gates.md` — the five-gate Align/Research/Plan/Build/Verify&Ship contract: inputs, outputs, durable artifact, verification owner, risk escalation, explicit-skip policy. Documentation only; no gate command files added, per task scope.
+  - `.claude/rules/30-skill-taxonomy.md` — the two-axis rule (commands orchestrate and never invoke each other; skills are single-purpose, may be `user-invocable: true` without becoming orchestrators).
+  - `.claude/scripts/taxonomy_check.py` — deterministic linter: command-cross-invocation, duplicate skill/command description, always-loaded context budget (measured 140/400 lines), global-path (`~/.claude`) dependency in hooks/scripts/commands, oversized root `CLAUDE.md` (measured 74/200 lines). Wired into `control_plane_check.py` as `check_taxonomy()`.
+  - `tests/test_taxonomy_check.py` — 11 tests, one positive/negative pair per check against isolated fixture trees, plus a real-repo pass-through test.
+  - `docs/CONTEXT.md` — domain glossary (term, meaning, owning file).
+  - `docs/adr/0000-template.md`, `docs/adr/0001-phase-5a-portable-layout.md` — minimal ADR template plus the real ADR recording every consolidation-vs-new-file decision this phase made.
+  - `.claude/state/handoffs/.gitkeep`, `.claude/state/research/.gitkeep` — the two durable-state subdirectories the roadmap names that did not already exist (`ledger.md`, `agents/`, `checkpoints/`, `roadmap/` existed from Phases 0-2).
+  - `.claude/state/roadmap/phase-5a-report.md`, `.claude/state/roadmap/phase-5a-checkpoint.json`.
+- Extended (not replaced): `.claude/rules/00-core-workflow.md` — added a Scope Doctrine pointer and a loop-discipline cross-reference; kept its existing role as the operating-doctrine file rather than adding a competing `00-operating-doctrine.md`.
+- Updated: `.claude/scripts/control_plane_check.py` (new `check_taxonomy()` step + required path), `.claude/scripts/rules_fidelity_check.py` (registered 3 new rule files with `paths:`/`MAX_LINES`), `.claude/rules/AGENTS.md` (entry-point list), `.claude/state/completion-matrix.md` (Phase 5 split into 5A-complete and 5B/5C-not-started sections), `.claude/state/execution-manifest.json` (`phase_5a: complete`, `phase_5a_completion` block, `next_goal`).
+- Audit finding: the existing 57-skill, 5-command, 8-agent corpus already followed the two-axis convention (every skill description states one job plus an explicit `NOT for X; use Y instead` non-goal; no command body invokes another command) — `30-skill-taxonomy.md` documents a convention that was already live, and `taxonomy_check.py` found 0 violations rather than needing to fix any.
+- Verification commands:
+  - `python -m py_compile .claude/scripts/taxonomy_check.py .claude/scripts/control_plane_check.py .claude/scripts/rules_fidelity_check.py tests/test_taxonomy_check.py` -> `0`
+  - `python -m unittest discover -s tests -v` -> `0` (65 tests: 54 prior + 11 new, no regression)
+  - `python3 .claude/scripts/control_plane_check.py` -> `0`
+  - `python3 .claude/scripts/rules_fidelity_check.py` -> `0`
+  - `python3 -c "import json; json.load(open('.claude/settings.json'))"` -> `0`
+  - `git check-ignore -v` against every new Phase 5A path -> `1` (nothing ignored; all evidence is git-visible)
+- Evidence: `.claude/state/roadmap/phase-5a-report.md`, `.claude/state/roadmap/phase-5a-checkpoint.json`, updated `.claude/state/completion-matrix.md` Phase 5 section.
+- Notes:
+  - Phase 5B/5C (`/bootstrap-control-plane`, cross-stack proof, main-thread context measurement) and Phase 6/7 are untouched, per instruction not to begin them.
+  - The global-path-dependency check does not scan `.claude/skills/` or `.claude/agents/`; a manual grep found 7 skill files with descriptive, non-functional `~/.claude` mentions (optional install-scope documentation), recorded as a residual risk rather than silently treated as clean.
+  - Unrelated untracked files remain preserved and untouched.
+

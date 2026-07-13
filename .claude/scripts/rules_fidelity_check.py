@@ -18,6 +18,31 @@ EXPECTED_SCOPES = {
         "SECURITY.md",
         ".github/**",
     ],
+    "10-karpathy-guidelines.md": [
+        ".claude/**",
+        "CLAUDE.md",
+        "CLAUDE.local.md",
+        "AGENTS.md",
+        "README.md",
+        "CONTRIBUTING.md",
+        "SECURITY.md",
+        ".github/**",
+    ],
+    "20-lifecycle-gates.md": [
+        ".claude/**",
+        "CLAUDE.md",
+        "CLAUDE.local.md",
+        "AGENTS.md",
+        "README.md",
+        "CONTRIBUTING.md",
+        "SECURITY.md",
+        ".github/**",
+    ],
+    "30-skill-taxonomy.md": [
+        ".claude/commands/**",
+        ".claude/skills/**",
+        "CLAUDE.md",
+    ],
     "architecture.md": [
         ".claude/**",
         "CLAUDE.md",
@@ -112,6 +137,9 @@ MAX_LINES = {
     "security.md": 20,
     "testing.md": 20,
     "memory-and-compaction.md": 30,
+    "10-karpathy-guidelines.md": 30,
+    "20-lifecycle-gates.md": 40,
+    "30-skill-taxonomy.md": 25,
 }
 
 

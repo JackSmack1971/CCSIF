@@ -71,7 +71,8 @@
     "phase_4": "complete",
     "phase_5": "partial",
     "phase_6": "partial",
-    "phase_7": "not_started"
+    "phase_7": "not_started",
+    "phase_5a": "complete"
   },
   "dependencies": {
     "project_scoped": [
@@ -369,5 +370,73 @@
       "Phases 5-7 remain incomplete and are not implicitly validated by these Phase 4 changes."
     ]
   },
-  "next_goal": "Phase 4 is complete. Do not begin Phase 5 until explicitly directed."
+  "phase_5a_completion": {
+    "status": "complete",
+    "report": ".claude/state/roadmap/phase-5a-report.md",
+    "checkpoint": ".claude/state/roadmap/phase-5a-checkpoint.json",
+    "implemented_files": [
+      ".claude/rules/10-karpathy-guidelines.md",
+      ".claude/rules/20-lifecycle-gates.md",
+      ".claude/rules/30-skill-taxonomy.md",
+      ".claude/scripts/taxonomy_check.py",
+      "tests/test_taxonomy_check.py",
+      "docs/CONTEXT.md",
+      "docs/adr/0000-template.md",
+      "docs/adr/0001-phase-5a-portable-layout.md",
+      ".claude/state/handoffs/.gitkeep",
+      ".claude/state/research/.gitkeep"
+    ],
+    "design_decisions": [
+      "Extended .claude/rules/00-core-workflow.md instead of adding a competing 00-operating-doctrine.md file; it already held the operating-doctrine role.",
+      "10-karpathy-guidelines.md contains only the delta not already in surgical-density.md (assumption-surfacing, verify-before-done, metric-gated experiment loops); no duplication.",
+      "20-lifecycle-gates.md documents the five-gate contract only, per the task's explicit 'without yet implementing every command' instruction; no gate command files were added.",
+      "The two-axis taxonomy (30-skill-taxonomy.md) documents a convention the existing 57-skill/5-command corpus already followed; taxonomy_check.py proves it mechanically (0 violations found) rather than by inspection alone.",
+      "docs/adr/ is a new, distinct location from the pre-existing .claude/docs/decision-log.md; the log stays chronological narrative, ADRs are scoped and supersedable records."
+    ],
+    "verification_commands": [
+      {
+        "command": "python -m py_compile .claude/scripts/taxonomy_check.py .claude/scripts/control_plane_check.py .claude/scripts/rules_fidelity_check.py tests/test_taxonomy_check.py",
+        "exit_code": 0
+      },
+      {
+        "command": "python -m unittest discover -s tests -v",
+        "exit_code": 0,
+        "notes": "65 tests total (54 prior + 11 new), no regression"
+      },
+      {
+        "command": "python3 .claude/scripts/control_plane_check.py",
+        "exit_code": 0
+      },
+      {
+        "command": "python3 .claude/scripts/rules_fidelity_check.py",
+        "exit_code": 0
+      },
+      {
+        "command": "python3 -c \"import json; json.load(open('.claude/settings.json'))\"",
+        "exit_code": 0
+      },
+      {
+        "command": "git check-ignore -v <every new Phase 5A path>",
+        "exit_code": 1,
+        "notes": "nothing ignored; all evidence is git-visible"
+      }
+    ],
+    "measured_budgets": {
+      "always_loaded_context_lines": {
+        "measured": 140,
+        "budget": 400
+      },
+      "root_claude_md_lines": {
+        "measured": 74,
+        "budget": 200
+      }
+    },
+    "remaining_risks": [
+      "The five-gate lifecycle contract is documentation only; no gate command exists yet (Phase 5B/5C).",
+      "The duplicate-responsibility check compares exact description strings, not paraphrase similarity.",
+      "The global-path-dependency check does not scan .claude/skills/ or .claude/agents/; a manual grep found 7 skill files with descriptive, non-functional ~/.claude mentions, not mechanically verified as non-dependencies.",
+      "Phases 5B, 5C, 6, and 7 remain incomplete and are not implicitly validated by these Phase 5A changes."
+    ]
+  },
+  "next_goal": "Phase 5A is complete. Do not begin Phase 5B/5C or Phase 6 until explicitly directed."
 }

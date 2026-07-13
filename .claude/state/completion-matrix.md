@@ -59,12 +59,26 @@ The roadmap section defines workflow selection, graph execution, planner, evalua
 
 ## Phase 5: Portable Project-Scoped Framework
 
+### Phase 5A: portable core, layout, operating doctrine, and skill taxonomy — complete
+
 | Criterion | Status | Evidence | Notes |
 |---|---|---|---|
-| A fresh clone plus `/bootstrap-control-plane` reproduces the full framework with zero reliance on `~/.claude/`. | missing | No `/bootstrap-control-plane` command file or installer script exists. | The baseline only captures current scaffolding. |
-| Every gate produces its durable artifact in `.claude/state/` or `.claude/plans/`; `/status` can answer from disk alone. | missing | No `.claude/state/` artifacts beyond the baseline scaffold; no `/status` command. | Durable gate artifacts are not present yet. |
+| Numbered operating and Karpathy-style rules exist. | existing | `.claude/rules/00-core-workflow.md` (extended with Scope Doctrine pointer); `.claude/rules/10-karpathy-guidelines.md` (new) | `rules_fidelity_check.py` re-verified after both changes. |
+| Five-gate lifecycle contract is encoded (inputs/outputs/skip policy/risk escalation/artifacts/verification ownership), without implementing every command. | existing | `.claude/rules/20-lifecycle-gates.md` | Documentation only, per task scope; no gate command files added. |
+| Two-axis taxonomy (commands orchestrate, never invoke each other; skills are single-purpose) is enforced with a linter/test. | existing | `.claude/rules/30-skill-taxonomy.md`; `.claude/scripts/taxonomy_check.py`; `tests/test_taxonomy_check.py` (11 tests); wired into `control_plane_check.py` | 0 violations found across 5 commands and 57 skills. |
+| Always-loaded instruction size is measured against a declared token/line budget. | existing | `taxonomy_check.check_always_loaded_context_budget()`; `.claude/state/roadmap/phase-5a-report.md` | 140/400 lines (35%) measured live, not estimated. |
+| `docs/CONTEXT.md` domain glossary and `docs/adr/` with a minimal ADR template exist. | existing | `docs/CONTEXT.md`; `docs/adr/0000-template.md`; `docs/adr/0001-phase-5a-portable-layout.md` | ADR 0001 records every consolidation-vs-new-file decision this phase made. |
+| Durable state subdirectories for ledger, handoffs, agents, research, checkpoints, and roadmap evidence exist. | existing | `.claude/state/ledger.md`, `handoffs/`, `agents/`, `research/`, `checkpoints/`, `roadmap/` | `handoffs/` and `research/` added this phase; the rest existed from Phases 0-2. |
+| Phase 5A report and checkpoint exist with evidence. | existing | `.claude/state/roadmap/phase-5a-report.md`; `.claude/state/roadmap/phase-5a-checkpoint.json` | |
+
+### Phase 5B/5C (task-agnostic lifecycle commands, bootstrap skill, cross-stack proof) — not started
+
+| Criterion | Status | Evidence | Notes |
+|---|---|---|---|
+| Thin project commands, discipline skills, a verify adapter, and durable lifecycle artifacts exist for the remaining gates. | missing | No `.claude/commands/{brainstorm,grill,research,plan,build,verify,ship,handoff,status,debug,experiment}.md`, verify adapter, or lifecycle script exist yet. | Explicitly out of Phase 5A scope per task instruction; deferred to Phase 5B. |
+| A fresh clone plus `/bootstrap-control-plane` reproduces the full framework with zero reliance on `~/.claude/`. | missing | No `/bootstrap-control-plane` command file or installer script exists. | Deferred to Phase 5C. |
 | The same framework runs unmodified against at least two unrelated stacks. | missing | No portable bootstrap package or cross-stack eval harness exists. | No multi-stack evidence is present. |
-| Main-thread context stays below ~50% on multi-plan work because building happens in fresh subagent contexts. | unverified | `.claude/agents/*`; `.claude/workflows/issue-to-pr.js` | The repo has orchestration pieces, but no measurement baseline for context pressure. |
+| Main-thread context stays below ~50% on multi-plan work because building happens in fresh subagent contexts. | unverified | `.claude/agents/*`; `.claude/workflows/issue-to-pr.js` | The repo has orchestration pieces, but no measurement baseline for context pressure and no `/build` gate yet. |
 
 ## Phase 6: Determinism Ladder & Adversarial Verification
 
