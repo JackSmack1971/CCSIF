@@ -40,6 +40,8 @@ python3 -m unittest discover -s .claude/memory/tests -v
 # issue-to-pr tests
 python3 -m unittest discover -s .claude/skills/issue-to-pr/tests -v
 ```
+When planning or building the Claude Code control plane, always read and update claude-code-control-plane-roadmap.md using the documented agentic loop, Task tool, CLAUDE.md hierarchy, 
+and compaction patterns.
 
 ## Read First
 
