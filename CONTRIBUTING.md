@@ -11,6 +11,7 @@ Thanks for your interest in CCSIF, a repository-local Claude Code scaffold that 
 - [Local setup](#local-setup)
 - [Development workflow](#development-workflow)
 - [Merge policy](#merge-policy)
+- [Branch protection policy](#branch-protection-policy)
 - [Quality standards](#quality-standards)
 - [Pull requests](#pull-requests)
 - [Getting help](#getting-help)
@@ -69,6 +70,13 @@ Thanks for your interest in CCSIF, a repository-local Claude Code scaffold that 
 - Merge pull requests with squash commits only.
 - Keep automatic head-branch deletion enabled so merged issue branches do not linger.
 - Leave merge commits and rebase merges disabled in the repository settings.
+
+## Branch protection policy
+
+- The default branch (`main`) requires every change to land through a pull request; direct pushes, force-pushes, and branch deletion are blocked.
+- The required ruleset is defined as settings-as-code in `.github/rulesets/main-branch-protection.json`, with the rationale and the `gh api` apply command documented in `.github/rulesets/README.md`.
+- GitHub reads ruleset configuration from its API/settings, not from files in the tree, so a repository admin applies this definition out-of-band from any pull request merge. Re-apply it whenever the checked-in definition changes.
+- The required approving review count starts at `0` because the repository has a single verified collaborator with write access; raise it in the same file the first time a second maintainer is added.
 
 ## Quality standards
 
