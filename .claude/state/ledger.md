@@ -244,3 +244,10 @@
 - Verification: `node -c pre-tool-use-guard.js` -> 0; `python -m unittest discover -s tests -v` -> 0 (193 tests: 127 prior + 66 new, no regression); `control_plane_check.py` -> PASS; `rules_fidelity_check.py` -> PASS; `taxonomy_check.py` -> PASS; `phase6a_metrics.py` -> 293 guardrail events (184 allow/42 ask/62 block/5 error, p50 2ms/p95 4ms/max 13ms), `ledger_ladder_changes` promotions=1 demotions=1; `settings.json` JSON-valid.
 - Evidence: `.claude/state/roadmap/phase-6a-report.md`, `phase-6a-checkpoint.json`, updated `completion-matrix.md` Phase 6 section, this entry and the two ladder-change entries above (all via `ledger_append.py`).
 - Notes: Phase 6B (verifier-vs-builder disagreement, review-lens agents, red-team pass) and Phase 7 (distribution/versioning) are untouched, per instruction not to begin them. The secrets-path regex's benign-lookalike false positives are a documented, intentional precision tradeoff within an otherwise-deterministic rule, not a probabilistic trigger. Unrelated untracked files (pre-existing roadmap docs, `.scratch/`, prior-session state dirs) remain preserved and untouched.
+
+## 2026-07-14 Gone-upstream branch review
+
+- Reviewed the 21 local branches reported by `git branch -vv` as `origin/*: gone`.
+- Confirmed the current checkout had no live worktree attached to any of those gone-upstream refs in `git worktree list --porcelain`.
+- Retained the branch refs unchanged in this PR because the actual cleanup step is destructive and should go through a separate approved maintenance pass.
+- Verification for this review is the branch inventory in `git branch -vv` and the worktree inventory in `git worktree list --porcelain`; no branch delete or force-push was performed here.
