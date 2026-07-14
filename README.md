@@ -199,23 +199,30 @@ No required environment variables were discovered in committed repo files.
 <a id="testing--verification"></a>
 ## Testing & Verification
 
-No repo-level automated test suite, build pipeline, or CI workflow was found in the repository.
+The authoritative repository test command is:
 
-Skill-local tests, verification logs, and evals live under `.claude/skills/` and are the right place to look for workflow-specific validation.
+```bash
+python -m unittest discover -s tests -v
+```
+
+CI runs that same command on Linux, macOS, and Windows across the supported Python (`3.11`, `3.12`) and Node.js (`20`, `22`) runtime matrix. The project is expected to remain portable across those platforms; Windows coverage assumes GitHub Actions' Bash and PowerShell environments are available for the Claude hook wrappers.
 
 Grounded verification options:
 
 ```bash
 git status --short
 git diff --check
-python3 .claude/scripts/control_plane_check.py
-bash .claude/hooks/session-start.sh
+python -m unittest discover -s tests -v
+python .claude/scripts/control_plane_check.py
+python .claude/scripts/rules_fidelity_check.py
+bash .claude/hooks/verify.sh run rules
+pwsh ./.claude/hooks/verify.ps1 run rules
 ```
 
 Use the narrowest check that matches the change:
 
 - Edit docs or config: `git diff --check`
-- Adjust hooks or settings: run the affected hook script directly
+- Adjust hooks, settings, scripts, or CI: run the authoritative unittest command and the affected wrapper or validator directly
 - Change workflow or agent docs: re-read the file and compare against `CLAUDE.md`
 
 ## Troubleshooting
@@ -232,8 +239,8 @@ Use the narrowest check that matches the change:
 | Layer | Technology | Version | Source | Notes |
 |---|---|---|---|---|
 | Repo type | Claude Code agent scaffold [INFERRED] | Unknown | `CLAUDE.md`, `.claude/` layout | Repository-local automation and policy bundle. |
-| Scripting runtime | Node.js [INFERRED] | Unknown | `.claude/workflows/issue-to-pr.js`, `.claude/hooks/lib/trace-writer.js` | JavaScript workflow and hook helper files use Node shebangs. |
-| Hook shell | Bash [INFERRED] | Unknown | `.claude/hooks/*.sh` | Session, pre-tool, post-tool, and stop hooks are shell scripts. |
+| Scripting runtime | Node.js | 20 and 22 in CI | `.claude/workflows/issue-to-pr.js`, `.claude/hooks/lib/trace-writer.js` | JavaScript workflow and hook helper files use Node shebangs. |
+| Hook shell | Bash / PowerShell | GitHub-hosted Linux, macOS, and Windows in CI | `.claude/hooks/*.sh` | Session, pre-tool, post-tool, and stop hooks are shell scripts. |
 | Policy format | Markdown / JSON | N/A | `CLAUDE.md`, `.claude/settings.json`, `.claude/**/*.md` | Human-readable repo instructions and settings. |
 | Telemetry format | JSONL | N/A | `.claude/traces/*.jsonl` | Append-only generated trace corpus. |
 
@@ -244,7 +251,7 @@ Use the narrowest check that matches the change:
 - Re-read the live source of truth before edits: `CLAUDE.md`, `.claude/settings.json`, and the specific agent/command/hook file you plan to touch.
 - Keep local-only settings in `CLAUDE.local.md` and `.claude/settings.local.json`; both are treated as local overrides in `.gitignore`.
 - If trace history gets noisy, treat `.claude/traces/*.jsonl` as generated telemetry and start from a fresh session rather than editing the files by hand.
-- On Windows, ensure the shell can run Bash scripts before relying on hooks.
+- On Windows, use an environment with Bash for `.sh` hooks and PowerShell for `.ps1` hooks; CI verifies both wrappers on `windows-latest`.
 
 ## Contributing
 

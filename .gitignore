@@ -33,9 +33,13 @@ CLAUDE.local.md
 .claude/state/phase0.sqlite3-wal
 .claude/state/phase0.sqlite3-shm
 .claude/state/phase0.sqlite3-journal
+.claude/state/raw
 .claude/state/raw/
+.claude/state/logs
 .claude/state/logs/
+.claude/state/checkpoints
 .claude/state/checkpoints/
+.claude/state/archive
 .claude/state/archive/
 .claude/state/compactions/*
 !.claude/state/compactions/.gitkeep
