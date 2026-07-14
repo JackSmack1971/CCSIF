@@ -29,6 +29,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import re
 import sys
 from pathlib import Path
 from typing import Any
@@ -51,6 +52,8 @@ from phase0_control_plane import (  # noqa: E402
 DEFAULT_MAX_RETRIES = 2
 HIGH_RISK_TRANSITIONS = {"write", "merge", "deploy", "delegate", "handoff"}
 VALID_RISKS = {"low", "medium", "high"}
+SAFE_ID_RE = re.compile(r"^[a-z0-9][a-z0-9-]{0,63}$")
+APPROVED_PERSISTENCE_DIRS = ((".claude", "state"), (".claude", "traces"))
 
 
 class Phase4Error(RuntimeError):
@@ -81,44 +84,105 @@ class UnverifiedNodeError(Phase4Error):
     pass
 
 
+class UnsafeWorkflowIdentifierError(Phase4Error):
+    pass
+
+
+class UnsafeWorkflowPersistenceError(Phase4Error):
+    pass
+
+
+def validate_workflow_id(value: str, *, kind: str = "workflow id") -> str:
+    """Return a normalized, filename-safe workflow identifier or raise.
+
+    Workflow identifiers are persisted in file paths, embedded in state, and
+    compared across workflow definitions. Keep them deliberately boring:
+    lowercase ASCII letters/digits separated by single hyphen-compatible runs.
+    This rejects absolute paths, traversal, path separators, ambiguous dot IDs,
+    whitespace, case variants, and shell/path metacharacters before any state is
+    read from or written to disk.
+    """
+    if not isinstance(value, str):
+        raise UnsafeWorkflowIdentifierError(f"{kind} must be a string")
+    if value != value.strip() or not value:
+        raise UnsafeWorkflowIdentifierError(f"{kind} must be non-empty with no surrounding whitespace")
+    if value in {".", ".."} or "/" in value or "\\" in value:
+        raise UnsafeWorkflowIdentifierError(f"{kind} must not contain path components")
+    path = Path(value)
+    if path.is_absolute() or any(part in {".", ".."} for part in path.parts):
+        raise UnsafeWorkflowIdentifierError(f"{kind} must not be absolute or traverse directories")
+    normalized = value.lower()
+    if value != normalized:
+        raise UnsafeWorkflowIdentifierError(f"{kind} must already be normalized lowercase")
+    if not SAFE_ID_RE.fullmatch(value):
+        raise UnsafeWorkflowIdentifierError(
+            f"{kind} contains unsafe characters; use lowercase letters, digits, and hyphens"
+        )
+    return value
+
+
+def _validate_persistence_root(root: Path | None, workspace: Path | None = None) -> Path:
+    ws = (workspace or workspace_root()).resolve()
+    candidate = (root or state_root()).expanduser().resolve()
+    approved = [(ws.joinpath(*parts)).resolve() for parts in APPROVED_PERSISTENCE_DIRS]
+    if not any(candidate == base or base in candidate.parents for base in approved):
+        allowed = ", ".join(str(base) for base in approved)
+        raise UnsafeWorkflowPersistenceError(f"workflow persistence root must be under: {allowed}")
+    return candidate
+
+
 def _defs_dir(workspace: Path | None = None) -> Path:
     ws = (workspace or workspace_root()).resolve()
     return ws / ".claude" / "workflows" / "defs"
 
 
-def _runs_dir(root: Path | None = None) -> Path:
-    path = (root or state_root()) / "workflows"
+def _runs_dir(root: Path | None = None, workspace: Path | None = None) -> Path:
+    path = _validate_persistence_root(root, workspace) / "workflows"
     path.mkdir(parents=True, exist_ok=True)
     return path
 
 
-def _run_path(root: Path | None, run_id: str) -> Path:
-    return _runs_dir(root) / f"{run_id}.json"
+def _run_path(root: Path | None, run_id: str, workspace: Path | None = None) -> Path:
+    safe_run_id = validate_workflow_id(run_id, kind="run id")
+    return _runs_dir(root, workspace) / f"{safe_run_id}.json"
 
 
 def load_workflow_def(name: str, workspace: Path | None = None) -> dict[str, Any]:
-    path = _defs_dir(workspace) / f"{name}.json"
+    safe_name = validate_workflow_id(name, kind="workflow name")
+    path = _defs_dir(workspace) / f"{safe_name}.json"
     if not path.exists():
         raise UnknownWorkflowError(f"no workflow definition: {name}")
     definition = json.loads(path.read_text(encoding="utf-8"))
     _validate_workflow_def(definition)
+    if definition.get("workflow") not in (None, safe_name):
+        raise InvalidWorkflowDefError(f"workflow field {definition.get('workflow')!r} does not match filename {safe_name!r}")
     definition["_source_path"] = str(path)
     definition["_sha256"] = hashlib.sha256(path.read_bytes()).hexdigest()
     return definition
 
 
 def _validate_workflow_def(definition: dict[str, Any]) -> None:
+    workflow = definition.get("workflow")
+    if workflow is not None:
+        validate_workflow_id(workflow, kind="workflow field")
     nodes = definition.get("nodes")
     if not isinstance(nodes, dict) or not nodes:
         raise InvalidWorkflowDefError("workflow definition has no nodes")
-    start = definition.get("start")
+    start = validate_workflow_id(definition.get("start"), kind="start node")
+    normalized_node_ids: set[str] = set()
+    for node_id in nodes:
+        safe_node_id = validate_workflow_id(node_id, kind="node id")
+        if safe_node_id in normalized_node_ids:
+            raise InvalidWorkflowDefError(f"duplicate normalized node id: {node_id!r}")
+        normalized_node_ids.add(safe_node_id)
     if start not in nodes:
         raise InvalidWorkflowDefError(f"start node {start!r} is not declared in nodes")
     for node_id, node in nodes.items():
         if node.get("risk") not in VALID_RISKS:
             raise InvalidWorkflowDefError(f"node {node_id!r} has an invalid risk value")
         for target in node.get("allowed_next", []):
-            if target not in nodes:
+            safe_target = validate_workflow_id(target, kind="allowed_next node id")
+            if safe_target not in nodes:
                 raise InvalidWorkflowDefError(
                     f"node {node_id!r} allows transition to undeclared node {target!r}"
                 )
@@ -131,16 +195,18 @@ def _node_def(definition: dict[str, Any], node_id: str) -> dict[str, Any]:
     return node
 
 
-def _load_run(root: Path | None, run_id: str) -> dict[str, Any]:
-    path = _run_path(root, run_id)
+def _load_run(root: Path | None, run_id: str, workspace: Path | None = None) -> dict[str, Any]:
+    path = _run_path(root, run_id, workspace)
     if not path.exists():
         raise Phase4Error(f"no workflow run: {run_id}")
     return json.loads(path.read_text(encoding="utf-8"))
 
 
-def _save_run(root: Path | None, record: dict[str, Any]) -> Path:
+def _save_run(root: Path | None, record: dict[str, Any], workspace: Path | None = None) -> Path:
+    record["run_id"] = validate_workflow_id(record["run_id"], kind="run id")
+    record["workflow"] = validate_workflow_id(record["workflow"], kind="workflow name")
     record["updated_at"] = now()
-    path = _run_path(root, record["run_id"])
+    path = _run_path(root, record["run_id"], workspace)
     atomic_write_text(path, stable_json(record) + "\n")
     return path
 
@@ -153,7 +219,10 @@ def start_run(
     workspace: Path | None = None,
 ) -> dict[str, Any]:
     definition = load_workflow_def(workflow_name, workspace)
-    run_id = run_id or make_id("wfrun")
+    run_id = validate_workflow_id(run_id or make_id("wfrun"), kind="run id")
+    if _run_path(root, run_id, workspace).exists():
+        raise UnsafeWorkflowIdentifierError(f"workflow run id already exists: {run_id}")
+
     record: dict[str, Any] = {
         "kind": "workflow-run",
         "run_id": run_id,
@@ -184,14 +253,14 @@ def start_run(
             "planner_cost_usd": None,
         },
     }
-    _save_run(root, record)
+    _save_run(root, record, workspace)
     return record
 
 
 def propose_next(run_id: str, *, root: Path | None = None, workspace: Path | None = None) -> dict[str, Any]:
     """The bounded 'planner' surface: the only nodes a caller may choose
     among for the next transition. Nothing outside this list is valid."""
-    record = _load_run(root, run_id)
+    record = _load_run(root, run_id, workspace)
     definition = load_workflow_def(record["workflow"], workspace)
     node = _node_def(definition, record["current_node"])
     return {
@@ -212,7 +281,7 @@ def verify_node(
     root: Path | None = None,
     workspace: Path | None = None,
 ) -> dict[str, Any]:
-    record = _load_run(root, run_id)
+    record = _load_run(root, run_id, workspace)
     if record["status"] not in ("active",):
         raise Phase4Error(f"cannot verify a run in status={record['status']!r}")
     definition = load_workflow_def(record["workflow"], workspace)
@@ -236,7 +305,7 @@ def verify_node(
             record["path_trace"].append(
                 {"event": "retries-exhausted", "node": node_id, "at": now(), "attempts": attempts, "max_retries": max_retries}
             )
-    _save_run(root, record)
+    _save_run(root, record, workspace)
     if record["status"] == "failed-exhausted-retries":
         raise RetriesExhaustedError(
             f"node {node_id!r} exceeded max_retries={max_retries} ({record['retries'][node_id]} failed attempts)"
@@ -253,7 +322,8 @@ def advance(
     root: Path | None = None,
     workspace: Path | None = None,
 ) -> dict[str, Any]:
-    record = _load_run(root, run_id)
+    record = _load_run(root, run_id, workspace)
+    next_node_id = validate_workflow_id(next_node_id, kind="next node id")
     if record["status"] != "active":
         raise Phase4Error(f"cannot advance a run in status={record['status']!r}")
     definition = load_workflow_def(record["workflow"], workspace)
@@ -271,7 +341,7 @@ def advance(
                 "at": now(),
             }
         )
-        _save_run(root, record)
+        _save_run(root, record, workspace)
         raise UnsupportedBranchError(
             f"{next_node_id!r} is not an allowed transition from {current_id!r}; allowed: {allowed}"
         )
@@ -318,11 +388,11 @@ def advance(
         record["verified_node"] = next_node_id
         record["path_trace"].append({"event": "completed", "node": next_node_id, "at": now()})
 
-    _save_run(root, record)
+    _save_run(root, record, workspace)
     return record
 
 
-def resume(run_id: str, *, root: Path | None = None) -> dict[str, Any]:
+def resume(run_id: str, *, root: Path | None = None, workspace: Path | None = None) -> dict[str, Any]:
     """Resume from the last verified node. A run interrupted mid-node (its
     `current_node` was entered but never verified) rolls back to the last
     verified node rather than silently continuing from an unproven state."""
@@ -342,31 +412,31 @@ def resume(run_id: str, *, root: Path | None = None) -> dict[str, Any]:
             "was_interrupted": was_interrupted,
         }
     )
-    _save_run(root, record)
+    _save_run(root, record, workspace)
     return record
 
 
-def fallback(run_id: str, *, reason: str, root: Path | None = None) -> dict[str, Any]:
-    record = _load_run(root, run_id)
+def fallback(run_id: str, *, reason: str, root: Path | None = None, workspace: Path | None = None) -> dict[str, Any]:
+    record = _load_run(root, run_id, workspace)
     record["fallback_used"] = True
     record["fallback_reason"] = reason
     record["path_trace"].append({"event": "fallback", "node": record["current_node"], "at": now(), "reason": reason})
-    _save_run(root, record)
+    _save_run(root, record, workspace)
     return record
 
 
-def replay(run_id: str, *, root: Path | None = None) -> list[dict[str, Any]]:
-    return list(_load_run(root, run_id)["path_trace"])
+def replay(run_id: str, *, root: Path | None = None, workspace: Path | None = None) -> list[dict[str, Any]]:
+    return list(_load_run(root, run_id, workspace)["path_trace"])
 
 
 def status(run_id: str, *, root: Path | None = None, workspace: Path | None = None) -> dict[str, Any]:
-    record = _load_run(root, run_id)
+    record = _load_run(root, run_id, workspace)
     plan = propose_next(run_id, root=root, workspace=workspace) if record["status"] == "active" else None
     return {"run": record, "plan": plan}
 
 
-def list_runs(*, root: Path | None = None) -> list[dict[str, Any]]:
-    runs_dir = _runs_dir(root)
+def list_runs(*, root: Path | None = None, workspace: Path | None = None) -> list[dict[str, Any]]:
+    runs_dir = _runs_dir(root, workspace)
     records = [json.loads(path.read_text(encoding="utf-8")) for path in sorted(runs_dir.glob("*.json"))]
     records.sort(key=lambda r: r.get("created_at") or "", reverse=True)
     return records

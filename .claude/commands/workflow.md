@@ -2,8 +2,8 @@
 
 Thin entrypoint for the Phase 4 static-first workflow engine
 (`.claude/scripts/phase4_workflows.py`). Definitions live in
-`.claude/workflows/defs/*.json` as small declarative graphs: stable step
-IDs, an explicit `allowed_next` allowlist per node, `risk`, and
+`.claude/workflows/defs/*.json` as small declarative graphs: stable, normalized, filename-safe step
+IDs (`^[a-z0-9][a-z0-9-]{0,63}$`), an explicit `allowed_next` allowlist per node, `risk`, and
 `checkpoint_required`. The engine never invents a node or a tool — it only
 validates a caller's choice against the current node's allowlist.
 
@@ -38,6 +38,8 @@ python3 .claude/scripts/phase4_workflows.py list
 ## Rules
 
 - Never call `advance` to a node outside the current node's `allowed_next`; the engine rejects it and records the rejection in `path_trace` for visibility.
+- Use only normalized lowercase workflow/run/node IDs with letters, digits, and hyphens; path traversal, absolute paths, ambiguous dot IDs, duplicate run IDs, and unsafe characters are rejected before persistence.
+- Keep workflow state under repository-local `.claude/state/` or `.claude/traces/`; do not write workflow state to ad hoc paths.
 - Never fabricate a `--checkpoint-id`; obtain one from `.claude/scripts/phase0_control_plane.py compact`, which only exists after a real verified step.
 - Prefer the plain linear workflow (`linear-static`) unless the task has shown repeated, evidence-driven branching.
 - Run `.claude/scripts/control_plane_check.py` and `.claude/scripts/rules_fidelity_check.py` after adding or editing a workflow definition.
