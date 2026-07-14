@@ -134,6 +134,30 @@ class RunTargetTests(unittest.TestCase):
         with self.assertRaises(pv.VerifyAdapterError):
             pv.run_target("full", claude_md=missing, cwd=ROOT)
 
+    def test_manifest_root_is_used_when_cwd_is_omitted(self) -> None:
+        manifest_root = Path(self.tmp.name) / "manifest-root"
+        manifest_root.mkdir()
+        claude_md = manifest_root / "CLAUDE.md"
+        marker = manifest_root / "marker.txt"
+        marker.write_text("manifest cwd ok\n", encoding="utf-8")
+        python_exe = sys.executable
+        claude_md.write_text(
+            f"""# Fake Project
+
+## Source-of-Truth Commands
+
+```bash
+# manifest-root check
+"{python_exe}" -c "from pathlib import Path; import sys; sys.exit(0 if Path('marker.txt').read_text(encoding='utf-8').strip() == 'manifest cwd ok' else 1)"
+```
+""",
+            encoding="utf-8",
+        )
+
+        result = pv.run_target("manifest-root-check", claude_md=claude_md)
+        self.assertEqual(result["exit_code"], 0)
+        self.assertEqual(result["status"], "pass")
+
 
 class RealRepoIntegrationTests(unittest.TestCase):
     """Prove the adapter works against this repo's real CLAUDE.md, not just

@@ -137,7 +137,7 @@ def run_target(
     cwd: Path | None = None,
 ) -> dict[str, Any]:
     claude_md = claude_md or (ROOT / "CLAUDE.md")
-    cwd = cwd or ROOT
+    cwd = cwd or claude_md.parent
 
     if target in NON_CODE_MODES:
         return {
