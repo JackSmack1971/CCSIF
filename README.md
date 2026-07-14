@@ -251,6 +251,8 @@ See [`CONTRIBUTING.md`](./CONTRIBUTING.md) for how to find or propose work, set 
 | Area | Status | Source |
 |---|---|---|
 | Code of Conduct | [TBD] | No `CODE_OF_CONDUCT.md` file was found. |
+| GitHub issue intake | Structured forms only | [`.github/ISSUE_TEMPLATE/config.yml`](./.github/ISSUE_TEMPLATE/config.yml), [bug report](./.github/ISSUE_TEMPLATE/bug_report.yml), [feature request](./.github/ISSUE_TEMPLATE/feature_request.yml) |
+| Pull request intake | Structured template | [`.github/PULL_REQUEST_TEMPLATE.md`](./.github/PULL_REQUEST_TEMPLATE.md) |
 | Security | Policy published | [`SECURITY.md`](./SECURITY.md), [`CLAUDE.md`](./CLAUDE.md), [`.claude/rules/security.md`](./.claude/rules/security.md) |
 | License | MIT | [`LICENSE`](./LICENSE) |
 | Maintainers | [TBD] | No maintainer file was found. |
