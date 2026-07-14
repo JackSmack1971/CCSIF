@@ -14,5 +14,8 @@ paths:
 - Treat `.claude/` and the repo-level instruction files as production governance; runtime-only artifacts stay local.
 - Treat edits to agents, commands, hooks, workflows, rules, settings, `.mcp.json`, `managed-settings.json`, and root memory files as control-plane changes.
 - Keep control-plane changes narrow and one mechanism at a time when possible.
+- Halt on the first protected-area block: if a native permission, hook, or guard blocks an edit, stop the attempt immediately, report the blocked path/category, and ask for human direction.
+- Do not workaround protected-area blocks by retrying with another tool, shell redirection, renamed path, copied content, or broader edit.
+- Governance-sensitive examples include `.github/**` (CODEOWNERS, rulesets, workflows, templates), `SECURITY.md` or other security policy files, and control-plane rules such as `.claude/rules/control-plane.md`.
 - Prefer Node or Python for hooks and workflows; keep hook paths portable with `$CLAUDE_PROJECT_DIR` or `$HOME`.
 - After control-plane edits, run `/control-plane-check` and `python3 .claude/scripts/rules_fidelity_check.py`.

@@ -207,6 +207,42 @@ class LedgerAppendOnlyTests(unittest.TestCase):
         self.assertEqual(decision_of(proc), "block")
 
 
+class GovernanceProtectedAreaTests(unittest.TestCase):
+    def test_github_governance_path_is_blocked(self):
+        proc = invoke({"tool_name": "Write", "tool_input": {"file_path": ".github/CODEOWNERS"}})
+        self.assertEqual(decision_of(proc), "block")
+
+    def test_security_policy_file_is_blocked(self):
+        proc = invoke({"tool_name": "Write", "tool_input": {"file_path": "SECURITY.md"}})
+        self.assertEqual(decision_of(proc), "block")
+
+    def test_control_plane_rule_is_blocked(self):
+        proc = invoke({"tool_name": "Write", "tool_input": {"file_path": ".claude/rules/control-plane.md"}})
+        self.assertEqual(decision_of(proc), "block")
+
+    def test_block_reason_requires_halt_not_workaround(self):
+        proc = invoke({"tool_name": "Write", "tool_input": {"file_path": ".github/CODEOWNERS"}})
+        self.assertIn("Halt immediately on this first protected-area block", proc.stderr)
+        self.assertIn("do not retry", proc.stderr)
+
+
+class ProtectedAreaGuidanceDocumentationTests(unittest.TestCase):
+    def test_authoritative_docs_include_halt_guidance_and_examples(self):
+        required = [
+            ROOT / "CLAUDE.md",
+            ROOT / ".claude" / "rules" / "control-plane.md",
+            ROOT / ".claude" / "rules" / "security.md",
+            ROOT / ".claude" / "commands" / "control-plane-check.md",
+        ]
+        for path in required:
+            text = path.read_text(encoding="utf-8")
+            self.assertIn("halt", text.lower(), msg=f"missing halt guidance in {path}")
+            self.assertIn("workaround", text.lower(), msg=f"missing workaround guidance in {path}")
+        control_plane = (ROOT / ".claude" / "rules" / "control-plane.md").read_text(encoding="utf-8")
+        for example in (".github/**", "SECURITY.md", ".claude/rules/control-plane.md"):
+            self.assertIn(example, control_plane)
+
+
 class HookFailureAndTimeoutTests(unittest.TestCase):
     def test_malformed_json_fails_open(self):
         node = cpc.resolve_node()
