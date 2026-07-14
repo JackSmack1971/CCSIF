@@ -2,7 +2,9 @@
 set -euo pipefail
 
 payload="$(cat)"
-script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+script_path="${BASH_SOURCE[0]//\\//}"
+script_dir="${script_path%/*}"
+script_dir="$(cd -- "${script_dir:-.}" && pwd)"
 phase2_script="$script_dir/../scripts/phase2_memory.py"
 
 printf '%s' "$payload" | python3 "$phase2_script" postcompact >/dev/null 2>&1 || true

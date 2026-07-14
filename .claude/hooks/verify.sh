@@ -6,5 +6,7 @@
 # (0 pass, 1 fail, 2 unavailable).
 set -euo pipefail
 
-script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+script_path="${BASH_SOURCE[0]//\\//}"
+script_dir="${script_path%/*}"
+script_dir="$(cd -- "${script_dir:-.}" && pwd)"
 exec python3 "$script_dir/../scripts/phase5b_verify.py" "$@"

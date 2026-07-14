@@ -2,7 +2,9 @@
 set -euo pipefail
 
 payload="$(cat)"
-script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+script_path="${BASH_SOURCE[0]//\\//}"
+script_dir="${script_path%/*}"
+script_dir="$(cd -- "${script_dir:-.}" && pwd)"
 phase0_script="$script_dir/../scripts/phase0_control_plane.py"
 phase2_script="$script_dir/../scripts/phase2_memory.py"
 

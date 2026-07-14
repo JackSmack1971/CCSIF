@@ -2,7 +2,10 @@
 set -uo pipefail
 
 if command -v python >/dev/null 2>&1; then
-  python "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/../memory/hindsight.py" recall
+  script_path="${BASH_SOURCE[0]//\\//}"
+  script_dir="${script_path%/*}"
+  script_dir="$(cd -- "${script_dir:-.}" && pwd)"
+  python "$script_dir/../memory/hindsight.py" recall
   exit $?
 fi
 
