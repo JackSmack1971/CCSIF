@@ -1,4 +1,10 @@
 {
-  "actions": [],
-  "schema_version": "1.0"
+  "schema_version": "1.0",
+  "generated_for": "issue-164-documentation-hardening",
+  "status": "no automated skill-audit fixes queued",
+  "notes": [
+    "skill-audit-report.md was refreshed to match the current skill directory inventory.",
+    "Run the dedicated skill-auditor tooling before adding scored remediation actions."
+  ],
+  "actions": []
 }

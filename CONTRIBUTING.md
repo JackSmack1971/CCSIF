@@ -18,13 +18,13 @@ Thanks for your interest in CCSIF, a repository-local Claude Code scaffold that 
 
 ## Before contributing
 
-- No `CODE_OF_CONDUCT` file, `LICENSE` file, or security policy file exists in this repository yet, so none of those processes are formalized. If your change should add one of these, open an issue first so the addition can be scoped and reviewed.
+- `LICENSE` and `SECURITY.md` are present. A `CODE_OF_CONDUCT.md` is not currently checked in, so conduct-process additions should be proposed in a scoped issue before implementation.
 - Read [the repository constitution](./CLAUDE.md) before making changes. It defines Protected Areas, tiered change rules, and the engineering rules every contribution must follow.
 - This repository has a root `package.json` for discoverable verification scripts and runtime metadata, not for third-party Node dependencies.
 
 ## Find or propose work
 
-- There are no issue forms or discussion channels checked into this repository. Open a GitHub issue on the repository to propose a change, report a problem, or ask a question before starting non-trivial work.
+- Use the checked-in GitHub issue forms for bug reports and feature requests under `.github/ISSUE_TEMPLATE/`. Open one issue before starting non-trivial work, and keep the implementation scoped to that issue.
 - The standard workflow is one issue per branch per pull request: [`implementation-agent`](./.claude/agents/implementation-agent.md) implements exactly one issue as an isolated branch and PR, and [`pr-reviewer`](./.claude/agents/pr-reviewer.md) reviews it for correctness, verification quality, and merge readiness.
 - The [`/create-pr`](./.claude/commands/create-pr.md), [`/review-pr`](./.claude/commands/review-pr.md), and [`/audit-upstream`](./.claude/commands/audit-upstream.md) slash commands document the corresponding Claude Code workflows if you are contributing through Claude Code itself.
 
@@ -122,7 +122,7 @@ Update the relevant docs (`README.md`, [the repository constitution](./CLAUDE.md
 ## Pull requests
 
 - Target `main`.
-- Reference the issue your change addresses.
+- Reference the issue your change addresses; use `Closes #<issue>` when the PR should close it automatically.
 - Follow the PR Expectations from [the repository constitution](./CLAUDE.md). Every PR should include:
   - Problem statement
   - Change summary

@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Documentation
+
+- Updated repository hardening documentation for issue #164: removed stale missing-security-policy and missing-roadmap claims, aligned issue/PR workflow guidance with checked-in GitHub templates, and refreshed the skill audit report against the current skill tree
+
 ### Added
 
 - Added the initial `.claude/` control-plane scaffold: agent, command, hook, output-style, rule, skill, and workflow definitions for repository-shared Claude Code behavior
@@ -32,4 +36,4 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Security
 
 - Removed an untracked rule file that loaded unconditionally on every turn and instructed autonomous self-modification of `.claude/`, relocating its reusable reference content to `.claude/docs` with the operational directives stripped
-- Declared an explicit empty MCP server allowlist in `.claude/settings.json` and added `.claude/memory/` and `.claude/projects/` to `.gitignore` as preventive hygiene, closing the two remaining findings from the architecture audit (5 findings down to 3, no high or critical at any point)
+- Declared explicit MCP server enablement in `.claude/settings.json` and added `.claude/memory/` and `.claude/projects/` to `.gitignore` as preventive hygiene, closing the two remaining findings from the architecture audit (5 findings down to 3, no high or critical at any point)
