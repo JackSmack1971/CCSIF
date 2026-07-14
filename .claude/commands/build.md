@@ -13,12 +13,13 @@ Gate 4 (Build). Execute exactly one approved atomic plan.
 3. Dispatch the `builder` agent (isolated worktree) per task, or execute directly for a single trivial task. Apply the `tdd` skill for any task with a test seam.
 4. For every task whose `commit_boundary` is true, commit that task's diff separately using the `git-commit` skill's conventional-commit discipline before moving to the next task.
 5. Run each task's declared verification target via `.claude/hooks/verify.sh run <target>` (or `.claude/hooks/verify.ps1` on Windows) before considering that task done.
-6. Mark the plan `built` and append a ledger entry with the builder's summary and the exported task record under `.claude/state/agents/`.
+6. If any verification command fails, stop to triage before retrying: classify the failure as `implementation bug`, `flaky/environmental issue`, `missing dependency`, `test defect`, or `unclear`, then record the concrete reason and next action. Use the verify adapter's `--triage-file <json>` retry path rather than rerunning blindly.
+7. Mark the plan `built` and append a ledger entry with the builder's summary and the exported task record under `.claude/state/agents/`.
 
 ## Required output
 
 - One commit per `commit_boundary: true` task
-- Per-task verification adapter output (exit code recorded)
+- Per-task verification adapter output (exit code recorded), plus triage classification/reason/next action for any failed command before retry
 - Ledger entry; builder summary exported under `.claude/state/agents/`
 
 ## Next gate
