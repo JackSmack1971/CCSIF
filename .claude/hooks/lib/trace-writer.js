@@ -61,6 +61,41 @@ function isEnvDumpCommand(cmd) {
   return false;
 }
 
+const OUTCOME_STATUSES = new Set(['success', 'failure', 'skipped', 'blocked', 'partial', 'malformed']);
+const FAILURE_STATUSES = new Set(['failure', 'blocked', 'malformed']);
+
+function normalizeStatus(value, fallback) {
+  const status = String(value || fallback || 'success').trim().toLowerCase().replace(/-/g, '_');
+  return OUTCOME_STATUSES.has(status) ? status : 'malformed';
+}
+
+function normalizeOutcomeFields(source, fallbackStatus, fallbackSource) {
+  const obj = source && typeof source === 'object' ? source : {};
+  const nested = obj.outcome && typeof obj.outcome === 'object' ? obj.outcome : {};
+  const status = normalizeStatus(nested.status || obj.status, fallbackStatus);
+  const recoverable =
+    typeof nested.recoverable === 'boolean'
+      ? nested.recoverable
+      : typeof obj.recoverable === 'boolean'
+      ? obj.recoverable
+      : status === 'skipped' || status === 'partial';
+  return {
+    status,
+    reason: safeText(nested.reason || obj.reason || obj.message || obj.details || null, 200),
+    error_code: safeText(nested.error_code || obj.error_code || obj.error_class || null, 120),
+    source: safeText(nested.source || obj.source || fallbackSource || null, 120),
+    recoverable,
+  };
+}
+
+function hasStructuredOutcome(source) {
+  return !!(
+    source &&
+    typeof source === 'object' &&
+    ((source.outcome && typeof source.outcome === 'object') || source.status || source.error_code || source.error_class)
+  );
+}
+
 function readStdinJson() {
   try {
     const raw = fs.readFileSync(0, 'utf8');
@@ -186,7 +221,10 @@ function findAnyToolFailure(lines, windowSize) {
             : Array.isArray(block.content)
             ? block.content.map((c) => (c && c.text) || '').join(' ')
             : '';
-        const failed = block.is_error === true || /error|exception|traceback/i.test(text);
+        const blockOutcome = normalizeOutcomeFields(block, block.is_error === true ? 'failure' : null, 'transcript');
+        const failed = hasStructuredOutcome(block)
+          ? FAILURE_STATUSES.has(blockOutcome.status)
+          : block.is_error === true || /error|exception|traceback/i.test(text);
         if (failed) {
           return { failed: true, component: findToolUseComponent(lines, i, block.tool_use_id) };
         }
@@ -221,6 +259,7 @@ function findToolUseComponent(lines, resultIndex, toolUseId) {
 // file that merely discusses errors (e.g. this skill's own reference docs).
 function classifyPostToolOutcome(toolResponse, toolName) {
   try {
+    if (hasStructuredOutcome(toolResponse)) return normalizeOutcomeFields(toolResponse, 'success', toolName || 'tool').status;
     if (toolResponse == null) return 'success';
     if (typeof toolResponse === 'string') {
       if (toolName !== 'Bash') return 'success';
@@ -291,8 +330,11 @@ function buildPostToolUseEntry(payload, facts) {
   const toolName = payload.tool_name || null;
   const toolInput = payload.tool_input || {};
   const toolResponse = payload.tool_response;
-  const outcome = classifyPostToolOutcome(toolResponse, toolName);
-  const errorClass = outcome === 'failure' ? 'tool_failure' : null;
+  const structuredOutcome = hasStructuredOutcome(toolResponse)
+    ? normalizeOutcomeFields(toolResponse, 'success', toolName || 'tool')
+    : normalizeOutcomeFields({ status: classifyPostToolOutcome(toolResponse, toolName), source: 'legacy-heuristic' }, 'success', toolName || 'tool');
+  const outcome = structuredOutcome.status;
+  const errorClass = FAILURE_STATUSES.has(outcome) ? structuredOutcome.error_code || 'tool_failure' : null;
   const component = deriveComponent(toolInput, cwd);
 
   let notes;
@@ -317,6 +359,12 @@ function buildPostToolUseEntry(payload, facts) {
     skill: facts.skill || null,
     outcome,
     error_class: errorClass,
+    outcome_fields: structuredOutcome,
+    status: structuredOutcome.status,
+    reason: structuredOutcome.reason,
+    error_code: structuredOutcome.error_code,
+    source: structuredOutcome.source,
+    recoverable: structuredOutcome.recoverable,
     component: component ? safeText(component, 200) : null,
     notes: safeText(notes, 400) || 'PostToolUse event',
   };
@@ -329,6 +377,12 @@ function buildStopEntry(payload, facts) {
     skill: facts.skill || null,
     outcome: facts.outcome,
     error_class: facts.errorClass,
+    outcome_fields: facts.outcomeFields || normalizeOutcomeFields({ status: facts.outcome, source: 'stop' }, facts.outcome, 'stop'),
+    status: facts.outcome,
+    reason: facts.reason || null,
+    error_code: facts.errorClass,
+    source: 'stop',
+    recoverable: facts.outcome !== 'success',
     component: facts.component ? safeText(facts.component, 200) : null,
     notes: safeText(facts.notes, 400) || 'Stop event summary',
   };

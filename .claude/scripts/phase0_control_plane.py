@@ -177,6 +177,54 @@ def scan_history(paths: list[str] | None = None, cwd: Path | None = None) -> lis
     return findings
 
 
+OUTCOME_STATUSES = {
+    "success",
+    "failure",
+    "skipped",
+    "blocked",
+    "partial",
+    "malformed",
+    "pending",
+    "retry",
+    "recovered",
+}
+FAILURE_STATUSES = {"failure", "blocked", "malformed"}
+
+
+def normalize_outcome_fields(payload: dict[str, Any], *, default_status: str = "success", source: str = "phase0") -> dict[str, Any]:
+    """Return canonical machine-readable outcome fields.
+
+    Prefer structured outcome/status fields supplied by hooks and tools; only
+    callers that need legacy compatibility should choose a default. Free-text
+    messages are preserved as reason/details but are not parsed for status.
+    """
+    candidate = payload.get("outcome") if isinstance(payload.get("outcome"), dict) else {}
+    raw_status = candidate.get("status") or payload.get("status") or default_status
+    status = str(raw_status or default_status).strip().lower().replace("-", "_")
+    if status not in OUTCOME_STATUSES:
+        status = "malformed"
+    raw_recoverable = candidate.get("recoverable", payload.get("recoverable"))
+    recoverable = (
+        raw_recoverable
+        if isinstance(raw_recoverable, bool)
+        else status in {"skipped", "partial", "retry", "recovered"}
+    )
+    reason = candidate.get("reason", payload.get("reason") or payload.get("message") or payload.get("details"))
+    return {
+        "status": status,
+        "reason": redact_value(reason),
+        "error_code": redact_value(
+            candidate.get("error_code", payload.get("error_code") or payload.get("error_class"))
+        ),
+        "source": redact_value(candidate.get("source", payload.get("source") or source)),
+        "recoverable": recoverable,
+    }
+
+
+def status_from_outcome(outcome: dict[str, Any]) -> str:
+    return str(outcome.get("status") or "malformed")
+
+
 class Phase0Error(RuntimeError):
     pass
 
@@ -1016,7 +1064,8 @@ class Phase0ControlPlane:
         if not session_id:
             raise Phase0Error("tool result is missing session_id")
         session = self.load_session(session_id)
-        status = str(payload.get("status") or "success")
+        outcome = normalize_outcome_fields(payload, default_status="success", source="tool")
+        status = status_from_outcome(outcome)
         tool_call_id = str(payload.get("tool_use_id") or session.pending_tool_call_id or "")
 
         if session.step_state != STEP_TOOL_PENDING:
@@ -1059,6 +1108,8 @@ class Phase0ControlPlane:
         session.pending_tool_call_id = None
         if status == "success":
             session.step_state = STEP_TOOL_COMPLETED
+        elif status == "skipped":
+            session.step_state = STEP_TOOL_COMPLETED
         else:
             session.step_state = STEP_TOOL_FAILED
             session.status = "failed" if payload.get("terminal") else session.status
@@ -1069,13 +1120,15 @@ class Phase0ControlPlane:
         tool_result = payload.get("tool_result")
         if tool_result is None and "tool_response" in payload:
             tool_result = payload.get("tool_response")
+        outcome = normalize_outcome_fields(payload, default_status="success", source="tool")
         return {
             "session_id": session.session_id,
             "turn_index": session.current_turn_index,
             "step_index": session.current_step_index,
             "tool_call_id": session.pending_tool_call_id,
             "tool_name": payload.get("tool_name"),
-            "status": payload.get("status") or "success",
+            "status": outcome["status"],
+            "outcome": outcome,
             "duration_ms": payload.get("duration_ms"),
             "result": redact_value(tool_result),
             "error": redact_value(payload.get("error")),
@@ -1109,7 +1162,14 @@ class Phase0ControlPlane:
             step_index=session.verified_step_index if passed else session.current_step_index,
             tool_call_id=None,
             status="success" if passed else "failure",
-            payload={"passed": passed, "details": details},
+            payload={
+                "passed": passed,
+                "details": details,
+                "outcome": normalize_outcome_fields(
+                    {"status": "success" if passed else "failure", "reason": details, "source": "verification"},
+                    source="verification",
+                ),
+            },
         )
 
     def compact(self, session_id: str, *, reason: str | None = None) -> dict[str, Any]:
