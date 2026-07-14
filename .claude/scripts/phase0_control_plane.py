@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+import fcntl
 import json
 import os
 import re
@@ -211,6 +212,90 @@ class TransientToolError(Phase0Error):
     pass
 
 
+def _lock_path_for(path: Path) -> Path:
+    return path.with_name(f".{path.name}.lock")
+
+
+@contextmanager
+def file_lock(path: Path):
+    """Advisory per-file lock for durable state writers (issue #153)."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    lock_path = _lock_path_for(path)
+    with lock_path.open("a+", encoding="utf-8") as lock_fh:
+        fcntl.flock(lock_fh.fileno(), fcntl.LOCK_EX)
+        try:
+            yield
+        finally:
+            fcntl.flock(lock_fh.fileno(), fcntl.LOCK_UN)
+
+
+def atomic_write_text(path: Path, text: str, *, encoding: str = "utf-8") -> None:
+    """Write text via temp-file + fsync + os.replace under a per-file lock."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with file_lock(path):
+        tmp = path.with_name(f".{path.name}.{os.getpid()}.{uuid.uuid4().hex}.tmp")
+        try:
+            with tmp.open("w", encoding=encoding, newline="") as fh:
+                fh.write(text)
+                fh.flush()
+                os.fsync(fh.fileno())
+            os.replace(tmp, path)
+            try:
+                dir_fd = os.open(str(path.parent), os.O_DIRECTORY)
+                try:
+                    os.fsync(dir_fd)
+                finally:
+                    os.close(dir_fd)
+            except OSError:
+                pass
+        finally:
+            try:
+                tmp.unlink()
+            except FileNotFoundError:
+                pass
+    _secure_chmod(path)
+
+
+def update_json_file_locked(path: Path, updater: Callable[[dict[str, Any] | None], dict[str, Any]]) -> dict[str, Any]:
+    """Lock, read a JSON object if present, and atomically replace it."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with file_lock(path):
+        current = json.loads(path.read_text(encoding="utf-8")) if path.exists() else None
+        updated = updater(current)
+        tmp = path.with_name(f".{path.name}.{os.getpid()}.{uuid.uuid4().hex}.tmp")
+        try:
+            with tmp.open("w", encoding="utf-8", newline="") as fh:
+                fh.write(stable_json(updated) + "\n")
+                fh.flush()
+                os.fsync(fh.fileno())
+            os.replace(tmp, path)
+            try:
+                dir_fd = os.open(str(path.parent), os.O_DIRECTORY)
+                try:
+                    os.fsync(dir_fd)
+                finally:
+                    os.close(dir_fd)
+            except OSError:
+                pass
+        finally:
+            try:
+                tmp.unlink()
+            except FileNotFoundError:
+                pass
+    _secure_chmod(path)
+    return updated
+
+
+def append_text_locked(path: Path, text: str, *, encoding: str = "utf-8") -> None:
+    """Append one record while holding a per-file lock, then fsync."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with file_lock(path):
+        with path.open("a", encoding=encoding, newline="") as fh:
+            fh.write(text)
+            fh.flush()
+            os.fsync(fh.fileno())
+    _secure_chmod(path)
+
 def now() -> str:
     return datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
 
@@ -344,8 +429,10 @@ class Phase0ControlPlane:
 
     @contextmanager
     def _db(self) -> sqlite3.Connection:
-        conn = sqlite3.connect(self.db_path)
+        conn = sqlite3.connect(self.db_path, timeout=30)
         conn.row_factory = sqlite3.Row
+        conn.execute("pragma journal_mode=WAL")
+        conn.execute("pragma busy_timeout=30000")
         try:
             yield conn
             conn.commit()
@@ -477,16 +564,12 @@ class Phase0ControlPlane:
         path = self._raw_export_path(session_id)
         path.parent.mkdir(parents=True, exist_ok=True)
         _rotate_if_oversized(path)
-        with path.open("a", encoding="utf-8") as fh:
-            fh.write(stable_json(payload) + "\n")
-        _secure_chmod(path)
+        append_text_locked(path, stable_json(payload) + "\n")
 
     def _write_structured_event(self, session_id: str, event: EventRecord) -> None:
         path = self._log_path(session_id)
         _rotate_if_oversized(path)
-        with path.open("a", encoding="utf-8") as fh:
-            fh.write(stable_json(asdict(event)) + "\n")
-        _secure_chmod(path)
+        append_text_locked(path, stable_json(asdict(event)) + "\n")
         with self._db() as conn:
             conn.execute(
                 """
@@ -598,8 +681,7 @@ class Phase0ControlPlane:
             "recorded_at": now(),
             "session": session_snapshot,
         }
-        path.write_text(stable_json(payload) + "\n", encoding="utf-8")
-        _secure_chmod(path)
+        atomic_write_text(path, stable_json(payload) + "\n")
         return path
 
     def recover_stale_step(self, session_id: str, *, reason: str | None = None) -> SessionRecord:
@@ -1068,7 +1150,7 @@ class Phase0ControlPlane:
             "session": asdict(session),
         }
         checkpoint_path = self._checkpoint_path(session.session_id, session.verified_turn_index, session.verified_step_index)
-        checkpoint_path.write_text(stable_json(checkpoint) + "\n", encoding="utf-8")
+        atomic_write_text(checkpoint_path, stable_json(checkpoint) + "\n")
         with self._db() as conn:
             conn.execute(
                 """

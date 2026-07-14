@@ -339,7 +339,29 @@ function writeEntry(cwd, entry) {
   fs.mkdirSync(dir, { recursive: true });
   const dateStr = new Date().toISOString().slice(0, 10);
   const filePath = path.join(dir, `${dateStr}.jsonl`);
-  fs.appendFileSync(filePath, JSON.stringify(entry) + '\n');
+  const lockPath = path.join(dir, `.${dateStr}.jsonl.lock`);
+  let lockFd;
+  const deadline = Date.now() + 30000;
+  while (lockFd === undefined) {
+    try {
+      lockFd = fs.openSync(lockPath, 'wx');
+    } catch (err) {
+      if (!err || err.code !== 'EEXIST' || Date.now() > deadline) throw err;
+      Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 25);
+    }
+  }
+  try {
+    const fd = fs.openSync(filePath, 'a');
+    try {
+      fs.writeSync(fd, JSON.stringify(entry) + '\n');
+      fs.fsyncSync(fd);
+    } finally {
+      fs.closeSync(fd);
+    }
+  } finally {
+    fs.closeSync(lockFd);
+    fs.unlinkSync(lockPath);
+  }
 }
 
 function main() {

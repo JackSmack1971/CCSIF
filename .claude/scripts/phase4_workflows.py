@@ -44,6 +44,7 @@ from phase0_control_plane import (  # noqa: E402
     read_stdin_json,
     stable_json,
     state_root,
+    atomic_write_text,
     workspace_root,
 )
 
@@ -140,7 +141,7 @@ def _load_run(root: Path | None, run_id: str) -> dict[str, Any]:
 def _save_run(root: Path | None, record: dict[str, Any]) -> Path:
     record["updated_at"] = now()
     path = _run_path(root, record["run_id"])
-    path.write_text(stable_json(record) + "\n", encoding="utf-8")
+    atomic_write_text(path, stable_json(record) + "\n")
     return path
 
 
