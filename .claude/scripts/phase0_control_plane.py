@@ -23,6 +23,8 @@ DEFAULT_WORKSPACE_ROOT = ROOT
 
 RAW_EXPORT_NAME = "raw-events.jsonl"
 DB_NAME = "phase0.sqlite3"
+HOOK_PAYLOAD_COUNTERS_NAME = "hook-payload-counters.json"
+MALFORMED_HOOK_PAYLOAD_THRESHOLD = 3
 
 MAX_RETRIES = 2
 
@@ -260,6 +262,10 @@ class TransientToolError(Phase0Error):
     pass
 
 
+class HookPayloadBug(Phase0Error):
+    pass
+
+
 def _lock_path_for(path: Path) -> Path:
     return path.with_name(f".{path.name}.lock")
 
@@ -355,6 +361,55 @@ def monotonic_ms(start: float) -> int:
 def stable_json(value: Any) -> str:
     return json.dumps(value, ensure_ascii=True, sort_keys=True, separators=(",", ":"))
 
+
+
+def _json_shape(value: Any) -> str:
+    if isinstance(value, dict):
+        keys = sorted(str(key) for key in value.keys())
+        if not keys:
+            return "object:empty"
+        return "object:" + ",".join(keys[:12]) + (",…" if len(keys) > 12 else "")
+    if isinstance(value, list):
+        return "array"
+    return type(value).__name__
+
+
+def classify_hook_payload(raw: str, *, expected_hook: str | None = None) -> tuple[bool, dict[str, Any]]:
+    if not raw.strip():
+        return False, {"reason": "empty stdin", "shape": "empty", "session_id": "unknown", "hook_event_name": expected_hook or "unknown"}
+    try:
+        payload = json.loads(raw)
+    except Exception as exc:  # noqa: BLE001 - shape evidence, not control flow detail
+        return False, {
+            "reason": f"invalid JSON: {exc.__class__.__name__}",
+            "shape": "invalid-json",
+            "session_id": "unknown",
+            "hook_event_name": expected_hook or "unknown",
+        }
+    if not isinstance(payload, dict):
+        return False, {
+            "reason": "stdin JSON must be an object",
+            "shape": _json_shape(payload),
+            "session_id": "unknown",
+            "hook_event_name": expected_hook or "unknown",
+        }
+    hook_event_name = str(payload.get("hook_event_name") or expected_hook or "unknown")
+    session_id = str(payload.get("session_id") or payload.get("sessionId") or "unknown")
+    if not payload.get("hook_event_name"):
+        return False, {
+            "reason": "missing hook_event_name",
+            "shape": _json_shape(payload),
+            "session_id": session_id,
+            "hook_event_name": hook_event_name,
+        }
+    if expected_hook and hook_event_name != expected_hook:
+        return False, {
+            "reason": f"hook_event_name mismatch: expected {expected_hook}, got {hook_event_name}",
+            "shape": _json_shape(payload),
+            "session_id": session_id,
+            "hook_event_name": hook_event_name,
+        }
+    return True, {"shape": _json_shape(payload), "session_id": session_id, "hook_event_name": hook_event_name}
 
 def read_stdin_json() -> dict[str, Any]:
     raw = sys.stdin.read()
@@ -1308,6 +1363,67 @@ class Phase0ControlPlane:
                         pass
         return removed
 
+    def hook_payload_counters_path(self) -> Path:
+        return self.root / HOOK_PAYLOAD_COUNTERS_NAME
+
+    def record_hook_payload(self, raw: str, *, expected_hook: str | None = None) -> dict[str, Any]:
+        valid, details = classify_hook_payload(raw, expected_hook=expected_hook)
+        hook_name = str(expected_hook or details.get("hook_event_name") or "unknown")
+        session_id = str(details.get("session_id") or "unknown")
+        shape = str(details.get("shape") or "unknown")
+        key = f"hook={hook_name}|shape={shape}|session={session_id}"
+        path = self.hook_payload_counters_path()
+
+        def updater(current: dict[str, Any] | None) -> dict[str, Any]:
+            state = current if isinstance(current, dict) else {}
+            counters = state.get("counters") if isinstance(state.get("counters"), dict) else {}
+            streaks = state.get("streaks") if isinstance(state.get("streaks"), dict) else {}
+            streak_key = f"hook={hook_name}|session={session_id}"
+            streak = streaks.get(streak_key) if isinstance(streaks.get(streak_key), dict) else {}
+            entry = counters.get(key) if isinstance(counters.get(key), dict) else {}
+            entry.update({
+                "hook_name": hook_name,
+                "payload_shape": shape,
+                "session_id": session_id,
+                "updated_at": now(),
+            })
+            if valid:
+                entry["valid"] = int(entry.get("valid") or 0) + 1
+                streak.update({"consecutive_malformed": 0, "last_outcome": "recovered", "updated_at": now()})
+                entry["consecutive_malformed"] = 0
+                entry["last_outcome"] = "recovered" if int(entry.get("malformed") or 0) else "valid"
+                entry.pop("last_reason", None)
+            else:
+                entry["malformed"] = int(entry.get("malformed") or 0) + 1
+                consecutive = int(streak.get("consecutive_malformed") or 0) + 1
+                streak.update({
+                    "hook_name": hook_name,
+                    "session_id": session_id,
+                    "consecutive_malformed": consecutive,
+                    "last_payload_shape": shape,
+                    "last_reason": details.get("reason"),
+                    "last_outcome": "hook-bug" if consecutive >= MALFORMED_HOOK_PAYLOAD_THRESHOLD else "malformed",
+                    "updated_at": now(),
+                })
+                entry["consecutive_malformed"] = consecutive
+                entry["last_outcome"] = streak["last_outcome"]
+                entry["last_reason"] = details.get("reason")
+            counters[key] = entry
+            streaks[streak_key] = streak
+            state["counters"] = counters
+            state["streaks"] = streaks
+            state["threshold"] = MALFORMED_HOOK_PAYLOAD_THRESHOLD
+            state["updated_at"] = now()
+            return state
+
+        state = update_json_file_locked(path, updater)
+        entry = state["counters"][key]
+        outcome = str(entry.get("last_outcome"))
+        result = {"ok": valid, "outcome": outcome, "counter_key": key, "counter": entry}
+        if outcome == "hook-bug":
+            raise HookPayloadBug(stable_json(result))
+        return result
+
     def execute_tool(
         self,
         payload: dict[str, Any],
@@ -1522,6 +1638,14 @@ def command_prune(args: argparse.Namespace) -> int:
     return 0
 
 
+
+def command_hook_payload(args: argparse.Namespace) -> int:
+    raw = sys.stdin.read()
+    control = Phase0ControlPlane()
+    result = control.record_hook_payload(raw, expected_hook=args.hook_name)
+    print(stable_json(result))
+    return 0
+
 def command_secret_scan(args: argparse.Namespace) -> int:
     if args.staged:
         findings = scan_staged_diff()
@@ -1643,6 +1767,10 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--retention-days", type=int, default=DEFAULT_RETENTION_DAYS)
     p.set_defaults(func=command_prune)
 
+    p = sub.add_parser("hook-payload")
+    p.add_argument("--hook-name")
+    p.set_defaults(func=command_hook_payload)
+
     p = sub.add_parser("secret-scan")
     p.add_argument("--staged", action="store_true")
     p.add_argument("--paths", nargs="*")
@@ -1665,6 +1793,9 @@ def main(argv: list[str] | None = None) -> int:
     except TerminalToolFailure as exc:
         print(str(exc), file=sys.stderr)
         return 1
+    except HookPayloadBug as exc:
+        print(f"Hook payload bug: {exc}", file=sys.stderr)
+        return 2
     except Phase0Error as exc:
         print(f"Phase0 error: {exc}", file=sys.stderr)
         return 1
