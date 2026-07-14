@@ -524,6 +524,59 @@ class Phase0StepStateTests(unittest.TestCase):
         self._result(session.session_id, "tool-3", status="failure", terminal=True)
         self.assertEqual(self.control.load_session(session.session_id).status, "failed")
 
+
+    def test_tool_result_prefers_structured_outcome_over_error_words(self) -> None:
+        session = self.control.start(notes="structured-success")
+        self._request(session.session_id, "tool-structured-ok")
+        self.control.result_tool(
+            {
+                "session_id": session.session_id,
+                "tool_use_id": "tool-structured-ok",
+                "tool_name": "Bash",
+                "outcome": {
+                    "status": "success",
+                    "reason": "command output mentions error as data",
+                    "source": "hook",
+                    "recoverable": False,
+                },
+                "tool_result": "this text contains error and traceback but is successful",
+            }
+        )
+        event = [e for e in self.control.replay(session.session_id) if e["event_type"] == "tool.result"][0]
+        self.assertEqual(event["status"], "success")
+        self.assertEqual(event["payload"]["outcome"]["source"], "hook")
+        self.assertEqual(self.control.load_session(session.session_id).step_state, phase0.STEP_TOOL_COMPLETED)
+
+    def test_tool_result_classifies_failed_skipped_blocked_and_malformed_from_structured_fields(self) -> None:
+        cases = [
+            ("failure", phase0.STEP_TOOL_FAILED),
+            ("skipped", phase0.STEP_TOOL_COMPLETED),
+            ("blocked", phase0.STEP_TOOL_FAILED),
+            ("not-a-status", phase0.STEP_TOOL_FAILED),
+        ]
+        session = self.control.start(notes="structured-statuses")
+        for index, (status, expected_step_state) in enumerate(cases, start=1):
+            tool_id = f"tool-status-{index}"
+            self._request(session.session_id, tool_id)
+            event = self.control.result_tool(
+                {
+                    "session_id": session.session_id,
+                    "tool_use_id": tool_id,
+                    "tool_name": "Write",
+                    "outcome": {
+                        "status": status,
+                        "reason": f"structured {status}",
+                        "error_code": "E_STRUCTURED" if status != "skipped" else None,
+                        "source": "regression-test",
+                        "recoverable": status == "skipped",
+                    },
+                    "tool_result": {"message": "human text is ignored for classification"},
+                }
+            )
+            expected_status = status if status in phase0.OUTCOME_STATUSES else "malformed"
+            self.assertEqual(event.status, expected_status)
+            self.assertEqual(self.control.load_session(session.session_id).step_state, expected_step_state)
+
     def test_duplicate_result_delivery_is_idempotent_replay(self) -> None:
         session = self.control.start(notes="duplicate-result")
         self._request(session.session_id, "tool-1")
