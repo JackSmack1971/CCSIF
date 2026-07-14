@@ -71,7 +71,8 @@ Read one matching existing file in a path-scoped area before creating a new file
 
 ## Protected Areas
 
-- Production configuration, secrets and credentials, database migrations, authentication and authorization, payment or trading logic, and CI/CD deployment workflows
+- Production configuration, secrets and credentials, database migrations, authentication and authorization, payment or trading logic, CI/CD deployment workflows, `.github/**` governance files, security policy files such as `SECURITY.md`, and control-plane rules under `.claude/rules/**`
+- If a protected-area permission or hook blocks an edit, halt on that first block. Do not retry with another tool, shell command, path spelling, temporary copy, or workaround; report the blocked path/category and wait for explicit human direction.
 
 ## PR Expectations
 

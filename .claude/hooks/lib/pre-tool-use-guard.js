@@ -54,9 +54,24 @@ const PROTECTED_AREAS = [
     re: /(^|[\\/])(\.env(\..+)?|[^\\/]*\.pem|[^\\/]*\.key|[^\\/]*credentials[^\\/]*|[^\\/]*service-account[^\\/]*)$/i,
   },
   {
+    label: 'GitHub governance path',
+    severity: 'block',
+    re: /(^|[\\/])\.github[\\/]/i,
+  },
+  {
+    label: 'security policy file',
+    severity: 'block',
+    re: /(^|[\\/])SECURITY\.md$/i,
+  },
+  {
+    label: 'control-plane rule',
+    severity: 'block',
+    re: /(^|[\\/])\.claude[\\/]rules[\\/]/i,
+  },
+  {
     label: 'CI/CD deployment workflow',
     severity: 'block',
-    re: /(^|[\\/])\.github[\\/]workflows[\\/]|(^|[\\/])\.gitlab-ci\.ya?ml$|(^|[\\/])Jenkinsfile$|(^|[\\/])azure-pipelines\.ya?ml$|(^|[\\/])\.circleci[\\/]/i,
+    re: /(^|[\\/])\.gitlab-ci\.ya?ml$|(^|[\\/])Jenkinsfile$|(^|[\\/])azure-pipelines\.ya?ml$|(^|[\\/])\.circleci[\\/]/i,
   },
   {
     label: 'database migration',
@@ -400,7 +415,7 @@ function main() {
     process.exit(0);
   }
 
-  const reason = `Blocked: this ${toolName} call targets ${hit.label}. Per the repository constitution, this requires explicit human approval before apply.`;
+  const reason = `Blocked: this ${toolName} call targets ${hit.label}. Halt immediately on this first protected-area block; do not retry with another tool, path spelling, shell redirection, or workaround. Per the repository constitution, this requires explicit human approval before apply.`;
   logEvent({
     ts: new Date().toISOString(),
     correlation_id: correlationId,

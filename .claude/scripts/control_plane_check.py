@@ -78,6 +78,9 @@ REQUIRED_PATHS = [
 PROTECTED_PROBES = [
     {"tool_name": "Write", "tool_input": {"file_path": ".env"}},
     {"tool_name": "Write", "tool_input": {"file_path": ".github/workflows/release.yml"}},
+    {"tool_name": "Write", "tool_input": {"file_path": ".github/CODEOWNERS"}},
+    {"tool_name": "Write", "tool_input": {"file_path": "SECURITY.md"}},
+    {"tool_name": "Write", "tool_input": {"file_path": ".claude/rules/control-plane.md"}},
     {"tool_name": "Write", "tool_input": {"file_path": "migrations/001_init.sql"}},
     {"tool_name": "Bash", "tool_input": {"command": "cat x >> .env"}},
     {"tool_name": "Bash", "tool_input": {"command": "cat x >> .github/workflows/release.yml"}},

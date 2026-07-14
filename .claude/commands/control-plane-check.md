@@ -14,6 +14,7 @@ python3 .claude/scripts/control_plane_check.py
 - Shared settings parse as JSON.
 - Required governance paths are not hidden by `.gitignore`.
 - Hook shell scripts parse with `bash -n`.
-- The PreToolUse guard blocks synthetic writes to the constitution, settings, hooks, and self-improvement ledgers.
+- The PreToolUse guard blocks synthetic writes to protected governance paths and self-improvement ledgers, including `.github/**`, `SECURITY.md`, and `.claude/rules/**` examples.
+- Protected-area guidance requires the agent to halt on the first block instead of attempting repeated edits or workarounds.
 
 If the command fails, fix the reported control-plane defect before making release-readiness claims.
