@@ -143,9 +143,11 @@ This repository is best treated as a command center for Claude Code work, not as
 | Key or file | Required | Default | Source | Description |
 |---|---:|---|---|---|
 | `CLAUDE.md` constitution block | Yes | N/A | [`CLAUDE.md`](./CLAUDE.md) | Repo-wide operating rules and protected areas. |
-| `permissions.mode` | Yes | `ask` | [`.claude/settings.json`](./.claude/settings.json) | Default permission posture for project actions. |
+| `permissions.defaultMode` | Yes | `default` | [`.claude/settings.json`](./.claude/settings.json) | Default permission posture for project actions (`default` is the documented config value for Manual mode, labeled "Manual" in the CLI/IDE; the file previously used an undocumented `permissions.mode` key, which is not a recognized Claude Code setting). |
+| `permissions.disableBypassPermissionsMode` | Yes | `disable` | [`.claude/settings.json`](./.claude/settings.json) | Blocks `--dangerously-skip-permissions`/`bypassPermissions` mode for this repository from any scope. |
 | `permissions.allow` | Yes | Allowlist entries in file | [`.claude/settings.json`](./.claude/settings.json) | Permitted shell commands include `git status`, `git diff`, `git log`, and the repo's control-plane verifier. |
-| `permissions.deny` | Yes | Denylist entries in file | [`.claude/settings.json`](./.claude/settings.json) | Blocks high-risk commands such as `git push --force`, `git reset --hard`, and `rm -rf`. |
+| `permissions.ask` | Yes | Ask entries in file | [`.claude/settings.json`](./.claude/settings.json) | Requires confirmation for lockfile mass-edit paths (`package-lock.json`, `yarn.lock`, etc.). |
+| `permissions.deny` | Yes | Denylist entries in file | [`.claude/settings.json`](./.claude/settings.json) | Blocks high-risk commands (`git push --force`, `git reset --hard`, `rm -rf`, `terraform destroy`, `kubectl delete`) and native `Read`/`Edit`/`Write` access to secrets/credentials, CI/CD workflows, database migrations, and the append-only ledger. |
 | `hooks.SessionStart` | Yes | `bash .claude/hooks/session-start.sh` | [`.claude/settings.json`](./.claude/settings.json) | Prints session start status and repo state. |
 | `hooks.PreToolUse` | Yes | `bash .claude/hooks/pre-tool-use.sh` | [`.claude/settings.json`](./.claude/settings.json) | Protected-area guard for pre-tool checks. |
 | `hooks.PostToolUse` | Yes | `bash .claude/hooks/post-tool-use.sh` | [`.claude/settings.json`](./.claude/settings.json) | Writes trace telemetry after tool use. |

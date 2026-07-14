@@ -158,6 +158,47 @@ def check_json() -> None:
         fail(f".claude/settings.json is not valid JSON: {exc}")
 
 
+# Vendored, pinned key set for `permissions.*` in project-scope
+# `.claude/settings.json`, hand-derived from the packaged docs snapshot at
+# `.claude/docs/claude-code-docs-2026-07-12-00-15-46/docs/
+# code-claude-com-docs-en-settings-545f9c5a.md` (the "Available settings"
+# table, lines ~396-405) rather than a live fetch of the external
+# `$schema` URL, since that schema "may not include settings added in the
+# most recent CLI releases" per the same doc. Update this set only after
+# re-deriving it from a refreshed docs snapshot; do not silently widen it
+# to make a new key pass.
+PERMISSIONS_ALLOWED_KEYS = {
+    "allow",
+    "ask",
+    "deny",
+    "additionalDirectories",
+    "defaultMode",
+    "disableBypassPermissionsMode",
+    "skipDangerousModePermissionPrompt",
+}
+
+
+def check_settings_permissions_schema() -> None:
+    """Deterministic, offline check that `.claude/settings.json`'s
+    `permissions` block contains no key outside the documented/vendored
+    key set (Hardening 02/13, #150 finding 1: an unrecognized key such as
+    the previous `permissions.mode` silently no-ops instead of raising a
+    visible error, so this must be caught structurally, not by hoping
+    JSON parses)."""
+    data = json.loads((ROOT / ".claude/settings.json").read_text(encoding="utf-8"))
+    permissions = data.get("permissions")
+    if permissions is None:
+        return
+    if not isinstance(permissions, dict):
+        fail("`.claude/settings.json`'s `permissions` key must be an object")
+    unknown = sorted(set(permissions) - PERMISSIONS_ALLOWED_KEYS)
+    if unknown:
+        fail(
+            "`.claude/settings.json` `permissions` block has unrecognized key(s) "
+            f"not in the documented settings schema: {', '.join(unknown)}"
+        )
+
+
 def check_git_visibility() -> None:
     proc = run(["git", "check-ignore", *REQUIRED_PATHS])
     if proc.stdout.strip():
@@ -265,6 +306,7 @@ def check_verify_adapter() -> None:
 def main() -> int:
     check_required_paths()
     check_json()
+    check_settings_permissions_schema()
     check_git_visibility()
     check_state_privacy_ignore()
     check_shell_parse()

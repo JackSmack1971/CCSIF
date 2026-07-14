@@ -22,22 +22,15 @@ migrates down (toward a lower rung number = stronger guarantee).
 | 2 | Skills | Loaded when invoked or matched | `.claude/skills/*` (61 skills) |
 | 3 | Prompt/agent-based hooks | Model-evaluated at fixed lifecycle points | `.claude/hooks/stop.sh`'s `control_plane_check.py`/`rules_fidelity_check.py` calls (deterministic scripts, model-evaluated trigger point) |
 | 4 | Command hooks (PreToolUse/PostToolUse/Stop/PermissionRequest) | Deterministic shell execution, can block or ask | `.claude/hooks/lib/pre-tool-use-guard.js` (git guardrails, path traversal, lockfile/ledger categories); `.claude/hooks/post-tool-use.sh` (lint-on-edit); `.claude/hooks/stop.sh` (bounded verification gate) |
-| 5 | Permission rules + sandbox settings | Enforced by the client regardless of model behavior | `.claude/settings.json` `permissions.deny` (unconditional: `push --force`, `reset --hard`, `rm -rf`, `terraform destroy`, `kubectl delete`) |
+| 5 | Permission rules + sandbox settings | Enforced by the client regardless of model behavior | `.claude/settings.json` `permissions.deny` (`push --force`, `reset --hard`, `rm -rf`, `terraform destroy`, `kubectl delete`, plus `Read`/`Edit`/`Write` globs for secrets, CI/CD, migrations, ledger — see below) |
+
+## Rung 5 native coverage added in Hardening 02/13 (#150)
+
+`permissions.deny`/`ask` now carry native `Read`/`Edit`/`Write` path-glob rules for `PROTECTED_AREAS`'s `block`-severity secrets/credentials, CI/CD workflows, database migrations, and ledger categories, plus `ask` for the lockfile category (see `security.md` for the exact globs) — these are now **primary** for those categories, since the client evaluates them before any hook runs. `pre-tool-use-guard.js` (rung 4) is **not removed or weakened**; it stays defense in depth there and remains the *sole* enforcement for categories native path-globs cannot express (auth/authz, payment/trading, production-config regex patterns) and for every `Bash`-string git-guardrail bypass variant below — rung 4's role for the four categories rung 5 now covers is downgraded from implied-primary to confirmed-secondary.
 
 ## Rung 4 vs rung 5 for git guardrails
 
-Rung 5 (`permissions.deny`) hard-blocks the literal command-prefix
-spellings above with no override — appropriate for the handful of
-catastrophic, unambiguous patterns. Rung 4
-(`pre-tool-use-guard.js`'s `GIT_DESTRUCTIVE_RULES`) catches the bypass
-variants a string-prefix deny rule misses (`-f` shorthand,
-`--force-with-lease`, `git clean -fdx`, `git branch -D`,
-`git filter-branch`/`filter-repo`, remote ref/tag deletion, `git rebase`,
-`git stash drop/clear`, `git reflog expire`) and returns
-`permissionDecision: "ask"` — Claude Code's own native interactive
-approval prompt to the real user. Rung 4 never invents its own bypass
-token or approval channel; the human-approval path *is* the native
-`ask` decision, surfaced to whoever is driving the session.
+Rung 5 (`permissions.deny`) hard-blocks the literal command-prefix spellings above with no override — appropriate for the handful of catastrophic, unambiguous patterns. Rung 4 (`pre-tool-use-guard.js`'s `GIT_DESTRUCTIVE_RULES`) catches the bypass variants a string-prefix deny rule misses (`-f` shorthand, `--force-with-lease`, `git clean -fdx`, `git branch -D`, `git filter-branch`/`filter-repo`, remote ref/tag deletion, `git rebase`, `git stash drop/clear`, `git reflog expire`) and returns `permissionDecision: "ask"` — Claude Code's own native interactive approval prompt to the real user. Rung 4 never invents its own bypass token or approval channel; the human-approval path *is* the native `ask` decision, surfaced to whoever is driving the session.
 
 ## Protected-path severities
 
