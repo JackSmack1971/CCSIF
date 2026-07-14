@@ -194,6 +194,7 @@ No required environment variables were discovered in committed repo files.
 | `permissions.allow` | Shell allowlist | Limits routine shell commands to safe inspection and test commands | [`.claude/settings.json`](./.claude/settings.json) |
 | `permissions.deny` | Shell denylist | Blocks destructive and forceful operations | [`.claude/settings.json`](./.claude/settings.json) |
 
+<a id="testing--verification"></a>
 ## Testing & Verification
 
 No repo-level automated test suite, build pipeline, or CI workflow was found in the repository.
@@ -234,6 +235,7 @@ Use the narrowest check that matches the change:
 | Policy format | Markdown / JSON | N/A | `CLAUDE.md`, `.claude/settings.json`, `.claude/**/*.md` | Human-readable repo instructions and settings. |
 | Telemetry format | JSONL | N/A | `.claude/traces/*.jsonl` | Append-only generated trace corpus. |
 
+<a id="reproducibility--maintenance"></a>
 ## Reproducibility & Maintenance
 
 - Fresh clone check: `git status --short` should be clean immediately after cloning.
