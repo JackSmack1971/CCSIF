@@ -28,18 +28,23 @@ Tier rules:
 Update these commands to match the repository:
 
 ```bash
+# authoritative repository tests (same command CI runs)
+python -m unittest discover -s tests -v
+
 # control-plane
-python3 .claude/scripts/control_plane_check.py
+python .claude/scripts/control_plane_check.py
 
 # rules
-python3 .claude/scripts/rules_fidelity_check.py
+python .claude/scripts/rules_fidelity_check.py
 
-# memory tests
-python3 -m unittest discover -s .claude/memory/tests -v
+# Bash hook wrapper smoke
+bash .claude/hooks/verify.sh run rules
 
-# issue-to-pr tests
-python3 -m unittest discover -s .claude/skills/issue-to-pr/tests -v
+# PowerShell hook wrapper smoke
+pwsh ./.claude/hooks/verify.ps1 run rules
 ```
+
+Supported CI platforms and runtimes are Linux, macOS, and Windows on Python 3.11/3.12 with Node.js 20/22. Keep Claude control-plane scripts portable across those environments, including path separators, shell dispatch, and filesystem semantics.
 When planning or building the Claude Code control plane, always read and update claude-code-control-plane-roadmap.md using the documented agentic loop, Task tool, CLAUDE.md hierarchy, 
 and compaction patterns.
 

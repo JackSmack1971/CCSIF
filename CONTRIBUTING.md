@@ -80,22 +80,32 @@ Thanks for your interest in CCSIF, a repository-local Claude Code scaffold that 
 
 ## Quality standards
 
-No automated test suite, build pipeline, or CI workflow was found in this repository. Use the narrowest check that matches your change:
+The authoritative local and CI test command is:
 
-- Any change: confirm the working tree state and check for whitespace/line-ending issues.
+```bash
+python -m unittest discover -s tests -v
+```
+
+CI runs that command on `ubuntu-latest`, `macos-latest`, and `windows-latest` for Python `3.11` and `3.12` with Node.js `20` and `22`. Contributors should preserve portability across Linux, macOS, and Windows, including path separators, shell wrappers, and filesystem behavior in Claude control-plane scripts.
+
+Use the narrowest check that matches your change:
+
+- Any change: confirm the working tree state, check for whitespace/line-ending issues, and run the authoritative test command.
 
   ```bash
   git status --short
   git diff --check
+  python -m unittest discover -s tests -v
   ```
 
-- Changes to hooks or settings: run the affected hook script directly. For example, to check the session-start hook:
+- Changes to hooks, settings, scripts, or CI: run the affected wrapper or validator directly. For example:
 
   ```bash
-  bash .claude/hooks/session-start.sh
+  python .claude/scripts/control_plane_check.py
+  python .claude/scripts/rules_fidelity_check.py
+  bash .claude/hooks/verify.sh run rules
+  pwsh ./.claude/hooks/verify.ps1 run rules
   ```
-
-  Expect it to print the `[project-hook] SessionStart` marker line followed by `git status --short` output when run inside a git worktree.
 
 - Changes to workflow or agent docs: re-read the file and compare it against [the repository constitution](./CLAUDE.md) for consistency.
 
@@ -117,7 +127,7 @@ Pre-flight checklist before opening a PR:
 
 - [ ] The change is scoped to a single issue and does not touch unrelated files.
 - [ ] Any Protected Area edit has explicit human approval.
-- [ ] `git status --short` and `git diff --check` were run and reviewed.
+- [ ] `git status --short`, `git diff --check`, and `python -m unittest discover -s tests -v` were run and reviewed.
 - [ ] Relevant hook scripts or docs were re-verified if you changed them.
 - [ ] The PR description follows the PR Expectations in [the repository constitution](./CLAUDE.md) above.
 
