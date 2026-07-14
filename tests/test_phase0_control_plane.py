@@ -525,6 +525,48 @@ class Phase0StepStateTests(unittest.TestCase):
         self.assertEqual(self.control.load_session(session.session_id).status, "failed")
 
 
+
+    def test_single_malformed_hook_payload_is_counted_fail_open(self) -> None:
+        result = self.control.record_hook_payload("{not json", expected_hook="PostToolUse")
+        self.assertFalse(result["ok"])
+        self.assertEqual(result["outcome"], "malformed")
+        self.assertIn("shape=invalid-json", result["counter_key"])
+
+        counters = json.loads(self.control.hook_payload_counters_path().read_text(encoding="utf-8"))
+        counter = counters["counters"][result["counter_key"]]
+        self.assertEqual(counter["malformed"], 1)
+        self.assertEqual(counter["hook_name"], "PostToolUse")
+
+    def test_repeated_malformed_hook_payloads_escalate_to_hook_bug(self) -> None:
+        for _ in range(phase0.MALFORMED_HOOK_PAYLOAD_THRESHOLD - 1):
+            result = self.control.record_hook_payload("[]", expected_hook="PreToolUse")
+            self.assertEqual(result["outcome"], "malformed")
+
+        with self.assertRaises(phase0.HookPayloadBug) as ctx:
+            self.control.record_hook_payload("[]", expected_hook="PreToolUse")
+
+        self.assertIn("hook-bug", str(ctx.exception))
+        counters = json.loads(self.control.hook_payload_counters_path().read_text(encoding="utf-8"))
+        streak = counters["streaks"]["hook=PreToolUse|session=unknown"]
+        self.assertEqual(streak["consecutive_malformed"], phase0.MALFORMED_HOOK_PAYLOAD_THRESHOLD)
+        self.assertEqual(streak["last_outcome"], "hook-bug")
+
+    def test_valid_hook_payload_resets_malformed_streak_for_recovery(self) -> None:
+        for _ in range(phase0.MALFORMED_HOOK_PAYLOAD_THRESHOLD - 1):
+            self.control.record_hook_payload("", expected_hook="SessionStart")
+
+        valid = self.control.record_hook_payload(
+            json.dumps({"hook_event_name": "SessionStart"}),
+            expected_hook="SessionStart",
+        )
+        self.assertTrue(valid["ok"])
+
+        result = self.control.record_hook_payload("", expected_hook="SessionStart")
+        self.assertEqual(result["outcome"], "malformed")
+        counters = json.loads(self.control.hook_payload_counters_path().read_text(encoding="utf-8"))
+        streak = counters["streaks"]["hook=SessionStart|session=unknown"]
+        self.assertEqual(streak["consecutive_malformed"], 1)
+
     def test_tool_result_prefers_structured_outcome_over_error_words(self) -> None:
         session = self.control.start(notes="structured-success")
         self._request(session.session_id, "tool-structured-ok")

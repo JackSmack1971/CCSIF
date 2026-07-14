@@ -9,6 +9,18 @@ if [ "$script_dir" = "$script_path" ]; then
 fi
 script_dir="$(cd -- "${script_dir:-.}" && pwd)"
 gate_script="$script_dir/../scripts/phase6a_stop_gate.py"
+phase0_script="$script_dir/../scripts/phase0_control_plane.py"
+
+if printf '%s' "$payload" | python3 "$phase0_script" hook-payload --hook-name Stop >/dev/null; then
+  :
+else
+  status=$?
+  if [ "$status" -eq 2 ]; then
+    printf '%s\n' "phase0 hook payload bug: repeated malformed Stop payloads" >&2
+    exit 2
+  fi
+  printf '%s\n' "phase0 hook payload tracking failed (exit $status); continuing" >&2
+fi
 
 if command -v node >/dev/null 2>&1; then
   printf '%s' "$payload" | node "$script_dir/lib/trace-writer.js" >/dev/null 2>&1 || true
