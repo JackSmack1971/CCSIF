@@ -108,6 +108,78 @@ class Phase0SmokeTests(unittest.TestCase):
         self.assertTrue(raw_path.exists())
         self.assertGreaterEqual(len(raw_path.read_text(encoding="utf-8").splitlines()), 2)
 
+    def _hook_tool_roundtrip(self, session_id: str, tool_use_id: str) -> None:
+        """Exactly the PreToolUse -> PostToolUse CLI sequence the real hooks
+        run: `request` then `result`, with no verify in between."""
+        self.run_cli(
+            "request",
+            input_payload={
+                "session_id": session_id,
+                "tool_name": "Write",
+                "tool_input": {"file_path": f"{tool_use_id}.txt", "content": "smoke"},
+                "cwd": str(self.workspace),
+                "hook_event_name": "PreToolUse",
+                "permission_mode": "default",
+                "tool_use_id": tool_use_id,
+            },
+        )
+        self.run_cli(
+            "result",
+            input_payload={
+                "session_id": session_id,
+                "tool_use_id": tool_use_id,
+                "tool_name": "Write",
+                "tool_response": {"written": f"{tool_use_id}.txt"},
+                "status": "success",
+                "duration_ms": 2,
+            },
+        )
+
+    def test_sequential_successful_tools_do_not_deadlock_the_hook_chain(self) -> None:
+        """Hardening 03/13 (#151): the exact production sequence that used to
+        raise 'one verified step at a time' on the second request now runs
+        clean through the same CLI path pre-tool-use.sh/post-tool-use.sh use."""
+        start = self.run_cli("start", input_payload={"initialUserMessage": "sequential smoke"})
+        session_id = json.loads(start.stdout)["session_id"]
+        self._hook_tool_roundtrip(session_id, "tool-1")
+        self._hook_tool_roundtrip(session_id, "tool-2")
+        self._hook_tool_roundtrip(session_id, "tool-3")
+        reconstructed = json.loads(self.run_cli("reconstruct", session_id).stdout)
+        self.assertEqual(reconstructed["session"]["step_state"], "tool_completed")
+        self.assertIsNone(reconstructed["session"]["pending_tool_call_id"])
+        results = [e for e in reconstructed["events"] if e["event_type"] == "tool.result"]
+        self.assertEqual(len(results), 3)
+
+    def test_precompact_before_any_verify_is_a_recorded_skip_not_a_failure(self) -> None:
+        """pre-compact.sh runs `compact` on every real PreCompact event; with
+        no hook ever calling `verify`, that must be a recorded skip (exit 0),
+        not a hook-failing VerifiedCheckpointError."""
+        start = self.run_cli("start", input_payload={"initialUserMessage": "compact smoke"})
+        session_id = json.loads(start.stdout)["session_id"]
+        self._hook_tool_roundtrip(session_id, "tool-1")
+        compact = self.run_cli("compact", session_id, input_payload={"session_id": session_id, "reason": "auto"})
+        payload = json.loads(compact.stdout)
+        self.assertTrue(payload["skipped"])
+        self.assertIsNone(payload["checkpoint_id"])
+
+    def test_recover_subcommand_unwedges_a_stale_pending_step(self) -> None:
+        start = self.run_cli("start", input_payload={"session_id": "sess-cli-stale"})
+        session_id = json.loads(start.stdout)["session_id"]
+        self.run_cli(
+            "request",
+            input_payload={
+                "session_id": session_id,
+                "tool_name": "Write",
+                "tool_input": {"file_path": "wedged.txt"},
+                "cwd": str(self.workspace),
+                "tool_use_id": "tool-wedged",
+            },
+        )
+        recovered = self.run_cli("recover", session_id, input_payload={"session_id": session_id})
+        payload = json.loads(recovered.stdout)
+        self.assertEqual(payload["step_state"], "tool_failed")
+        self.assertIsNone(payload["pending_tool_call_id"])
+
 
 if __name__ == "__main__":
     unittest.main()
