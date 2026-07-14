@@ -46,6 +46,16 @@ logic, CI/CD deployment workflows, and secret material), and
 [`.claude/rules/security.md`](./.claude/rules/security.md) for the
 repository's day-to-day security rules.
 
+
+## Current Repository Hardening
+
+The repository currently hardens Claude Code usage through shared settings, hook guards, and GitHub governance rather than through application runtime controls. The current behavior includes:
+
+- `PreToolUse` runs the protected-area guard before tool use and preserves hard blocks for genuine safety failures.
+- Phase 0 request tracking warns without blocking otherwise-safe tool calls when tracking state cannot be written.
+- Shared Claude settings disable bypass-permissions mode, disable skill shell execution, enable the configured `graphiti-memory` MCP server explicitly, and define shell allow/ask/deny rules for risky actions and sensitive paths.
+- GitHub issue forms, the pull request template, CODEOWNERS, Dependabot configuration, and CI are checked in under `.github/`.
+
 ## Out of Scope
 
 - Vulnerabilities in upstream tools this repository configures (Claude

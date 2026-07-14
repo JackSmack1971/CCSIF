@@ -169,9 +169,9 @@ This repository is best treated as a command center for Claude Code work, not as
 | `permissions.ask` | Yes | Ask entries in file | [`.claude/settings.json`](./.claude/settings.json) | Requires confirmation for lockfile mass-edit paths (`package-lock.json`, `yarn.lock`, etc.). |
 | `permissions.deny` | Yes | Denylist entries in file | [`.claude/settings.json`](./.claude/settings.json) | Blocks high-risk commands (`git push --force`, `git reset --hard`, `rm -rf`, `terraform destroy`, `kubectl delete`) and native `Read`/`Edit`/`Write` access to secrets/credentials, CI/CD workflows, database migrations, and the append-only ledger. |
 | `hooks.SessionStart` | Yes | `bash .claude/hooks/session-start.sh` | [`.claude/settings.json`](./.claude/settings.json) | Prints session start status and repo state. |
-| `hooks.PreToolUse` | Yes | `bash .claude/hooks/pre-tool-use.sh` | [`.claude/settings.json`](./.claude/settings.json) | Protected-area guard for pre-tool checks. |
+| `hooks.PreToolUse` | Yes | `bash .claude/hooks/pre-tool-use.sh` | [`.claude/settings.json`](./.claude/settings.json) | Runs the Node Protected Area guard, then records Phase 0 request state; tracking failures warn and allow safe tool use, while genuine safety blocks still block. |
 | `hooks.PostToolUse` | Yes | `bash .claude/hooks/post-tool-use.sh` | [`.claude/settings.json`](./.claude/settings.json) | Writes trace telemetry after tool use. |
-| `hooks.Stop` | Yes | `bash .claude/hooks/stop.sh` | [`.claude/settings.json`](./.claude/settings.json) | Writes final trace telemetry at stop. |
+| `hooks.Stop` | Yes | `bash .claude/hooks/stop.sh` | [`.claude/settings.json`](./.claude/settings.json) | Writes final trace telemetry and performs stop-phase hygiene checks. |
 | `EXAMPLE_LOCAL_ONLY` | No | `replace-me` | [`.claude/settings.local.json`](./.claude/settings.local.json) | Example machine-local placeholder; do not treat as a shared secret. |
 
 No required environment variables were discovered in committed repo files. `.claude/settings.local.json` and `CLAUDE.local.md` are intentionally gitignored for machine-local overrides; copy or create them only on your workstation and never rely on them for shared startup behavior.
@@ -209,7 +209,7 @@ No required environment variables were discovered in committed repo files. `.cla
 | Hook or permission | Event/scope | Purpose | Source path |
 |---|---|---|---|
 | `SessionStart` | Claude Code session start | Prints `[project-hook] SessionStart` and current git status | [`.claude/hooks/session-start.sh`](./.claude/hooks/session-start.sh) |
-| `PreToolUse` | Before each tool use | Placeholder for deny checks and protection gates | [`.claude/hooks/pre-tool-use.sh`](./.claude/hooks/pre-tool-use.sh) |
+| `PreToolUse` | Before each tool use | Enforces protected-area/workspace guardrails and performs best-effort Phase 0 request tracking without deadlocking safe tool use | [`.claude/hooks/pre-tool-use.sh`](./.claude/hooks/pre-tool-use.sh) |
 | `PostToolUse` | After each tool use | Best-effort trace capture | [`.claude/hooks/post-tool-use.sh`](./.claude/hooks/post-tool-use.sh) |
 | `Stop` | Session stop | Final trace capture and summary | [`.claude/hooks/stop.sh`](./.claude/hooks/stop.sh) |
 | `trace-writer.js` | Hook helper | Appends daily JSONL trace entries and redacts common secrets | [`.claude/hooks/lib/trace-writer.js`](./.claude/hooks/lib/trace-writer.js) |
@@ -242,7 +242,7 @@ npm run verify
 npm run smoke:mcp
 ```
 
-Use the narrowest check that matches the change:
+Use the narrowest check that matches the change. `npm run verify` currently runs the MCP smoke check, control-plane validation, and the authoritative unittest command; run `python .claude/scripts/rules_fidelity_check.py` or the hook wrappers directly when the touched files affect those paths.
 
 - Edit docs or config: `git diff --check`
 - Bootstrap another repository: let `.claude/scripts/bootstrap_control_plane.py` detect Python, Node.js, shell, CI workflow, and Claude control-plane manifests so generated facts include matching prerequisite checks and verification guidance
@@ -293,7 +293,7 @@ See [`CONTRIBUTING.md`](./CONTRIBUTING.md) for how to find or propose work, set 
 
 ## Roadmap
 
-No roadmap document, issue milestone plan, or release plan was found in the repository.
+[`ROADMAP.md`](./ROADMAP.md) tracks the current HINDSIGHT memory-system roadmap. It is a repository roadmap, not a release milestone plan.
 
 ## License
 
