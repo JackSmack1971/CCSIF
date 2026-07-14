@@ -13,6 +13,7 @@ ROOT = Path(__file__).resolve().parents[2]
 REQUIRED_PATHS = [
     "CLAUDE.md",
     ".claude/settings.json",
+    ".claude/control-plane.json",
     ".claude/scripts/phase0_control_plane.py",
     ".claude/scripts/phase2_memory.py",
     ".claude/scripts/phase3_agents.py",
@@ -161,6 +162,21 @@ def check_json() -> None:
         json.loads((ROOT / ".claude/settings.json").read_text(encoding="utf-8"))
     except Exception as exc:  # noqa: BLE001 - report exact parse failure
         fail(f".claude/settings.json is not valid JSON: {exc}")
+
+
+def check_control_plane_marker() -> None:
+    path = ROOT / ".claude" / "control-plane.json"
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except Exception as exc:  # noqa: BLE001 - report exact parse failure
+        fail(f".claude/control-plane.json is not valid JSON: {exc}")
+    if data.get("schema_version") != 1:
+        fail(".claude/control-plane.json schema_version must be 1")
+    version = data.get("control_plane_version")
+    if not isinstance(version, int) or version < 1:
+        fail(".claude/control-plane.json must declare a positive integer control_plane_version")
+    if not data.get("upgrade_path"):
+        fail(".claude/control-plane.json must document an upgrade_path")
 
 
 # Vendored, pinned key set for `permissions.*` in project-scope
@@ -318,6 +334,7 @@ def check_verify_adapter() -> None:
 def main() -> int:
     check_required_paths()
     check_json()
+    check_control_plane_marker()
     check_settings_permissions_schema()
     check_git_visibility()
     check_state_privacy_ignore()

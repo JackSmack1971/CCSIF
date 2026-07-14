@@ -317,6 +317,60 @@ class SafeVerifyTemplateTests(unittest.TestCase):
         self.assertEqual(bcp.merge_verification_manifest(self.target, bcp.Facts(test_command="npm test")), "preserved")
         self.assertEqual(manifest.read_text(encoding="utf-8"), before)
 
+class RuntimeManifestDetectionTests(unittest.TestCase):
+    def setUp(self) -> None:
+        self.tmp = tempfile.TemporaryDirectory()
+        self.target = Path(self.tmp.name)
+
+    def tearDown(self) -> None:
+        self.tmp.cleanup()
+
+    def test_single_language_python_repo_selects_python_guidance(self) -> None:
+        (self.target / "pyproject.toml").write_text("[project]\nname='x'\n", encoding="utf-8")
+        (self.target / "tests").mkdir()
+        facts = bcp.detect_stack(self.target)
+        self.assertEqual(facts.runtimes, ["python"])
+        self.assertIn("pyproject.toml", facts.manifests)
+        self.assertIn("python --version", facts.prerequisite_checks)
+        self.assertEqual(facts.test_command, "python -m pytest -q")
+        self.assertTrue(any("Python" in item for item in facts.verification_guidance))
+
+    def test_polyglot_repo_accumulates_runtime_prerequisites(self) -> None:
+        (self.target / "package.json").write_text(json.dumps({"scripts": {"test": "jest", "build": "tsc"}}), encoding="utf-8")
+        (self.target / "pyproject.toml").write_text("[project]\nname='x'\n", encoding="utf-8")
+        (self.target / "tests").mkdir()
+        (self.target / "tool.sh").write_text("#!/usr/bin/env bash\n", encoding="utf-8")
+        workflow = self.target / ".github" / "workflows" / "ci.yml"
+        workflow.parent.mkdir(parents=True)
+        workflow.write_text("name: ci\n", encoding="utf-8")
+        (self.target / ".claude").mkdir()
+        (self.target / "CLAUDE.md").write_text("# Project\n", encoding="utf-8")
+        facts = bcp.detect_stack(self.target)
+        for runtime in ("python", "node", "shell", "ci-workflows", "claude-control-plane"):
+            self.assertIn(runtime, facts.runtimes)
+        for prereq in ("python --version", "node --version", "bash --version", "python .claude/scripts/control_plane_check.py"):
+            self.assertIn(prereq, facts.prerequisite_checks)
+        self.assertIn(".github/workflows/*", facts.manifests)
+
+    def test_missing_manifests_get_non_shell_guidance(self) -> None:
+        facts = bcp.detect_stack(self.target)
+        self.assertEqual(facts.runtimes, [])
+        self.assertEqual(facts.manifests, [])
+        self.assertIsNone(facts.test_command)
+        self.assertTrue(any("No runtime manifest" in item for item in facts.verification_guidance))
+
+    def test_older_control_plane_marker_is_migrated_additively(self) -> None:
+        marker = self.target / ".claude" / "control-plane.json"
+        marker.parent.mkdir(parents=True)
+        marker.write_text(json.dumps({"schema_version": 1, "control_plane_version": 1, "custom": "keep"}), encoding="utf-8")
+        result = bcp.bootstrap_control_plane_marker(self.target)
+        data = json.loads(marker.read_text(encoding="utf-8"))
+        self.assertEqual(result, "upgraded")
+        self.assertEqual(data["control_plane_version"], bcp.CONTROL_PLANE_VERSION)
+        self.assertEqual(data["previous_control_plane_version"], 1)
+        self.assertEqual(data["custom"], "keep")
+        self.assertIn("upgrade_path", data)
+
 
 if __name__ == "__main__":
     unittest.main()
