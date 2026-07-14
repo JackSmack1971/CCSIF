@@ -13,7 +13,8 @@ from unittest.mock import patch
 
 import sys
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1] / ".claude" / "scripts"))
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / ".claude" / "scripts"))
 
 import phase0_control_plane as phase0
 
@@ -275,6 +276,162 @@ class Phase0ControlPlaneTests(unittest.TestCase):
         subprocess.run(["git", "add", "sample.txt"], cwd=repo_dir, check=True)
         findings_clean = phase0.scan_staged_diff(cwd=repo_dir)
         self.assertEqual(findings_clean, [])
+
+
+class Phase0SessionStartTests(unittest.TestCase):
+    """Hardening 04/13 (#152): SessionStart is idempotent and resume-safe —
+    no resume, duplicate, or archived redelivery can clobber durable state."""
+
+    def setUp(self) -> None:
+        self.tmp = tempfile.TemporaryDirectory()
+        self.workspace = Path(self.tmp.name) / "workspace"
+        self.workspace.mkdir(parents=True, exist_ok=True)
+        self.state_root = self.workspace / ".claude" / "state"
+        self.env_patch = patch.dict(
+            os.environ,
+            {
+                "PHASE0_STATE_ROOT": str(self.state_root),
+                "PHASE0_WORKSPACE_ROOT": str(self.workspace),
+            },
+            clear=False,
+        )
+        self.env_patch.start()
+        self.control = phase0.Phase0ControlPlane(root=self.state_root)
+
+    def tearDown(self) -> None:
+        self.env_patch.stop()
+        self.tmp.cleanup()
+
+    def _progress_session(self, session_id: str) -> None:
+        """start -> request -> result -> verify -> compact: real verified
+        progress plus a checkpoint."""
+        self.control.start(session_id=session_id, source="startup")
+        self.control.request_tool(
+            {
+                "session_id": session_id,
+                "tool_name": "Write",
+                "tool_input": {"file_path": "a.txt"},
+                "cwd": str(self.workspace),
+                "tool_use_id": "tool-1",
+            }
+        )
+        self.control.result_tool(
+            {"session_id": session_id, "tool_use_id": "tool-1", "tool_name": "Write", "status": "success"}
+        )
+        self.control.verify(session_id, passed=True)
+        self.control.compact(session_id, reason="progress")
+
+    def _decisions(self, session_id: str) -> list[dict]:
+        decisions_dir = self.state_root / "logs" / "session-start"
+        records = []
+        for path in sorted(decisions_dir.glob(f"{session_id}-*.json")):
+            records.append(json.loads(path.read_text(encoding="utf-8")))
+        return records
+
+    def test_new_start_creates_fresh_session_with_decision_record(self) -> None:
+        session = self.control.start(session_id="sess-new", source="startup")
+        self.assertEqual(session.current_turn_index, 1)
+        decisions = self._decisions("sess-new")
+        self.assertEqual([d["decision"] for d in decisions], ["create"])
+
+    def test_resume_source_preserves_verified_progress(self) -> None:
+        self._progress_session("sess-resume")
+        before = self.control.load_session("sess-resume")
+        resumed = self.control.start(session_id="sess-resume", source="resume")
+        self.assertEqual(resumed.current_turn_index, before.current_turn_index)
+        self.assertEqual(resumed.verified_turn_index, before.verified_turn_index)
+        self.assertEqual(resumed.verified_step_index, before.verified_step_index)
+        self.assertEqual(resumed.last_checkpoint_id, before.last_checkpoint_id)
+        self.assertIn("resume-replay", [d["decision"] for d in self._decisions("sess-resume")])
+
+    def test_compact_source_redelivery_preserves_progress(self) -> None:
+        self._progress_session("sess-compact")
+        before = self.control.load_session("sess-compact")
+        resumed = self.control.start(session_id="sess-compact", source="compact")
+        self.assertEqual(resumed.verified_step_index, before.verified_step_index)
+        self.assertEqual(resumed.last_checkpoint_id, before.last_checkpoint_id)
+
+    def test_duplicate_session_start_is_idempotent(self) -> None:
+        first = self.control.start(session_id="sess-dup", source="startup")
+        second = self.control.start(session_id="sess-dup", source="startup")
+        self.assertEqual(asdict_stable(first), asdict_stable(second))
+        events = [e["event_type"] for e in self.control.replay("sess-dup")]
+        self.assertEqual(events.count("session.start"), 1)
+        self.assertEqual(events.count("session.resume-replay"), 1)
+
+    def test_archived_session_is_never_silently_resurrected(self) -> None:
+        self.control.start(session_id="sess-arch", source="startup")
+        self.control.archive("sess-arch", reason="done")
+        returned = self.control.start(session_id="sess-arch", source="startup")
+        self.assertEqual(returned.status, "archived")
+        self.assertEqual(self.control.load_session("sess-arch").status, "archived")
+        decisions = [d["decision"] for d in self._decisions("sess-arch")]
+        self.assertIn("archived-conflict", decisions)
+        events = [e["event_type"] for e in self.control.replay("sess-arch")]
+        self.assertIn("session.start-conflict", events)
+
+    def test_interrupted_step_evidence_is_explicitly_transitioned_not_zeroed(self) -> None:
+        self.control.start(session_id="sess-interrupt", source="startup")
+        self.control.request_tool(
+            {
+                "session_id": "sess-interrupt",
+                "tool_name": "Write",
+                "tool_input": {"file_path": "wedged.txt"},
+                "cwd": str(self.workspace),
+                "tool_use_id": "tool-wedged",
+            }
+        )
+        # SessionStart redelivery while a step is mid-flight: the evidence
+        # must survive as an explicit step.recover transition.
+        resumed = self.control.start(session_id="sess-interrupt", source="resume")
+        self.assertEqual(resumed.step_state, phase0.STEP_TOOL_FAILED)
+        events = [e for e in self.control.replay("sess-interrupt") if e["event_type"] == "step.recover"]
+        self.assertEqual(events[0]["payload"]["stale_tool_call_id"], "tool-wedged")
+        self.assertEqual(resumed.current_step_index, 1)  # not zeroed
+
+    def test_corrupt_state_fails_with_durable_evidence_not_reset(self) -> None:
+        corrupt_root = Path(self.tmp.name) / "corrupt-state"
+        corrupt_root.mkdir(parents=True)
+        db_path = corrupt_root / "phase0.sqlite3"
+        proc = subprocess.run(
+            [sys.executable, str(ROOT / ".claude" / "scripts" / "phase0_control_plane.py"), "start"],
+            input=json.dumps({"session_id": "sess-corrupt", "source": "startup"}),
+            text=True,
+            capture_output=True,
+            env={
+                **os.environ,
+                "PHASE0_STATE_ROOT": str(corrupt_root),
+                "PHASE0_WORKSPACE_ROOT": str(self.workspace),
+            },
+        )
+        self.assertEqual(proc.returncode, 0)  # first run creates the DB
+        db_path.write_bytes(b"this is not a sqlite database at all")
+        proc2 = subprocess.run(
+            [sys.executable, str(ROOT / ".claude" / "scripts" / "phase0_control_plane.py"), "start"],
+            input=json.dumps({"session_id": "sess-corrupt", "source": "resume"}),
+            text=True,
+            capture_output=True,
+            env={
+                **os.environ,
+                "PHASE0_STATE_ROOT": str(corrupt_root),
+                "PHASE0_WORKSPACE_ROOT": str(self.workspace),
+            },
+        )
+        self.assertNotEqual(proc2.returncode, 0)
+        # Durable evidence exists, and the corrupt DB was not silently reset.
+        evidence = list((corrupt_root / "logs" / "session-start").glob("sess-corrupt-*.json"))
+        self.assertTrue(evidence)
+        recorded = [json.loads(p.read_text(encoding="utf-8"))["decision"] for p in evidence]
+        self.assertIn("start-failed", recorded)
+        self.assertEqual(db_path.read_bytes(), b"this is not a sqlite database at all")
+
+
+def asdict_stable(record: object) -> dict:
+    from dataclasses import asdict
+
+    data = asdict(record)
+    data.pop("updated_at", None)  # bookkeeping field may legitimately change
+    return data
 
 
 class Phase0StepStateTests(unittest.TestCase):

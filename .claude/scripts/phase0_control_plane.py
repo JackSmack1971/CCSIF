@@ -543,6 +543,65 @@ class Phase0ControlPlane:
         self._write_structured_event(session_id, event)
         return event
 
+    def _insert_session_new(self, record: SessionRecord) -> None:
+        """Ordinary-insert creation path (Hardening 04/13, #152): a genuinely
+        new session must never silently replace an existing row the way the
+        shared `insert or replace` update path can."""
+        with self._db() as conn:
+            conn.execute(
+                """
+                insert into sessions (
+                    session_id, status, created_at, updated_at,
+                    current_turn_index, current_step_index,
+                    verified_turn_index, verified_step_index,
+                    pending_tool_call_id, last_checkpoint_id,
+                    raw_export_path, notes, step_state
+                ) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    record.session_id,
+                    record.status,
+                    record.created_at,
+                    record.updated_at,
+                    record.current_turn_index,
+                    record.current_step_index,
+                    record.verified_turn_index,
+                    record.verified_step_index,
+                    record.pending_tool_call_id,
+                    record.last_checkpoint_id,
+                    record.raw_export_path,
+                    record.notes,
+                    record.step_state,
+                ),
+            )
+
+    def _write_start_decision(
+        self,
+        session_id: str,
+        *,
+        decision: str,
+        source: str | None,
+        reason: str,
+        session_snapshot: dict[str, Any] | None = None,
+    ) -> Path:
+        """Durable, evidence-preserving record of every SessionStart decision
+        (create / resume-replay / archived-conflict / corrupt-state),
+        mirroring phase2_memory.py's *-restore.json pattern."""
+        decisions_dir = self.logs_dir / "session-start"
+        decisions_dir.mkdir(parents=True, exist_ok=True)
+        path = decisions_dir / f"{session_id or 'unknown'}-{make_id('dec')}.json"
+        payload = {
+            "session_id": session_id,
+            "decision": decision,
+            "source": source,
+            "reason": reason,
+            "recorded_at": now(),
+            "session": session_snapshot,
+        }
+        path.write_text(stable_json(payload) + "\n", encoding="utf-8")
+        _secure_chmod(path)
+        return path
+
     def recover_stale_step(self, session_id: str, *, reason: str | None = None) -> SessionRecord:
         """Safe recovery from an interrupted hook: a step stuck in
         tool_pending with no delivered result (process killed
@@ -570,18 +629,84 @@ class Phase0ControlPlane:
         )
         return session
 
-    def start(self, *, session_id: str | None = None, notes: str | None = None) -> SessionRecord:
-        # Preserve interruption evidence before (re)initializing: if this
-        # session_id already exists and is stuck mid-tool-call, record an
-        # explicit recovery transition first. (Full create-vs-resume
-        # decisioning is Hardening 04/13's scope.)
-        if session_id:
+    def start(self, *, session_id: str | None = None, notes: str | None = None, source: str | None = None) -> SessionRecord:
+        """SessionStart entry point (Hardening 04/13, #152). One explicit
+        decision per invocation:
+
+        - **create**: no durable row exists for this session_id — ordinary
+          insert of a fresh session.
+        - **resume-replay**: a row exists in active/paused status (ordinary
+          resume, post-compact resume, or a duplicate/redelivered
+          SessionStart) — durable progress (turn/step indexes, checkpoint,
+          step_state) is preserved unchanged; only updated_at/status
+          bookkeeping changes, and a stale in-flight step is explicitly
+          recovered rather than silently zeroed.
+        - **archived-conflict**: the row is already archived — it is never
+          silently resurrected to active; the conflict is durably recorded
+          and the archived record returned untouched.
+
+        Every decision is written to .claude/state/logs/session-start/ as a
+        durable evidence record before the hook returns.
+        """
+        requested_id = str(session_id or "")
+        if requested_id:
             try:
-                existing = self.load_session(session_id)
+                existing = self.load_session(requested_id)
             except Phase0Error:
                 existing = None
-            if existing is not None and existing.step_state == STEP_TOOL_PENDING:
-                self.recover_stale_step(session_id, reason="stale tool_pending step at session start")
+            except sqlite3.Error as exc:
+                self._write_start_decision(
+                    requested_id,
+                    decision="corrupt-state",
+                    source=source,
+                    reason=f"session state unreadable: {exc.__class__.__name__}: {exc}",
+                )
+                raise Phase0Error(f"session state unreadable for {requested_id}: {exc}") from exc
+            if existing is not None:
+                if existing.status == "archived":
+                    self._write_start_decision(
+                        requested_id,
+                        decision="archived-conflict",
+                        source=source,
+                        reason="SessionStart for an archived session; refusing to silently reactivate",
+                        session_snapshot=asdict(existing),
+                    )
+                    self._record_event(
+                        session_id=requested_id,
+                        event_type="session.start-conflict",
+                        turn_index=existing.current_turn_index,
+                        step_index=existing.current_step_index,
+                        tool_call_id=None,
+                        status="rejected",
+                        payload={"source": source, "reason": "archived session not reactivated"},
+                    )
+                    return existing
+                # Idempotent resume: preserve interruption evidence with an
+                # explicit recovery transition, never a silent reset.
+                if existing.step_state == STEP_TOOL_PENDING:
+                    existing = self.recover_stale_step(
+                        requested_id, reason="stale tool_pending step at session start"
+                    )
+                if existing.status == "paused":
+                    existing.status = "active"
+                self._update_session(existing)
+                self._write_start_decision(
+                    requested_id,
+                    decision="resume-replay",
+                    source=source,
+                    reason="existing session preserved; SessionStart treated as idempotent resume",
+                    session_snapshot=asdict(existing),
+                )
+                self._record_event(
+                    session_id=requested_id,
+                    event_type="session.resume-replay",
+                    turn_index=existing.current_turn_index,
+                    step_index=existing.current_step_index,
+                    tool_call_id=None,
+                    status="success",
+                    payload={"source": source},
+                )
+                return existing
         session = SessionRecord(
             session_id=session_id or make_id("sess"),
             status="active",
@@ -597,7 +722,20 @@ class Phase0ControlPlane:
             notes=notes,
         )
         session.raw_export_path = str(self._raw_export_path(session.session_id))
-        self._insert_session(session)
+        try:
+            self._insert_session_new(session)
+        except sqlite3.IntegrityError:
+            # Two SessionStart deliveries raced on creation: the row now
+            # exists, so re-enter the decision path and treat this delivery
+            # as the idempotent resume it is.
+            return self.start(session_id=session.session_id, notes=notes, source=source)
+        self._write_start_decision(
+            session.session_id,
+            decision="create",
+            source=source,
+            reason="no existing durable session row; created fresh session",
+            session_snapshot=asdict(session),
+        )
         self._record_event(
             session_id=session.session_id,
             event_type="session.start",
@@ -605,7 +743,7 @@ class Phase0ControlPlane:
             step_index=0,
             tool_call_id=None,
             status="success",
-            payload={"notes": notes},
+            payload={"notes": notes, "source": source},
         )
         return session
 
@@ -1088,13 +1226,44 @@ class Phase0ControlPlane:
         raise TerminalToolFailure(f"terminal failure after {attempts} attempts: {last_error}")
 
 
+def _write_start_failure_evidence(session_id: str, source: str | None, exc: BaseException) -> None:
+    """Best-effort durable evidence when SessionStart cannot even reach the
+    decision logic (e.g. a corrupt phase0.sqlite3 fails schema setup). Never
+    raises: evidence-writing must not mask the original failure."""
+    try:
+        decisions_dir = state_root() / "logs" / "session-start"
+        decisions_dir.mkdir(parents=True, exist_ok=True)
+        path = decisions_dir / f"{session_id or 'unknown'}-{make_id('dec')}.json"
+        path.write_text(
+            stable_json(
+                {
+                    "session_id": session_id,
+                    "decision": "start-failed",
+                    "source": source,
+                    "reason": f"{exc.__class__.__name__}: {exc}",
+                    "recorded_at": now(),
+                    "session": None,
+                }
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+        _secure_chmod(path)
+    except OSError:
+        pass
+
+
 def command_start(args: argparse.Namespace) -> int:
-    control = Phase0ControlPlane()
     payload = read_stdin_json()
-    session = control.start(
-        session_id=args.session_id or str(payload.get("session_id") or payload.get("sessionId") or ""),
-        notes=args.notes or payload.get("initialUserMessage") or payload.get("notes") or payload.get("message"),
-    )
+    session_id = args.session_id or str(payload.get("session_id") or payload.get("sessionId") or "")
+    source = args.source or (str(payload.get("source")) if payload.get("source") else None)
+    notes = args.notes or payload.get("initialUserMessage") or payload.get("notes") or payload.get("message")
+    try:
+        control = Phase0ControlPlane()
+        session = control.start(session_id=session_id, notes=notes, source=source)
+    except (Phase0Error, sqlite3.Error) as exc:
+        _write_start_failure_evidence(session_id, source, exc)
+        raise Phase0Error(str(exc)) from exc
     print(stable_json(asdict(session)))
     return 0
 
@@ -1263,6 +1432,7 @@ def build_parser() -> argparse.ArgumentParser:
     p = sub.add_parser("start")
     p.add_argument("--session-id")
     p.add_argument("--notes")
+    p.add_argument("--source")
     p.set_defaults(func=command_start)
 
     p = sub.add_parser("pause")
