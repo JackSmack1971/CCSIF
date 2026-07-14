@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import shutil
 import subprocess
 import sys
@@ -13,53 +14,66 @@ sys.path.insert(0, str(ROOT / ".claude" / "scripts"))
 import phase5b_verify as pv  # noqa: E402
 
 
-FAKE_CLAUDE_MD = """# Fake Project
+FAKE_MANIFEST = {
+    "schema_version": 1,
+    "targets": [
+        {
+            "id": "control-plane",
+            "label": "control-plane",
+            "command": ["python3", "-c", "print('control-plane ok')"],
+        },
+        {
+            "id": "rules-lint",
+            "label": "rules lint",
+            "command": ["python3", "-c", "print('rules ok')"],
+        },
+        {
+            "id": "unit-tests",
+            "label": "unit tests",
+            "command": ["python3", "-m", "unittest", "discover", "-s", "fixture_tests", "-v"],
+        },
+        {
+            "id": "always-fails",
+            "label": "always fails",
+            "command": ["python3", "-c", "raise SystemExit(1)"],
+        },
+        {
+            "id": "smoke",
+            "label": "smoke",
+            "command": ["python3", "-c", "print('smoke ok')"],
+        },
+    ],
+}
 
-## Source-of-Truth Commands
 
-Update these commands to match the repository:
-
-```bash
-# control-plane
-python3 -c "print('control-plane ok')"
-
-# rules lint
-python3 -c "print('rules ok')"
-
-# unit tests
-python3 -m unittest discover -s fixture_tests -v
-
-# always fails
-python3 -c "import sys; sys.exit(1)"
-```
-
-## Other Section
-"""
+def write_manifest(root: Path, manifest: dict) -> Path:
+    manifest_path = root / ".claude" / "verification-manifest.json"
+    manifest_path.parent.mkdir(parents=True, exist_ok=True)
+    manifest_path.write_text(json.dumps(manifest, indent=2), encoding="utf-8")
+    return manifest_path
 
 
 class ParsingTests(unittest.TestCase):
     def setUp(self) -> None:
         self.tmp = tempfile.TemporaryDirectory()
-        self.claude_md = Path(self.tmp.name) / "CLAUDE.md"
-        self.claude_md.write_text(FAKE_CLAUDE_MD, encoding="utf-8")
+        self.root = Path(self.tmp.name)
+        self.manifest = write_manifest(self.root, FAKE_MANIFEST)
 
     def tearDown(self) -> None:
         self.tmp.cleanup()
 
-    def test_parses_labeled_commands(self) -> None:
-        entries = pv.parse_source_of_truth(self.claude_md)
-        self.assertEqual(len(entries), 4)
+    def test_parses_manifest_targets(self) -> None:
+        entries = pv.parse_manifest(self.manifest)
+        self.assertEqual(len(entries), 5)
         self.assertEqual(entries[0]["label"], "control-plane")
         self.assertEqual(entries[0]["slug"], "control-plane")
 
-    def test_missing_heading_raises(self) -> None:
-        bad = Path(self.tmp.name) / "no_heading.md"
-        bad.write_text("# Nothing here\n", encoding="utf-8")
+    def test_missing_manifest_raises(self) -> None:
         with self.assertRaises(pv.VerifyAdapterError):
-            pv.parse_source_of_truth(bad)
+            pv.parse_manifest(self.root / ".claude" / "missing.json")
 
     def test_list_targets_reports_all_groups(self) -> None:
-        payload = pv.list_targets(claude_md=self.claude_md)
+        payload = pv.list_targets(manifest=self.manifest)
         self.assertEqual(payload["aggregate_targets"], ["full", "lint", "test"])
         self.assertIn("rules-lint", payload["individual_targets"])
         self.assertIn("rubric", payload["non_code_targets"])
@@ -68,24 +82,24 @@ class ParsingTests(unittest.TestCase):
 class TargetResolutionTests(unittest.TestCase):
     def setUp(self) -> None:
         self.tmp = tempfile.TemporaryDirectory()
-        self.claude_md = Path(self.tmp.name) / "CLAUDE.md"
-        self.claude_md.write_text(FAKE_CLAUDE_MD, encoding="utf-8")
-        self.entries = pv.parse_source_of_truth(self.claude_md)
+        self.root = Path(self.tmp.name)
+        self.manifest = write_manifest(self.root, FAKE_MANIFEST)
+        self.entries = pv.parse_manifest(self.manifest)
 
     def tearDown(self) -> None:
         self.tmp.cleanup()
 
     def test_lint_target_matches_lint_labeled_entry_only(self) -> None:
         selected = pv.resolve_targets(self.entries, "lint")
-        self.assertEqual([e["slug"] for e in selected], ["rules-lint"])
+        self.assertEqual([entry["slug"] for entry in selected], ["rules-lint"])
 
     def test_test_target_matches_test_labeled_entry_only(self) -> None:
         selected = pv.resolve_targets(self.entries, "test")
-        self.assertEqual([e["slug"] for e in selected], ["unit-tests"])
+        self.assertEqual([entry["slug"] for entry in selected], ["unit-tests"])
 
     def test_full_target_matches_every_entry(self) -> None:
         selected = pv.resolve_targets(self.entries, "full")
-        self.assertEqual(len(selected), 4)
+        self.assertEqual(len(selected), 5)
 
     def test_unknown_target_matches_nothing(self) -> None:
         selected = pv.resolve_targets(self.entries, "does-not-exist")
@@ -95,60 +109,109 @@ class TargetResolutionTests(unittest.TestCase):
 class RunTargetTests(unittest.TestCase):
     def setUp(self) -> None:
         self.tmp = tempfile.TemporaryDirectory()
-        self.claude_md = Path(self.tmp.name) / "CLAUDE.md"
-        self.claude_md.write_text(FAKE_CLAUDE_MD, encoding="utf-8")
+        self.root = Path(self.tmp.name)
+        (self.root / "fixture_tests").mkdir(parents=True)
+        (self.root / "fixture_tests" / "test_ok.py").write_text(
+            "import unittest\n\n\nclass Ok(unittest.TestCase):\n    def test_ok(self):\n        self.assertTrue(True)\n",
+            encoding="utf-8",
+        )
+        self.manifest = write_manifest(self.root, FAKE_MANIFEST)
 
     def tearDown(self) -> None:
         self.tmp.cleanup()
 
     def test_passing_target_exits_zero(self) -> None:
-        result = pv.run_target("control-plane", claude_md=self.claude_md, cwd=ROOT)
+        result = pv.run_target("control-plane", manifest=self.manifest, cwd=self.root)
         self.assertEqual(result["exit_code"], 0)
         self.assertEqual(result["status"], "pass")
+        self.assertIsInstance(result["commands"][0]["command"], list)
 
     def test_failure_propagates_nonzero_exit(self) -> None:
-        result = pv.run_target("always-fails", claude_md=self.claude_md, cwd=ROOT)
+        result = pv.run_target("always-fails", manifest=self.manifest, cwd=self.root)
         self.assertEqual(result["exit_code"], 1)
         self.assertEqual(result["status"], "fail")
         self.assertEqual(result["commands"][0]["exit_code"], 1)
 
     def test_full_target_fails_if_any_command_fails(self) -> None:
-        result = pv.run_target("full", claude_md=self.claude_md, cwd=ROOT)
+        result = pv.run_target("full", manifest=self.manifest, cwd=self.root)
         self.assertEqual(result["exit_code"], 1)
-        self.assertEqual(len(result["commands"]), 4)
+        self.assertEqual(len(result["commands"]), 5)
 
     def test_unavailable_target_returns_exit_code_two(self) -> None:
-        result = pv.run_target("nonexistent", claude_md=self.claude_md, cwd=ROOT)
+        result = pv.run_target("nonexistent", manifest=self.manifest, cwd=self.root)
         self.assertEqual(result["exit_code"], 2)
         self.assertEqual(result["status"], "unavailable")
 
     def test_non_code_verifier_returns_exit_code_two_with_guidance(self) -> None:
         for mode in ("rubric", "citation", "factcheck"):
             with self.subTest(mode=mode):
-                result = pv.run_target(mode, claude_md=self.claude_md, cwd=ROOT)
+                result = pv.run_target(mode, manifest=self.manifest, cwd=self.root)
                 self.assertEqual(result["exit_code"], 2)
                 self.assertTrue(result["message"])
 
-    def test_missing_claude_md_is_unavailable_not_a_crash(self) -> None:
-        missing = Path(self.tmp.name) / "does_not_exist.md"
+    def test_shell_metacharacters_are_rejected_before_subprocess(self) -> None:
+        manifest = write_manifest(
+            self.root,
+            {
+                "schema_version": 1,
+                "targets": [
+                    {
+                        "id": "pwn",
+                        "label": "pwn",
+                        "command": ["python3", "-c", "print('safe'); touch pwned"],
+                    }
+                ],
+            },
+        )
         with self.assertRaises(pv.VerifyAdapterError):
-            pv.run_target("full", claude_md=missing, cwd=ROOT)
+            pv.run_target("pwn", manifest=manifest, cwd=self.root)
+
+    def test_disallowed_executable_is_rejected(self) -> None:
+        manifest = write_manifest(
+            self.root,
+            {
+                "schema_version": 1,
+                "targets": [
+                    {"id": "perl", "label": "perl", "command": ["perl", "-e", "print 1"]},
+                ],
+            },
+        )
+        with self.assertRaises(pv.VerifyAdapterError):
+            pv.run_target("perl", manifest=manifest, cwd=self.root)
+
+    def test_path_escape_is_rejected(self) -> None:
+        manifest = write_manifest(
+            self.root,
+            {
+                "schema_version": 1,
+                "targets": [
+                    {
+                        "id": "escape",
+                        "label": "escape",
+                        "command": ["python3", "../outside.py"],
+                    }
+                ],
+            },
+        )
+        with self.assertRaises(pv.VerifyAdapterError):
+            pv.run_target("escape", manifest=manifest, cwd=self.root)
+
+    def test_missing_manifest_is_unavailable_not_a_crash(self) -> None:
+        missing = self.root / "does_not_exist.json"
+        with self.assertRaises(pv.VerifyAdapterError):
+            pv.run_target("full", manifest=missing, cwd=self.root)
 
 
 class RealRepoIntegrationTests(unittest.TestCase):
-    """Prove the adapter works against this repo's real CLAUDE.md, not just
-    a synthetic fixture."""
+    """Prove the adapter works against this repo's real manifest."""
 
-    def test_real_claude_md_parses_and_control_plane_target_passes(self) -> None:
+    def test_real_manifest_parses_and_control_plane_target_passes(self) -> None:
         result = pv.run_target("control-plane", cwd=ROOT)
         self.assertEqual(result["exit_code"], 0)
+        self.assertTrue(result["manifest_digest"])
 
     @staticmethod
     def _bash_exe() -> str | None:
-        # subprocess's PATH search for a plain "bash" can resolve to
-        # Windows' WSL bash.exe instead of Git Bash, which then can't see
-        # Windows-style paths. Prefer Git Bash explicitly; skip if absent
-        # (e.g. a non-Windows CI runner where plain "bash" is correct).
         for candidate in (r"C:\Program Files\Git\usr\bin\bash.exe", r"C:\Program Files\Git\bin\bash.exe"):
             if Path(candidate).exists():
                 return candidate

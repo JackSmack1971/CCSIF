@@ -30,6 +30,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import shlex
 import re
 import sys
 from dataclasses import dataclass, field
@@ -242,6 +243,436 @@ def state_root() -> Path:
     return env_path("CONTROL_PLANE_STATE_ROOT", workspace_root() / ".claude" / "state")
 '''
 
+
+VERIFICATION_MANIFEST_PY = '''#!/usr/bin/env python3
+"""Shared manifest-backed verification adapter core."""
+from __future__ import annotations
+
+import hashlib
+import json
+import re
+import subprocess
+from pathlib import Path
+from typing import Any
+
+ROOT = Path(__file__).resolve().parents[2]
+MANIFEST_REL = Path(".claude") / "verification-manifest.json"
+ALLOWED_EXECUTABLES = {"python3", "python", "node", "bash", "npm", "npx", "yarn", "pnpm"}
+SHELL_META_RE = re.compile(r"(;|&&|\\|\\||\\||`|\\$\\(|>|<)")
+PATH_ARG_FLAGS = {"-s", "--start-directory", "--cwd", "--directory"}
+NON_CODE_MODES = {
+    "rubric": (
+        "Rubric verifier: no shell check exists for model-judged review. "
+        "Use the fsv-verify skill's PRE/ACT/POST/DIFF protocol against the "
+        "task's stated acceptance criteria, scored explicitly per criterion."
+    ),
+    "citation": (
+        "Citation verifier: no shell check exists for source-grounding "
+        "review. Use the research skill's completion gate: every claim "
+        "must cite the primary source it was verified against."
+    ),
+    "factcheck": (
+        "Fact-check verifier: no shell check exists for factual accuracy "
+        "review. Cross-check each claim against its primary source and "
+        "record any discrepancy explicitly, per the research skill."
+    ),
+}
+
+
+class VerifyAdapterError(RuntimeError):
+    pass
+
+
+def manifest_path(root: Path | None = None) -> Path:
+    return (root or ROOT) / MANIFEST_REL
+
+
+def manifest_digest(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def _root_contains(path: Path, root: Path) -> bool:
+    try:
+        path.relative_to(root)
+        return True
+    except ValueError:
+        return False
+
+
+def _resolve_within_root(token: str, *, cwd: Path) -> Path:
+    candidate = Path(token)
+    resolved = (candidate if candidate.is_absolute() else cwd / candidate).resolve()
+    if not _root_contains(resolved, ROOT):
+        raise VerifyAdapterError(f"path escapes repository containment: {token!r}")
+    return resolved
+
+
+def _is_probable_path(token: str, *, index: int, argv: list[str]) -> bool:
+    if token in {".", ".."}:
+        return True
+    if token.startswith(("~", ".", "/", "\\")):
+        return True
+    if "/" in token or "\\" in token:
+        return True
+    if Path(token).suffix in {".py", ".md", ".json", ".sh", ".ps1", ".toml", ".yml", ".yaml", ".txt"}:
+        return True
+    if index > 0 and argv[index - 1] in PATH_ARG_FLAGS:
+        return True
+    return token in {"tests", "test", "docs", "src", "migrations", "packages"}
+
+
+def _validate_command(argv: list[str], *, cwd: Path) -> None:
+    if not argv:
+        raise VerifyAdapterError("command cannot be empty")
+    if not isinstance(argv[0], str):
+        raise VerifyAdapterError("command executable must be a string")
+    if SHELL_META_RE.search(argv[0]):
+        raise VerifyAdapterError(f"shell operators are not allowed in executables: {argv[0]!r}")
+
+    executable = argv[0]
+    if executable in ALLOWED_EXECUTABLES:
+        pass
+    elif _is_probable_path(executable, index=0, argv=argv):
+        _resolve_within_root(executable, cwd=cwd)
+    else:
+        raise VerifyAdapterError(f"executable is not allowlisted: {executable!r}")
+
+    for index, token in enumerate(argv[1:], start=1):
+        if not isinstance(token, str):
+            raise VerifyAdapterError("command argv elements must be strings")
+        if SHELL_META_RE.search(token):
+            raise VerifyAdapterError(f"shell operators are not allowed in argv: {token!r}")
+        if _is_probable_path(token, index=index, argv=argv):
+            _resolve_within_root(token, cwd=cwd)
+
+
+def _normalize_cwd(cwd: Path | None) -> Path:
+    resolved = (cwd or ROOT).resolve()
+    if not _root_contains(resolved, ROOT):
+        raise VerifyAdapterError(f"cwd escapes repository containment: {resolved}")
+    return resolved
+
+
+def _load_manifest(path: Path) -> dict[str, Any]:
+    if not path.is_file():
+        raise VerifyAdapterError(f"no verification manifest at {path}")
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except Exception as exc:  # noqa: BLE001
+        raise VerifyAdapterError(f"verification manifest is not valid JSON: {exc}") from exc
+    if not isinstance(data, dict):
+        raise VerifyAdapterError("verification manifest must be a JSON object")
+
+    unexpected = set(data) - {"schema_version", "targets"}
+    if unexpected:
+        raise VerifyAdapterError(f"verification manifest contains unknown top-level keys: {sorted(unexpected)}")
+    if data.get("schema_version") != 1:
+        raise VerifyAdapterError("verification manifest requires schema_version == 1")
+    if "targets" not in data or not isinstance(data["targets"], list) or not data["targets"]:
+        raise VerifyAdapterError("verification manifest requires a non-empty targets list")
+    return data
+
+
+def slugify(label: str) -> str:
+    return re.sub(r"[^a-z0-9]+", "-", label.strip().lower()).strip("-")
+
+
+def parse_manifest(path: Path | None = None) -> list[dict[str, Any]]:
+    path = path or manifest_path()
+    data = _load_manifest(path)
+    cwd = _normalize_cwd(path.parent.parent)
+    seen_ids: set[str] = set()
+    entries: list[dict[str, Any]] = []
+
+    for raw in data["targets"]:
+        if not isinstance(raw, dict):
+            raise VerifyAdapterError("each manifest target must be a JSON object")
+        unexpected = set(raw) - {"id", "label", "command", "cwd"}
+        if unexpected:
+            raise VerifyAdapterError(f"manifest target contains unknown keys: {sorted(unexpected)}")
+        target_id = raw.get("id")
+        label = raw.get("label")
+        command = raw.get("command")
+        target_cwd = raw.get("cwd")
+        if not isinstance(target_id, str) or not target_id.strip():
+            raise VerifyAdapterError("manifest target requires a non-empty string id")
+        if target_id in seen_ids:
+            raise VerifyAdapterError(f"duplicate manifest target id: {target_id}")
+        if not isinstance(label, str) or not label.strip():
+            raise VerifyAdapterError(f"manifest target {target_id!r} requires a non-empty label")
+        if not isinstance(command, list):
+            raise VerifyAdapterError(f"manifest target {target_id!r} requires command as a list")
+        if not command or any(not isinstance(item, str) or not item for item in command):
+            raise VerifyAdapterError(f"manifest target {target_id!r} requires a non-empty argv list of strings")
+
+        resolved_cwd = cwd
+        if target_cwd is not None:
+            if not isinstance(target_cwd, str) or not target_cwd.strip():
+                raise VerifyAdapterError(f"manifest target {target_id!r} cwd must be a non-empty string")
+            resolved_cwd = _resolve_within_root(target_cwd, cwd=cwd)
+
+        _validate_command(command, cwd=resolved_cwd)
+        seen_ids.add(target_id)
+        entries.append(
+            {
+                "id": target_id,
+                "label": label,
+                "slug": slugify(label),
+                "command": command,
+                "cwd": str(resolved_cwd),
+            }
+        )
+    return entries
+
+
+def resolve_targets(entries: list[dict[str, Any]], target: str) -> list[dict[str, Any]]:
+    if target == "full":
+        return list(entries)
+    if target == "lint":
+        return [entry for entry in entries if re.search(r"lint|rule|format", entry["label"], re.IGNORECASE)]
+    if target == "test":
+        return [entry for entry in entries if re.search(r"test", entry["label"], re.IGNORECASE)]
+    return [entry for entry in entries if entry["slug"] == target or entry["id"] == target]
+
+
+def _augment_command(command: list[str], *, pattern: str | None) -> list[str]:
+    if pattern and command[:4] == ["python3", "-m", "unittest", "discover"]:
+        return [*command, "-k", pattern]
+    if pattern and command[:4] == ["python", "-m", "unittest", "discover"]:
+        return [*command, "-k", pattern]
+    return list(command)
+
+
+def run_target(
+    target: str,
+    *,
+    manifest: Path | None = None,
+    pattern: str | None = None,
+    cwd: Path | None = None,
+) -> dict[str, Any]:
+    if target in NON_CODE_MODES:
+        return {
+            "target": target,
+            "manifest_path": str(manifest_path()),
+            "manifest_digest": None,
+            "exit_code": 2,
+            "status": "unavailable",
+            "message": NON_CODE_MODES[target],
+            "commands": [],
+        }
+
+    manifest = manifest or manifest_path()
+    entries = parse_manifest(manifest)
+    selected = resolve_targets(entries, target)
+    if not selected:
+        return {
+            "target": target,
+            "manifest_path": str(manifest),
+            "manifest_digest": manifest_digest(manifest),
+            "exit_code": 2,
+            "status": "unavailable",
+            "message": f"no verification target matched {target!r}",
+            "commands": [entry["slug"] for entry in entries],
+        }
+
+    runtime_cwd = _normalize_cwd(cwd)
+    results = []
+    overall = 0
+    for entry in selected:
+        command = _augment_command(entry["command"], pattern=pattern)
+        proc = subprocess.run(command, shell=False, cwd=entry.get("cwd", str(runtime_cwd)), capture_output=True, text=True)
+        if proc.returncode != 0:
+            overall = 1
+        results.append(
+            {
+                "id": entry["id"],
+                "label": entry["label"],
+                "slug": entry["slug"],
+                "command": command,
+                "cwd": entry.get("cwd", str(runtime_cwd)),
+                "exit_code": proc.returncode,
+                "stdout_tail": proc.stdout[-2000:],
+                "stderr_tail": proc.stderr[-2000:],
+            }
+        )
+    return {
+        "target": target,
+        "manifest_path": str(manifest),
+        "manifest_digest": manifest_digest(manifest),
+        "exit_code": overall,
+        "status": "pass" if overall == 0 else "fail",
+        "message": None,
+        "commands": results,
+    }
+
+
+def list_targets(manifest: Path | None = None) -> dict[str, Any]:
+    manifest = manifest or manifest_path()
+    entries = parse_manifest(manifest)
+    return {
+        "manifest_path": str(manifest),
+        "manifest_digest": manifest_digest(manifest),
+        "aggregate_targets": ["full", "lint", "test"],
+        "non_code_targets": sorted(NON_CODE_MODES),
+        "individual_targets": [entry["slug"] for entry in entries],
+    }
+'''
+
+
+VERIFICATION_MANIFEST_SOURCE = (SCRIPT_DIR / "verification_manifest.py").read_text(encoding="utf-8")
+
+
+VERIFY_ADAPTER_PY_V2 = '''#!/usr/bin/env python3
+"""Code-agnostic verification adapter."""
+from __future__ import annotations
+
+import argparse
+import json
+import sys
+from pathlib import Path
+
+from verification_manifest import VerifyAdapterError, list_targets, run_target
+
+
+def command_run(args: argparse.Namespace) -> int:
+    result = run_target(
+        args.target,
+        manifest=Path(args.manifest) if args.manifest else None,
+        pattern=args.pattern,
+        cwd=Path(args.cwd) if args.cwd else None,
+    )
+    print(json.dumps(result, indent=2, sort_keys=True))
+    return int(result["exit_code"])
+
+
+def command_list_targets(args: argparse.Namespace) -> int:
+    try:
+        payload = list_targets(manifest=Path(args.manifest) if args.manifest else None)
+    except VerifyAdapterError as exc:
+        print(f"Blocked: {exc}", file=sys.stderr)
+        return 2
+    print(json.dumps(payload, indent=2, sort_keys=True))
+    return 0
+
+
+def build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(prog="verify_adapter")
+    sub = parser.add_subparsers(dest="command", required=True)
+
+    p = sub.add_parser("run")
+    p.add_argument("target")
+    p.add_argument("--pattern", help="focused-test filter appended as -k <pattern> to unittest discover commands")
+    p.add_argument("--manifest")
+    p.add_argument("--cwd")
+    p.set_defaults(func=command_run)
+
+    p = sub.add_parser("list-targets")
+    p.add_argument("--manifest")
+    p.set_defaults(func=command_list_targets)
+
+    return parser
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser = build_parser()
+    args = parser.parse_args(argv)
+    try:
+        return int(args.func(args))
+    except VerifyAdapterError as exc:
+        print(f"Blocked: {exc}", file=sys.stderr)
+        return 2
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
+'''
+
+
+CONTROL_PLANE_CHECK_PY_V2 = '''#!/usr/bin/env python3
+"""Deterministic control-plane validation for CCSIF."""
+from __future__ import annotations
+
+import json
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[2]
+REQUIRED_PATHS = [
+    "CLAUDE.md",
+    ".claude/verification-manifest.json",
+    ".claude/settings.json",
+    ".claude/rules/00-operating-doctrine.md",
+    ".claude/rules/10-karpathy-guidelines.md",
+    ".claude/rules/20-lifecycle-gates.md",
+    ".claude/rules/30-skill-taxonomy.md",
+    ".claude/scripts/common.py",
+    ".claude/scripts/lifecycle.py",
+    ".claude/scripts/verify_adapter.py",
+    ".claude/scripts/verification_manifest.py",
+    ".claude/scripts/control_plane_check.py",
+    ".claude/hooks/verify.sh",
+    ".claude/hooks/verify.ps1",
+    ".claude/commands/plan.md",
+    ".claude/commands/build.md",
+    ".claude/commands/verify.md",
+    ".claude/commands/status.md",
+    "docs/CONTEXT.md",
+    "docs/adr/0000-template.md",
+    ".claude/plans/.gitkeep",
+    ".claude/state/ledger.md",
+    ".claude/state/checkpoints/.gitkeep",
+    ".claude/state/handoffs/.gitkeep",
+    ".claude/state/research/.gitkeep",
+    ".claude/state/agents/.gitkeep",
+    ".claude/state/experiments/.gitkeep",
+    ".claude/memory/.gitkeep",
+]
+
+
+def fail(message: str) -> None:
+    print(f"FAIL: {message}", file=sys.stderr)
+    raise SystemExit(1)
+
+
+def check_required_paths(root: Path) -> None:
+    missing = [path for path in REQUIRED_PATHS if not (root / path).exists()]
+    if missing:
+        fail(f"missing required control-plane paths: {', '.join(missing)}")
+
+
+def check_json(root: Path) -> None:
+    try:
+        json.loads((root / ".claude/settings.json").read_text(encoding="utf-8"))
+    except Exception as exc:  # noqa: BLE001
+        fail(f".claude/settings.json is not valid JSON: {exc}")
+
+
+def check_verify_adapter(root: Path) -> None:
+    sys.path.insert(0, str(root / ".claude" / "scripts"))
+    import verify_adapter  # noqa: E402
+
+    try:
+        targets = verify_adapter.list_targets()
+    except verify_adapter.VerifyAdapterError as exc:
+        fail(f"verify adapter cannot parse verification manifest: {exc}")
+    if not targets["individual_targets"]:
+        fail("verify adapter parsed zero verification targets from the manifest")
+    result = verify_adapter.run_target("smoke", cwd=root)
+    if result["exit_code"] != 0:
+        fail(f"verify adapter's own 'smoke' target did not pass: {result}")
+
+
+def main() -> int:
+    check_required_paths(ROOT)
+    check_json(ROOT)
+    check_verify_adapter(ROOT)
+    print("control-plane-check: PASS")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
+'''
 VERIFY_ADAPTER_PY = '''#!/usr/bin/env python3
 """Code-agnostic verification adapter.
 
@@ -367,7 +798,7 @@ def run_target(target: str, *, claude_md: Path | None = None, pattern: str | Non
     overall = 0
     for entry in selected:
         command = _augment_command(entry["command"], pattern=pattern)
-        proc = subprocess.run(command, shell=True, cwd=cwd, capture_output=True, text=True)
+        proc = subprocess.run(command, shell=False, cwd=cwd, capture_output=True, text=True)
         if proc.returncode != 0:
             overall = 1
         results.append({"label": entry["label"], "slug": entry["slug"], "command": command, "exit_code": proc.returncode, "stdout_tail": proc.stdout[-2000:], "stderr_tail": proc.stderr[-2000:]})
@@ -798,7 +1229,11 @@ if __name__ == "__main__":
 VERIFY_SH = """#!/usr/bin/env bash
 # Thin platform entrypoint for the code-agnostic verify adapter.
 set -euo pipefail
-script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+script_path="${BASH_SOURCE[0]//\\\\//}"
+script_dir="${script_path%/*}"
+if [[ "$script_dir" != /* && "$script_dir" != [A-Za-z]:/* ]]; then
+  script_dir="$(pwd)/$script_dir"
+fi
 exec python3 "$script_dir/../scripts/verify_adapter.py" "$@"
 """
 
@@ -919,9 +1354,10 @@ def scaffold_tree(target: Path, *, dry_run: bool = False) -> dict[str, list[str]
         ".claude/rules/20-lifecycle-gates.md": LIFECYCLE_GATES,
         ".claude/rules/30-skill-taxonomy.md": SKILL_TAXONOMY,
         ".claude/scripts/common.py": COMMON_PY,
-        ".claude/scripts/verify_adapter.py": VERIFY_ADAPTER_PY,
+        ".claude/scripts/verification_manifest.py": VERIFICATION_MANIFEST_SOURCE,
+        ".claude/scripts/verify_adapter.py": VERIFY_ADAPTER_PY_V2,
         ".claude/scripts/lifecycle.py": LIFECYCLE_PY,
-        ".claude/scripts/control_plane_check.py": CONTROL_PLANE_CHECK_PY,
+        ".claude/scripts/control_plane_check.py": CONTROL_PLANE_CHECK_PY_V2,
         ".claude/hooks/verify.sh": VERIFY_SH,
         ".claude/hooks/verify.ps1": VERIFY_PS1,
         "docs/CONTEXT.md": CONTEXT_MD,
@@ -953,7 +1389,14 @@ def scaffold_tree(target: Path, *, dry_run: bool = False) -> dict[str, list[str]
 
 def merge_claude_md(target: Path, facts: Facts) -> str:
     path = target / "CLAUDE.md"
-    commands_block_lines = ["## Source-of-Truth Commands", "", "```bash"]
+    commands_block_lines = [
+        "## Verification Manifest",
+        "",
+        "The machine-readable verification manifest lives at `.claude/verification-manifest.json`.",
+        "Update that file when verification commands change; the adapter reads the manifest directly.",
+        "",
+        "```bash",
+    ]
     if facts.build_command:
         commands_block_lines += ["# build", facts.build_command, ""]
     if facts.test_command:
@@ -988,7 +1431,7 @@ def merge_claude_md(target: Path, facts: Facts) -> str:
         return "created"
 
     text = path.read_text(encoding="utf-8")
-    if "## Source-of-Truth Commands" in text:
+    if "## Verification Manifest" in text or "## Source-of-Truth Commands" in text:
         return "preserved"  # never overwrite an existing customized facts block
     text = text.rstrip() + "\n\n" + commands_block + "\n" + facts_block
     path.write_text(text, encoding="utf-8", newline="\n")
@@ -1040,6 +1483,28 @@ def bootstrap_settings_json(target: Path) -> str:
     return "created"
 
 
+def _split_command(command: str) -> list[str]:
+    return shlex.split(command, posix=os.name != "nt")
+
+
+def bootstrap_verification_manifest(target: Path, facts: Facts) -> str:
+    path = target / ".claude" / "verification-manifest.json"
+    if path.exists():
+        return "preserved"
+    targets: list[dict[str, Any]] = []
+    if facts.build_command:
+        targets.append({"id": "build", "label": "build", "command": _split_command(facts.build_command)})
+    if facts.test_command:
+        targets.append({"id": "test", "label": "test", "command": _split_command(facts.test_command)})
+    if facts.lint_command:
+        targets.append({"id": "lint", "label": "lint", "command": _split_command(facts.lint_command)})
+    targets.append({"id": "smoke", "label": "smoke", "command": ["python3", "-c", "print('smoke ok')"]})
+    data = {"schema_version": 1, "targets": targets}
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(stable_json(data) + "\n", encoding="utf-8")
+    return "created"
+
+
 def update_gitignore(target: Path) -> list[str]:
     path = target / ".gitignore"
     existing = path.read_text(encoding="utf-8").splitlines() if path.exists() else []
@@ -1057,7 +1522,7 @@ def update_gitignore(target: Path) -> list[str]:
 
 def validate(target: Path) -> dict[str, Any]:
     sys.path.insert(0, str(target / ".claude" / "scripts"))
-    for mod in ("verify_adapter", "lifecycle", "control_plane_check"):
+    for mod in ("verify_adapter", "verification_manifest", "lifecycle", "control_plane_check"):
         sys.modules.pop(mod, None)
     import control_plane_check  # noqa: E402
 
@@ -1074,7 +1539,7 @@ def run_smoke(target: Path) -> dict[str, Any]:
     """Trivial five-gate smoke workflow: exercise each gate's durable
     artifact using only the bootstrap-installed scripts."""
     sys.path.insert(0, str(target / ".claude" / "scripts"))
-    for mod in ("verify_adapter", "lifecycle", "common"):
+    for mod in ("verify_adapter", "verification_manifest", "lifecycle", "common"):
         sys.modules.pop(mod, None)
     import lifecycle  # noqa: E402
     import verify_adapter  # noqa: E402
@@ -1106,8 +1571,7 @@ def run_smoke(target: Path) -> dict[str, Any]:
     results["build"] = {"artifact": str(build_marker), "exists": build_marker.exists()}
 
     # Gate 5: Verify & Ship -- run the verify adapter's "smoke" target.
-    claude_md = target / "CLAUDE.md"
-    verify_result = verify_adapter.run_target("smoke", claude_md=claude_md, cwd=target)
+    verify_result = verify_adapter.run_target("smoke", cwd=target)
     results["verify"] = verify_result
 
     status = lifecycle.reconstruct_status(root=target / ".claude" / "state", workspace=target)
@@ -1152,7 +1616,7 @@ def command_run(args: argparse.Namespace) -> int:
 
     tree_result = scaffold_tree(target)
     claude_md_result = merge_claude_md(target, facts)
-    add_smoke_target_to_claude_md(target)
+    manifest_result = bootstrap_verification_manifest(target, facts)
     settings_result = bootstrap_settings_json(target)
     local_settings_result = bootstrap_local_settings(target)
     gitignore_result = update_gitignore(target)
@@ -1164,6 +1628,7 @@ def command_run(args: argparse.Namespace) -> int:
                 "facts": facts.to_dict(),
                 "tree": tree_result,
                 "claude_md": claude_md_result,
+                "verification_manifest": manifest_result,
                 "settings_json": settings_result,
                 "settings_local_json": local_settings_result,
                 "gitignore_added": gitignore_result,

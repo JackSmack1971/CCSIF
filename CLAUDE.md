@@ -23,9 +23,12 @@ Tier rules:
 
 <!-- CONSTITUTION:END -->
 
-## Source-of-Truth Commands
+## Verification Manifest
 
-Update these commands to match the repository:
+The machine-readable verification manifest lives at `.claude/verification-manifest.json`.
+Update that file when verification commands change; the adapter reads the manifest directly.
+
+Update these targets to match the repository:
 
 ```bash
 # control-plane

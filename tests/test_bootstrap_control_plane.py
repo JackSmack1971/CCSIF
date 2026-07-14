@@ -28,6 +28,7 @@ class IdempotenceTests(unittest.TestCase):
             ".claude/rules/00-operating-doctrine.md",
             ".claude/rules/20-lifecycle-gates.md",
             ".claude/rules/30-skill-taxonomy.md",
+            ".claude/scripts/verification_manifest.py",
             ".claude/scripts/verify_adapter.py",
             ".claude/scripts/lifecycle.py",
             ".claude/hooks/verify.sh",
@@ -51,17 +52,21 @@ class IdempotenceTests(unittest.TestCase):
         facts = bcp.Facts(test_command="python -m pytest -q")
         bcp.scaffold_tree(self.target)
         r1 = bcp.merge_claude_md(self.target, facts)
+        r1_manifest = bcp.bootstrap_verification_manifest(self.target, facts)
         r1_settings = bcp.bootstrap_settings_json(self.target)
         r1_local = bcp.bootstrap_local_settings(self.target)
         r1_gitignore = bcp.update_gitignore(self.target)
 
         r2 = bcp.merge_claude_md(self.target, facts)
+        r2_manifest = bcp.bootstrap_verification_manifest(self.target, facts)
         r2_settings = bcp.bootstrap_settings_json(self.target)
         r2_local = bcp.bootstrap_local_settings(self.target)
         r2_gitignore = bcp.update_gitignore(self.target)
 
         self.assertEqual(r1, "created")
         self.assertEqual(r2, "preserved")
+        self.assertEqual(r1_manifest, "created")
+        self.assertEqual(r2_manifest, "preserved")
         self.assertEqual(r1_settings, "created")
         self.assertEqual(r2_settings, "preserved")
         self.assertEqual(r1_local["status"], "created")
@@ -182,7 +187,7 @@ class ValidateAndSmokeTests(unittest.TestCase):
         self.target = Path(self.tmp.name)
         bcp.scaffold_tree(self.target)
         bcp.merge_claude_md(self.target, bcp.Facts())
-        bcp.add_smoke_target_to_claude_md(self.target)
+        bcp.bootstrap_verification_manifest(self.target, bcp.Facts())
         bcp.bootstrap_settings_json(self.target)
         bcp.bootstrap_local_settings(self.target)
 
@@ -192,6 +197,11 @@ class ValidateAndSmokeTests(unittest.TestCase):
     def test_validate_passes_after_full_bootstrap(self) -> None:
         result = bcp.validate(self.target)
         self.assertEqual(result["status"], "pass")
+
+    def test_scaffolded_verify_adapter_uses_manifest_and_no_shell(self) -> None:
+        adapter = (self.target / ".claude" / "scripts" / "verify_adapter.py").read_text(encoding="utf-8")
+        self.assertIn("verification_manifest", adapter)
+        self.assertNotIn("shell=True", adapter)
 
     def test_validate_fails_on_missing_required_path(self) -> None:
         (self.target / ".claude" / "scripts" / "verify_adapter.py").unlink()

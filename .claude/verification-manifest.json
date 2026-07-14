@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "targets": [
+    {
+      "id": "control-plane",
+      "label": "control-plane",
+      "command": [
+        "python3",
+        ".claude/scripts/control_plane_check.py"
+      ]
+    },
+    {
+      "id": "rules",
+      "label": "rules",
+      "command": [
+        "python3",
+        ".claude/scripts/rules_fidelity_check.py"
+      ]
+    },
+    {
+      "id": "memory-tests",
+      "label": "memory tests",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        ".claude/memory/tests",
+        "-v"
+      ]
+    },
+    {
+      "id": "issue-to-pr-tests",
+      "label": "issue-to-pr tests",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        ".claude/skills/issue-to-pr/tests",
+        "-v"
+      ]
+    },
+    {
+      "id": "smoke",
+      "label": "smoke",
+      "command": [
+        "python3",
+        "-c",
+        "print('smoke ok')"
+      ]
+    }
+  ]
+}
