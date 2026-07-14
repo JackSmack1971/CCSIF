@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import shutil
 import sys
 import tempfile
 import unittest
@@ -15,14 +16,12 @@ from phase0_control_plane import Phase0ControlPlane  # noqa: E402
 class Phase4WorkflowTests(unittest.TestCase):
     def setUp(self) -> None:
         self.tmp = tempfile.TemporaryDirectory()
-        self.state_root = Path(self.tmp.name) / "state"
-        self.state_root.mkdir(parents=True, exist_ok=True)
-        # Workspace stays the real repo so workflow defs under
-        # .claude/workflows/defs/ are readable, matching the Phase 3 smoke
-        # test convention (state isolated, workspace real).
         self.workspace = ROOT
+        self.state_root = ROOT / ".claude" / "state" / f"test-phase4-{Path(self.tmp.name).name}"
+        self.state_root.mkdir(parents=True, exist_ok=True)
 
     def tearDown(self) -> None:
+        shutil.rmtree(self.state_root, ignore_errors=True)
         self.tmp.cleanup()
 
     def _verified_checkpoint(self, session_id: str = "sess-p4") -> str:
@@ -52,6 +51,47 @@ class Phase4WorkflowTests(unittest.TestCase):
         control.verify(session_id, passed=True, details="fixture step verified")
         checkpoint = control.compact(session_id, reason="phase4 fixture")
         return checkpoint["checkpoint_id"]
+
+    def test_rejects_malicious_workflow_and_run_ids_before_persistence(self) -> None:
+        malicious = ("../linear-static", "subdir/run", "/tmp/run", "..", ".", "Linear-Static", "run_id")
+        for workflow_id in malicious:
+            with self.subTest(workflow_id=workflow_id):
+                with self.assertRaises(p4.UnsafeWorkflowIdentifierError):
+                    p4.load_workflow_def(workflow_id, workspace=self.workspace)
+
+        for run_id in malicious:
+            with self.subTest(run_id=run_id):
+                with self.assertRaises(p4.UnsafeWorkflowIdentifierError):
+                    p4.start_run("linear-static", run_id=run_id, root=self.state_root, workspace=self.workspace)
+
+        self.assertFalse((self.state_root / "workflows" / "linear-static.json").exists())
+
+    def test_rejects_nested_traversal_attempts_for_state_paths(self) -> None:
+        run = p4.start_run("linear-static", run_id="safe-run", root=self.state_root, workspace=self.workspace)
+        self.assertEqual(run["run_id"], "safe-run")
+
+        traversal_ids = ("safe-run/../../evil", "safe-run\\..\\evil", "safe-run..", "safe-run/child")
+        for run_id in traversal_ids:
+            with self.subTest(run_id=run_id):
+                with self.assertRaises(p4.UnsafeWorkflowIdentifierError):
+                    p4.replay(run_id, root=self.state_root, workspace=self.workspace)
+
+        self.assertFalse((self.state_root / "evil.json").exists())
+
+    def test_duplicate_run_ids_are_rejected_instead_of_overwriting_state(self) -> None:
+        p4.start_run("linear-static", run_id="duplicate-run", root=self.state_root, workspace=self.workspace)
+        with self.assertRaises(p4.UnsafeWorkflowIdentifierError):
+            p4.start_run("linear-static", run_id="duplicate-run", root=self.state_root, workspace=self.workspace)
+
+    def test_valid_ids_persist_only_under_approved_repo_local_state(self) -> None:
+        run = p4.start_run("linear-static", run_id="valid-run-156", root=self.state_root, workspace=self.workspace)
+        state_file = self.state_root / "workflows" / "valid-run-156.json"
+        self.assertTrue(state_file.exists())
+        self.assertEqual(run["workflow"], "linear-static")
+
+        outside_root = Path(self.tmp.name) / "outside-state"
+        with self.assertRaises(p4.UnsafeWorkflowPersistenceError):
+            p4.start_run("linear-static", run_id="outside-root", root=outside_root, workspace=self.workspace)
 
     # 1. Linear static workflow -------------------------------------------------
     def test_linear_static_workflow_runs_to_completion(self) -> None:

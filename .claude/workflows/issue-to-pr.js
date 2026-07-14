@@ -87,11 +87,40 @@ const RECORD_SCHEMA = {
   required: ['issue_number', 'recorded'],
 }
 
+const SAFE_ID_RE = /^[a-z0-9][a-z0-9-]{0,63}$/
+const APPROVED_PERSISTENCE_PREFIXES = ['.claude/state/', '.claude/traces/']
+
+function validateWorkflowId(value, kind) {
+  if (typeof value !== 'string' || value.length === 0 || value !== value.trim()) {
+    throw new Error(`${kind} must be a non-empty normalized string`)
+  }
+  if (value === '.' || value === '..' || value.includes('/') || value.includes('\\') || value !== value.toLowerCase() || !SAFE_ID_RE.test(value)) {
+    throw new Error(`${kind} must use lowercase letters, digits, and hyphens only; path components and traversal are forbidden`)
+  }
+  return value
+}
+
+function validatePersistencePath(value, kind) {
+  if (typeof value !== 'string' || value.length === 0 || value !== value.trim()) {
+    throw new Error(`${kind} must be a non-empty repository-local path`)
+  }
+  if (value.startsWith('/') || value.startsWith('~') || value.includes('\\') || value.split('/').includes('..') || value.split('/').includes('.')) {
+    throw new Error(`${kind} must not be absolute, ambiguous, or traverse directories`)
+  }
+  if (!APPROVED_PERSISTENCE_PREFIXES.some(prefix => value.startsWith(prefix))) {
+    throw new Error(`${kind} must stay under .claude/state/ or .claude/traces/`)
+  }
+  return value
+}
+
+validateWorkflowId(meta.name, 'workflow name')
+
 const repo = (args && args.repo) || '.'
 const label = (args && args.label) || 'repository-hygiene'
 const issueFilter = (args && args.issue) || null
-const planPath = (args && args.planPath) || '.issue-to-pr/plan.json'
-const journalPath = (args && args.journalPath) || '.issue-to-pr/journal.json'
+const runId = validateWorkflowId((args && args.runId) || `issue-156-${Date.now().toString(36)}`, 'run id')
+const planPath = validatePersistencePath((args && args.planPath) || `.claude/state/issue-to-pr/${runId}/plan.json`, 'planPath')
+const journalPath = validatePersistencePath((args && args.journalPath) || `.claude/state/issue-to-pr/${runId}/journal.json`, 'journalPath')
 const issueFlags = issueFilter ? issueFilter.map(n => `--issue ${n}`).join(' ') : ''
 
 phase('Plan')
