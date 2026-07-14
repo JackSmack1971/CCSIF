@@ -29,9 +29,23 @@ CCSIF is a repository-local Claude Code scaffold for developers who want shared 
 ### Prerequisites
 
 - Git
-- Claude Code [INFERRED from repository layout and hook/config naming]
-- Bash for the project hook scripts in `.claude/hooks/`
-- Node.js [INFERRED] for `.claude/workflows/issue-to-pr.js` and `.claude/hooks/lib/trace-writer.js`
+- Python 3.11 or newer for repository validation and control-plane helper scripts; `.python-version` advertises the lowest supported version.
+- Node.js 20 or newer for `.claude/workflows/issue-to-pr.js` and `.claude/hooks/lib/*.js`; `.node-version` advertises the lowest supported version.
+- Bash for the project hook scripts in `.claude/hooks/`.
+- `uv` for starting the configured `graphiti-memory` MCP server from `.mcp.json`. The default prerequisite check validates the MCP manifest without requiring local MCP state; use `--require-uv` when you need to prove the executable is installed.
+- Claude Code [INFERRED from repository layout and hook/config naming].
+
+Run the deterministic prerequisite and MCP manifest smoke check before deeper validation:
+
+```bash
+python .claude/scripts/prereq_check.py --mcp-smoke
+```
+
+To also fail when `uv` itself is not installed locally, run:
+
+```bash
+python .claude/scripts/prereq_check.py --mcp-smoke --require-uv
+```
 
 ### Clone
 
@@ -42,7 +56,11 @@ cd CCSIF
 
 ### Install
 
-No package manager manifest or install script was found, so there is no repository-defined install step.
+There are no root third-party Node dependencies. `package.json` exists as a discoverable script and runtime manifest for deterministic verification commands. The MCP memory server keeps its Python dependency manifest and lockfile under `.claude/memory/`.
+
+```bash
+npm run smoke:mcp
+```
 
 ### Configure
 
@@ -154,7 +172,7 @@ This repository is best treated as a command center for Claude Code work, not as
 | `hooks.Stop` | Yes | `bash .claude/hooks/stop.sh` | [`.claude/settings.json`](./.claude/settings.json) | Writes final trace telemetry at stop. |
 | `EXAMPLE_LOCAL_ONLY` | No | `replace-me` | [`.claude/settings.local.json`](./.claude/settings.local.json) | Example machine-local placeholder; do not treat as a shared secret. |
 
-No required environment variables were discovered in committed repo files.
+No required environment variables were discovered in committed repo files. `.claude/settings.local.json` and `CLAUDE.local.md` are intentionally gitignored for machine-local overrides; copy or create them only on your workstation and never rely on them for shared startup behavior.
 
 ## Developer Command Center
 
@@ -213,10 +231,13 @@ Grounded verification options:
 git status --short
 git diff --check
 python -m unittest discover -s tests -v
+python .claude/scripts/prereq_check.py --mcp-smoke
 python .claude/scripts/control_plane_check.py
 python .claude/scripts/rules_fidelity_check.py
 bash .claude/hooks/verify.sh run rules
 pwsh ./.claude/hooks/verify.ps1 run rules
+npm run verify
+npm run smoke:mcp
 ```
 
 Use the narrowest check that matches the change:

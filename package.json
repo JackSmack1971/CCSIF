@@ -1,0 +1,15 @@
+{
+  "name": "ccsif-control-plane",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Repository-local Claude Code control-plane verification scripts for CCSIF.",
+  "engines": {
+    "node": ">=20",
+    "python": ">=3.11"
+  },
+  "scripts": {
+    "test": "python -m unittest discover -s tests -v",
+    "verify": "python .claude/scripts/prereq_check.py --mcp-smoke && python .claude/scripts/control_plane_check.py && python -m unittest discover -s tests -v",
+    "smoke:mcp": "python .claude/scripts/prereq_check.py --mcp-smoke"
+  }
+}

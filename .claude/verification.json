@@ -3,24 +3,55 @@
   "description": "Machine-readable verification manifest. Each target's command is an argv array executed with shell=False by .claude/scripts/phase5b_verify.py. The '## Source-of-Truth Commands' block in CLAUDE.md is the human-readable documentation of these same commands; this file is the executable source of truth.",
   "targets": [
     {
+      "id": "prerequisites",
+      "label": "prerequisites and MCP smoke",
+      "command": [
+        "python3",
+        ".claude/scripts/prereq_check.py",
+        "--mcp-smoke"
+      ]
+    },
+    {
       "id": "control-plane",
       "label": "control-plane",
-      "command": ["python3", ".claude/scripts/control_plane_check.py"]
+      "command": [
+        "python3",
+        ".claude/scripts/control_plane_check.py"
+      ]
     },
     {
       "id": "rules",
       "label": "rules",
-      "command": ["python3", ".claude/scripts/rules_fidelity_check.py"]
+      "command": [
+        "python3",
+        ".claude/scripts/rules_fidelity_check.py"
+      ]
     },
     {
       "id": "memory-tests",
       "label": "memory tests",
-      "command": ["python3", "-m", "unittest", "discover", "-s", ".claude/memory/tests", "-v"]
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        ".claude/memory/tests",
+        "-v"
+      ]
     },
     {
       "id": "issue-to-pr-tests",
       "label": "issue-to-pr tests",
-      "command": ["python3", "-m", "unittest", "discover", "-s", ".claude/skills/issue-to-pr/tests", "-v"]
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        ".claude/skills/issue-to-pr/tests",
+        "-v"
+      ]
     }
   ]
 }
