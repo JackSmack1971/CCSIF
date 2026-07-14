@@ -16,5 +16,10 @@ if command -v node >/dev/null 2>&1; then
 fi
 
 python3 "$phase2_script" bootstrap-local-settings >/dev/null 2>&1 || true
-printf '%s' "$payload" | python3 "$phase0_script" start >/dev/null
+# Fail-open with evidence (Hardening 04/13, #152): a corrupt-but-recoverable
+# phase0 state must never fail the whole SessionStart hook closed. The start
+# subcommand durably records every decision/failure under
+# .claude/state/logs/session-start/ before returning.
+printf '%s' "$payload" | python3 "$phase0_script" start >/dev/null \
+  || printf '%s\n' "phase0 session-start: start failed; decision evidence recorded under .claude/state/logs/session-start/" >&2
 printf '%s' "$payload" | python3 "$phase2_script" session-start-restore || true

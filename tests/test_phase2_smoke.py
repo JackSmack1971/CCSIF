@@ -163,6 +163,23 @@ class Phase2HookSmokeTests(unittest.TestCase):
         self.assertIn("Restored project memory", hook_output["hookSpecificOutput"]["additionalContext"])
         self.assertIn("Verified the ledger fixture.", hook_output["hookSpecificOutput"]["additionalContext"])
 
+        # Hardening 04/13 (#152): the compact-source SessionStart redelivery
+        # above must NOT clobber the session's durable progress back to
+        # session-start defaults (verified index and turn survive).
+        reconstruct = subprocess.run(
+            [sys.executable, str(PHASE0_SCRIPT), "reconstruct", session_id],
+            text=True,
+            capture_output=True,
+            cwd=str(ROOT),
+            env=self.env,
+            check=False,
+        )
+        self.assertEqual(reconstruct.returncode, 0, reconstruct.stderr)
+        survived = json.loads(reconstruct.stdout)["session"]
+        self.assertEqual(survived["verified_step_index"], 1)
+        self.assertEqual(survived["verified_turn_index"], 1)
+        self.assertEqual(survived["current_turn_index"], 2)
+
         status = self._run_cli("status")
         self.assertEqual(status.returncode, 0, status.stderr)
         status_payload = json.loads(status.stdout)
