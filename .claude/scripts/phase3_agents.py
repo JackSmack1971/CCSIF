@@ -27,6 +27,8 @@ from phase0_control_plane import (  # noqa: E402
     read_stdin_json,
     stable_json,
     state_root,
+    atomic_write_text,
+    update_json_file_locked,
     workspace_root,
 )
 
@@ -189,7 +191,7 @@ def subagent_start(payload: dict[str, Any], root: Path | None = None, workspace:
         "merge_handoff_result": None,
     }
     dest = _task_path(state, parent_session_id, agent_id)
-    dest.write_text(stable_json(record) + "\n", encoding="utf-8")
+    atomic_write_text(dest, stable_json(record) + "\n")
     return dest
 
 
@@ -201,32 +203,33 @@ def subagent_stop(payload: dict[str, Any], root: Path | None = None) -> Path:
     state = root or state_root()
     dest = _task_path(state, parent_session_id, agent_id)
 
-    if dest.exists():
-        record = json.loads(dest.read_text(encoding="utf-8"))
-    else:
-        # SubagentStart wasn't wired/observed for this task (e.g. hook added
-        # mid-session); reconstruct a minimal record rather than dropping
-        # the completion evidence.
-        record = {
-            "kind": "subagent-task",
-            "task_id": task_id_for(parent_session_id, agent_id),
-            "parent_session_id": parent_session_id,
-            "agent_id": agent_id,
-            "agent_type": str(payload.get("agent_type") or ""),
-            "role": route(str(payload.get("agent_type") or "")).get("role", "unrouted"),
-            "tool_scope": [],
-            "isolation": "unknown",
-            "routing": "reconstructed-at-stop",
-            "started_at": None,
-            "checkpoint": None,
-        }
+    def update(record: dict[str, Any] | None) -> dict[str, Any]:
+        if record is None:
+            # SubagentStart wasn't wired/observed for this task (e.g. hook added
+            # mid-session); reconstruct a minimal record rather than dropping
+            # the completion evidence.
+            record = {
+                "kind": "subagent-task",
+                "task_id": task_id_for(parent_session_id, agent_id),
+                "parent_session_id": parent_session_id,
+                "agent_id": agent_id,
+                "agent_type": str(payload.get("agent_type") or ""),
+                "role": route(str(payload.get("agent_type") or "")).get("role", "unrouted"),
+                "tool_scope": [],
+                "isolation": "unknown",
+                "routing": "reconstructed-at-stop",
+                "started_at": None,
+                "checkpoint": None,
+            }
 
-    record["status"] = "completed"
-    record["completed_at"] = now()
-    record["stop_resume_state"] = "stopped"
-    record["exported_summary"] = (payload.get("last_assistant_message") or "")[:MAX_SUMMARY_CHARS]
-    record["transcript_pointer"] = payload.get("agent_transcript_path")
-    dest.write_text(stable_json(record) + "\n", encoding="utf-8")
+        record["status"] = "completed"
+        record["completed_at"] = now()
+        record["stop_resume_state"] = "stopped"
+        record["exported_summary"] = (payload.get("last_assistant_message") or "")[:MAX_SUMMARY_CHARS]
+        record["transcript_pointer"] = payload.get("agent_transcript_path")
+        return record
+
+    update_json_file_locked(dest, update)
     return dest
 
 
@@ -262,7 +265,7 @@ def sweep(stale_after_minutes: int = DEFAULT_STALE_AFTER_MINUTES, root: Path | N
             record["status"] = "stale"
             record["stop_resume_state"] = "stale"
             record["stale_detected_at"] = now()
-            path.write_text(stable_json(record) + "\n", encoding="utf-8")
+            atomic_write_text(path, stable_json(record) + "\n")
             changed.append(record["task_id"])
     return changed
 
@@ -312,7 +315,7 @@ def handoff(
         record["status"] = "merged" if verified else "handoff-failed-verification"
 
     record["merge_handoff_result"] = result
-    dest.write_text(stable_json(record) + "\n", encoding="utf-8")
+    update_json_file_locked(dest, lambda _current: record)
     return record
 
 

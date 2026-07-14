@@ -24,6 +24,7 @@ LOG_PATH = ROOT / ".claude" / "state" / "logs" / "lint-events.jsonl"
 MUTATING_TOOLS = {"Write", "Edit", "NotebookEdit"}
 
 sys.path.insert(0, str(ROOT / ".claude" / "scripts"))
+from phase0_control_plane import append_text_locked, stable_json  # noqa: E402
 
 
 def now() -> str:
@@ -33,8 +34,7 @@ def now() -> str:
 def log_event(event: dict) -> None:
     try:
         LOG_PATH.parent.mkdir(parents=True, exist_ok=True)
-        with LOG_PATH.open("a", encoding="utf-8", newline="\n") as fh:
-            fh.write(json.dumps(event, sort_keys=True) + "\n")
+        append_text_locked(LOG_PATH, stable_json(event) + "\n")
     except Exception:  # noqa: BLE001 - logging must never crash the hook
         pass
 

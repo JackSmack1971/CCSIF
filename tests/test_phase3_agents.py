@@ -313,5 +313,78 @@ class Phase3AgentsTests(unittest.TestCase):
         self.assertIsNone(record["checkpoint"])
 
 
+class Phase3AtomicWriteRegressionTests(unittest.TestCase):
+    def setUp(self) -> None:
+        self.tmp = tempfile.TemporaryDirectory()
+        self.state_root = Path(self.tmp.name) / "state"
+        self.state_root.mkdir(parents=True, exist_ok=True)
+
+    def tearDown(self) -> None:
+        self.tmp.cleanup()
+
+    def test_issue_153_parallel_subagent_records_are_partitioned_and_durable(self) -> None:
+        """Regression for issue #153: parallel subagents must not share one mutable state file."""
+        from concurrent.futures import ThreadPoolExecutor
+
+        def run_agent(index: int) -> str:
+            agent_id = f"agent-{index}"
+            phase3.subagent_start(
+                {"session_id": "parent-153", "agent_id": agent_id, "agent_type": "builder"},
+                root=self.state_root,
+                workspace=REPO_ROOT,
+            )
+            path = phase3.subagent_stop(
+                {
+                    "session_id": "parent-153",
+                    "agent_id": agent_id,
+                    "agent_type": "builder",
+                    "last_assistant_message": f"summary-{index}",
+                },
+                root=self.state_root,
+            )
+            return path.name
+
+        with ThreadPoolExecutor(max_workers=8) as pool:
+            names = list(pool.map(run_agent, range(24)))
+
+        self.assertEqual(len(set(names)), 24)
+        records = phase3.list_tasks(root=self.state_root)
+        self.assertEqual(len(records), 24)
+        self.assertEqual({record["status"] for record in records}, {"completed"})
+        self.assertEqual(
+            {record["exported_summary"] for record in records},
+            {f"summary-{index}" for index in range(24)},
+        )
+
+    def test_issue_153_atomic_json_update_survives_parallel_stop_same_agent(self) -> None:
+        """Regression for issue #153: a same-record stop race leaves valid JSON, not a torn file."""
+        from concurrent.futures import ThreadPoolExecutor
+
+        phase3.subagent_start(
+            {"session_id": "parent-153", "agent_id": "agent-race", "agent_type": "builder"},
+            root=self.state_root,
+            workspace=REPO_ROOT,
+        )
+
+        def stop(index: int) -> None:
+            phase3.subagent_stop(
+                {
+                    "session_id": "parent-153",
+                    "agent_id": "agent-race",
+                    "agent_type": "builder",
+                    "last_assistant_message": f"winner-{index}",
+                },
+                root=self.state_root,
+            )
+
+        with ThreadPoolExecutor(max_workers=8) as pool:
+            list(pool.map(stop, range(32)))
+
+        path = self.state_root / "agents" / "parent-153" / "agent-race.task.json"
+        record = json.loads(path.read_text(encoding="utf-8"))
+        self.assertEqual(record["status"], "completed")
+        self.assertRegex(record["exported_summary"], r"^winner-\d+$")
+
+
 if __name__ == "__main__":
     unittest.main()

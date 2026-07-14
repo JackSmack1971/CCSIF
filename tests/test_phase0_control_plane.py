@@ -653,5 +653,64 @@ class Phase0StepStateTests(unittest.TestCase):
         self.assertEqual(migrated.load_session("sess-legacy").step_state, phase0.STEP_TOOL_FAILED)
 
 
+class Phase0AtomicWriteRegressionTests(unittest.TestCase):
+    def setUp(self) -> None:
+        self.tmp = tempfile.TemporaryDirectory()
+        self.workspace = Path(self.tmp.name) / "workspace"
+        self.workspace.mkdir(parents=True, exist_ok=True)
+        self.state_root = self.workspace / ".claude" / "state"
+        self.env_patch = patch.dict(
+            os.environ,
+            {
+                "PHASE0_STATE_ROOT": str(self.state_root),
+                "PHASE0_WORKSPACE_ROOT": str(self.workspace),
+            },
+            clear=False,
+        )
+        self.env_patch.start()
+
+    def tearDown(self) -> None:
+        self.env_patch.stop()
+        self.tmp.cleanup()
+
+    def test_issue_153_parallel_tool_event_logs_remain_parseable(self) -> None:
+        """Regression for issue #153: parallel tool-event writers append whole JSONL records."""
+        from concurrent.futures import ThreadPoolExecutor
+
+        def run_session(index: int) -> str:
+            control = phase0.Phase0ControlPlane(root=self.state_root)
+            session_id = f"sess-153-{index}"
+            control.start(session_id=session_id, notes="issue #153 parallel tool events")
+            event = control.request_tool(
+                {
+                    "session_id": session_id,
+                    "tool_name": "Write",
+                    "tool_input": {"file_path": f"notes-{index}.txt", "content": "x"},
+                    "cwd": str(self.workspace),
+                    "tool_use_id": f"tool-{index}",
+                }
+            )
+            control.result_tool(
+                {
+                    "session_id": session_id,
+                    "tool_use_id": event.tool_call_id,
+                    "tool_name": "Write",
+                    "status": "success",
+                    "tool_response": {"ok": True},
+                }
+            )
+            return session_id
+
+        with ThreadPoolExecutor(max_workers=8) as pool:
+            session_ids = list(pool.map(run_session, range(20)))
+
+        for session_id in session_ids:
+            replay = phase0.Phase0ControlPlane(root=self.state_root).replay(session_id)
+            self.assertEqual(
+                [event["event_type"] for event in replay],
+                ["session.start", "tool.request", "tool.result"],
+            )
+
+
 if __name__ == "__main__":
     unittest.main()
