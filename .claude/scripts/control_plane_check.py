@@ -42,6 +42,7 @@ REQUIRED_PATHS = [
     ".claude/state/workflows/.gitkeep",
     ".claude/scripts/phase5b_lifecycle.py",
     ".claude/scripts/phase5b_verify.py",
+    ".claude/verification.json",
     ".claude/hooks/verify.sh",
     ".claude/hooks/verify.ps1",
     ".claude/commands/brainstorm.md",
@@ -290,15 +291,16 @@ def check_verify_adapter() -> None:
     sys.path.insert(0, str(ROOT / ".claude" / "scripts"))
     import phase5b_verify  # noqa: E402
 
+    manifest = ROOT / ".claude" / "verification.json"
     try:
-        targets = phase5b_verify.list_targets(claude_md=ROOT / "CLAUDE.md")
+        targets = phase5b_verify.list_targets(manifest=manifest)
     except phase5b_verify.VerifyAdapterError as exc:
-        fail(f"verify adapter cannot parse CLAUDE.md source-of-truth commands: {exc}")
+        fail(f"verify adapter cannot load the verification manifest: {exc}")
     if not targets["individual_targets"]:
-        fail("verify adapter parsed zero source-of-truth commands from CLAUDE.md")
+        fail("verify adapter loaded zero targets from the verification manifest")
     # Use the "rules" target, not "control-plane": the latter would shell
     # out to this very script and recurse.
-    result = phase5b_verify.run_target("rules", claude_md=ROOT / "CLAUDE.md", cwd=ROOT)
+    result = phase5b_verify.run_target("rules", manifest=manifest, cwd=ROOT)
     if result["exit_code"] != 0:
         fail(f"verify adapter's own 'rules' target did not pass: {result}")
 

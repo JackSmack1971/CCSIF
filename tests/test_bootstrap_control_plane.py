@@ -183,6 +183,7 @@ class ValidateAndSmokeTests(unittest.TestCase):
         bcp.scaffold_tree(self.target)
         bcp.merge_claude_md(self.target, bcp.Facts())
         bcp.add_smoke_target_to_claude_md(self.target)
+        bcp.merge_verification_manifest(self.target, bcp.Facts())
         bcp.bootstrap_settings_json(self.target)
         bcp.bootstrap_local_settings(self.target)
 
@@ -247,6 +248,74 @@ class StackDetectionTests(unittest.TestCase):
         facts = bcp.detect_stack(self.target)
         self.assertIsNone(facts.test_command)
         self.assertIsNone(facts.lint_command)
+
+
+class SafeVerifyTemplateTests(unittest.TestCase):
+    """Hardening 01/13 (#149): the scaffolded verify adapter must execute
+    argv arrays with shell=False from a validated manifest, and must reject
+    shell-metacharacter payloads the same way the parent repo's adapter
+    does."""
+
+    def setUp(self) -> None:
+        self.tmp = tempfile.TemporaryDirectory()
+        self.target = Path(self.tmp.name)
+        bcp.scaffold_tree(self.target)
+        bcp.merge_claude_md(self.target, bcp.Facts())
+        bcp.merge_verification_manifest(self.target, bcp.Facts())
+
+    def tearDown(self) -> None:
+        self.tmp.cleanup()
+        for mod in ("verify_adapter",):
+            sys.modules.pop(mod, None)
+
+    def _import_scaffolded_adapter(self):
+        sys.path.insert(0, str(self.target / ".claude" / "scripts"))
+        sys.modules.pop("verify_adapter", None)
+        import verify_adapter  # noqa: E402
+
+        return verify_adapter
+
+    def test_scaffolded_adapter_contains_no_shell_true(self) -> None:
+        text = (self.target / ".claude" / "scripts" / "verify_adapter.py").read_text(encoding="utf-8")
+        self.assertNotIn("shell=True", text)
+        self.assertIn("shell=False", text)
+
+    def test_scaffolded_manifest_is_valid_and_smoke_target_passes(self) -> None:
+        adapter = self._import_scaffolded_adapter()
+        manifest = self.target / ".claude" / "verification.json"
+        entries = adapter.load_manifest(manifest)
+        self.assertIn("smoke", [e["slug"] for e in entries])
+        result = adapter.run_target("smoke", manifest=manifest, cwd=self.target)
+        self.assertEqual(result["exit_code"], 0)
+
+    def test_scaffolded_adapter_rejects_adversarial_payload(self) -> None:
+        adapter = self._import_scaffolded_adapter()
+        manifest = self.target / ".claude" / "verification.json"
+        data = json.loads(manifest.read_text(encoding="utf-8"))
+        data["targets"] = [{"id": "evil", "label": "evil", "command": ["python3", "-c", "print('x'); touch pwned"]}]
+        manifest.write_text(json.dumps(data), encoding="utf-8")
+        with self.assertRaises(adapter.VerifyAdapterError):
+            adapter.load_manifest(manifest)
+        self.assertFalse((self.target / "pwned").exists())
+
+    def test_detected_npm_stack_produces_argv_manifest(self) -> None:
+        npm_target = Path(self.tmp.name) / "npm-repo"
+        npm_target.mkdir()
+        (npm_target / "package.json").write_text(
+            json.dumps({"scripts": {"test": "jest", "lint": "eslint ."}}), encoding="utf-8"
+        )
+        facts = bcp.detect_stack(npm_target)
+        bcp.merge_verification_manifest(npm_target, facts)
+        data = json.loads((npm_target / ".claude" / "verification.json").read_text(encoding="utf-8"))
+        by_id = {t["id"]: t["command"] for t in data["targets"]}
+        self.assertEqual(by_id["test"], ["npm", "test"])
+        self.assertEqual(by_id["lint"], ["npm", "run", "lint"])
+
+    def test_manifest_merge_is_idempotent_and_preserving(self) -> None:
+        manifest = self.target / ".claude" / "verification.json"
+        before = manifest.read_text(encoding="utf-8")
+        self.assertEqual(bcp.merge_verification_manifest(self.target, bcp.Facts(test_command="npm test")), "preserved")
+        self.assertEqual(manifest.read_text(encoding="utf-8"), before)
 
 
 if __name__ == "__main__":

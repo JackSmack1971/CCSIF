@@ -72,7 +72,7 @@ def main() -> int:
     # the shell hop.
     import phase5b_verify  # noqa: E402
 
-    result = phase5b_verify.run_target("lint", claude_md=ROOT / "CLAUDE.md", cwd=ROOT)
+    result = phase5b_verify.run_target("lint", manifest=ROOT / ".claude" / "verification.json", cwd=ROOT)
     exit_code = result["exit_code"]
     event = {
         "ts": now(),
