@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import os
+import sqlite3
 import stat
 import subprocess
 import tempfile
@@ -274,6 +275,225 @@ class Phase0ControlPlaneTests(unittest.TestCase):
         subprocess.run(["git", "add", "sample.txt"], cwd=repo_dir, check=True)
         findings_clean = phase0.scan_staged_diff(cwd=repo_dir)
         self.assertEqual(findings_clean, [])
+
+
+class Phase0StepStateTests(unittest.TestCase):
+    """Hardening 03/13 (#151): the per-step state machine separates tool
+    completion from checkpoint verification, so a successful tool call never
+    deadlocks the next PreToolUse request."""
+
+    def setUp(self) -> None:
+        self.tmp = tempfile.TemporaryDirectory()
+        self.workspace = Path(self.tmp.name) / "workspace"
+        self.workspace.mkdir(parents=True, exist_ok=True)
+        self.state_root = self.workspace / ".claude" / "state"
+        self.env_patch = patch.dict(
+            os.environ,
+            {
+                "PHASE0_STATE_ROOT": str(self.state_root),
+                "PHASE0_WORKSPACE_ROOT": str(self.workspace),
+            },
+            clear=False,
+        )
+        self.env_patch.start()
+        self.control = phase0.Phase0ControlPlane(root=self.state_root)
+
+    def tearDown(self) -> None:
+        self.env_patch.stop()
+        self.tmp.cleanup()
+
+    def _request(self, session_id: str, tool_use_id: str) -> object:
+        return self.control.request_tool(
+            {
+                "session_id": session_id,
+                "tool_name": "Write",
+                "tool_input": {"file_path": f"{tool_use_id}.txt", "content": "x"},
+                "cwd": str(self.workspace),
+                "tool_use_id": tool_use_id,
+            }
+        )
+
+    def _result(self, session_id: str, tool_use_id: str, *, status: str = "success", terminal: bool = False) -> object:
+        payload: dict[str, object] = {
+            "session_id": session_id,
+            "tool_use_id": tool_use_id,
+            "tool_name": "Write",
+            "status": status,
+            "duration_ms": 1,
+            "tool_result": {"ok": status == "success"},
+        }
+        if terminal:
+            payload["terminal"] = True
+        return self.control.result_tool(payload)
+
+    def test_two_sequential_successful_tools_without_verify(self) -> None:
+        session = self.control.start(notes="sequential")
+        self._request(session.session_id, "tool-1")
+        self._result(session.session_id, "tool-1")
+        # The exact production sequence from finding 3: a second PreToolUse
+        # arrives with no intervening verify. It must succeed.
+        self._request(session.session_id, "tool-2")
+        self._result(session.session_id, "tool-2")
+        loaded = self.control.load_session(session.session_id)
+        self.assertEqual(loaded.step_state, phase0.STEP_TOOL_COMPLETED)
+        self.assertIsNone(loaded.pending_tool_call_id)
+        self.assertEqual(loaded.current_step_index, 2)
+
+    def test_success_result_clears_pending_and_sets_completed(self) -> None:
+        session = self.control.start(notes="clear-pending")
+        self._request(session.session_id, "tool-1")
+        mid = self.control.load_session(session.session_id)
+        self.assertEqual(mid.step_state, phase0.STEP_TOOL_PENDING)
+        self.assertEqual(mid.pending_tool_call_id, "tool-1")
+        self._result(session.session_id, "tool-1")
+        done = self.control.load_session(session.session_id)
+        self.assertIsNone(done.pending_tool_call_id)
+        self.assertEqual(done.step_state, phase0.STEP_TOOL_COMPLETED)
+
+    def test_success_then_failure_keeps_first_step_record(self) -> None:
+        session = self.control.start(notes="success-then-failure")
+        self._request(session.session_id, "tool-1")
+        self._result(session.session_id, "tool-1")
+        self._request(session.session_id, "tool-2")
+        self._result(session.session_id, "tool-2", status="failure")
+        loaded = self.control.load_session(session.session_id)
+        self.assertEqual(loaded.step_state, phase0.STEP_TOOL_FAILED)
+        self.assertEqual(loaded.status, "active")  # non-terminal failure
+        results = [e for e in self.control.replay(session.session_id) if e["event_type"] == "tool.result"]
+        self.assertEqual([r["status"] for r in results], ["success", "failure"])
+
+        # Terminal failure marks the session failed.
+        self._request(session.session_id, "tool-3")
+        self._result(session.session_id, "tool-3", status="failure", terminal=True)
+        self.assertEqual(self.control.load_session(session.session_id).status, "failed")
+
+    def test_duplicate_result_delivery_is_idempotent_replay(self) -> None:
+        session = self.control.start(notes="duplicate-result")
+        self._request(session.session_id, "tool-1")
+        first = self._result(session.session_id, "tool-1")
+        second = self._result(session.session_id, "tool-1")
+        self.assertEqual(first.event_id, second.event_id)
+        results = [e for e in self.control.replay(session.session_id) if e["event_type"] == "tool.result"]
+        self.assertEqual(len(results), 1)
+
+    def test_duplicate_result_with_different_outcome_is_rejected(self) -> None:
+        session = self.control.start(notes="conflicting-result")
+        self._request(session.session_id, "tool-1")
+        self._result(session.session_id, "tool-1", status="success")
+        with self.assertRaises(phase0.InvalidTransitionError):
+            self._result(session.session_id, "tool-1", status="failure")
+
+    def test_in_flight_request_is_still_rejected(self) -> None:
+        session = self.control.start(notes="still-guarded")
+        self._request(session.session_id, "tool-a")
+        with self.assertRaises(phase0.InvalidTransitionError) as ctx:
+            self._request(session.session_id, "tool-b")
+        self.assertIn("tool_pending", str(ctx.exception))
+
+    def test_result_without_request_is_diagnosable(self) -> None:
+        session = self.control.start(notes="orphan-result")
+        with self.assertRaises(phase0.InvalidTransitionError):
+            self._result(session.session_id, "tool-never-requested")
+
+    def test_verify_while_pending_is_rejected(self) -> None:
+        session = self.control.start(notes="verify-pending")
+        self._request(session.session_id, "tool-1")
+        with self.assertRaises(phase0.InvalidTransitionError):
+            self.control.verify(session.session_id, passed=True)
+
+    def test_verify_pass_and_fail_transitions_persist(self) -> None:
+        session = self.control.start(notes="verify-transitions")
+        self._request(session.session_id, "tool-1")
+        self._result(session.session_id, "tool-1")
+        self.control.verify(session.session_id, passed=False, details="not yet")
+        self.assertEqual(self.control.load_session(session.session_id).step_state, phase0.STEP_NEEDS_ATTENTION)
+        self.control.verify(session.session_id, passed=True, details="fixed")
+        verified = self.control.load_session(session.session_id)
+        self.assertEqual(verified.step_state, phase0.STEP_VERIFIED)
+        self.assertEqual(verified.verified_step_index, 1)
+
+    def test_stale_pending_step_recovers_at_restart(self) -> None:
+        session = self.control.start(session_id="sess-stale", notes="stale")
+        self._request(session.session_id, "tool-1")
+        # Simulate a process killed mid-PostToolUse: no result delivered.
+        restarted = phase0.Phase0ControlPlane(root=self.state_root)
+        recovered = restarted.recover_stale_step("sess-stale")
+        self.assertEqual(recovered.step_state, phase0.STEP_TOOL_FAILED)
+        self.assertIsNone(recovered.pending_tool_call_id)
+        events = [e for e in restarted.replay("sess-stale") if e["event_type"] == "step.recover"]
+        self.assertEqual(len(events), 1)
+        self.assertEqual(events[0]["payload"]["stale_tool_call_id"], "tool-1")
+        # The session accepts new work after recovery.
+        restarted.request_tool(
+            {
+                "session_id": "sess-stale",
+                "tool_name": "Write",
+                "tool_input": {"file_path": "next.txt"},
+                "cwd": str(self.workspace),
+                "tool_use_id": "tool-2",
+            }
+        )
+
+    def test_restart_mid_pending_and_mid_completed_reconstructs_state(self) -> None:
+        session = self.control.start(notes="restart-boundaries")
+        self._request(session.session_id, "tool-1")
+        restarted = phase0.Phase0ControlPlane(root=self.state_root)
+        self.assertEqual(restarted.load_session(session.session_id).step_state, phase0.STEP_TOOL_PENDING)
+        self._result(session.session_id, "tool-1")
+        restarted2 = phase0.Phase0ControlPlane(root=self.state_root)
+        self.assertEqual(restarted2.load_session(session.session_id).step_state, phase0.STEP_TOOL_COMPLETED)
+
+    def test_compact_before_any_verified_step_is_recorded_skip(self) -> None:
+        session = self.control.start(notes="compact-early")
+        outcome = self.control.compact(session.session_id, reason="precompact-hook")
+        self.assertTrue(outcome["skipped"])
+        self.assertIsNone(outcome["checkpoint_id"])
+        events = [e for e in self.control.replay(session.session_id) if e["event_type"] == "session.compact"]
+        self.assertEqual(events[0]["status"], "skipped")
+
+    def test_pre_step_state_sqlite_schema_migrates_additively(self) -> None:
+        # Build a DB with the pre-#151 schema (no step_state column) plus one
+        # row mid-flight, then open it with the current code.
+        legacy_root = Path(self.tmp.name) / "legacy-state"
+        legacy_root.mkdir(parents=True)
+        db_path = legacy_root / "phase0.sqlite3"
+        conn = sqlite3.connect(db_path)
+        conn.executescript(
+            """
+            create table sessions (
+                session_id text primary key, status text not null,
+                created_at text not null, updated_at text not null,
+                current_turn_index integer not null, current_step_index integer not null,
+                verified_turn_index integer not null, verified_step_index integer not null,
+                pending_tool_call_id text, last_checkpoint_id text,
+                raw_export_path text not null, notes text
+            );
+            create table events (
+                event_id text primary key, event_type text not null, session_id text not null,
+                turn_index integer not null, step_index integer not null, tool_call_id text,
+                created_at text not null, duration_ms integer, status text not null,
+                payload_json text not null, raw_payload_json text
+            );
+            create table checkpoints (
+                checkpoint_id text primary key, session_id text not null,
+                turn_index integer not null, step_index integer not null,
+                created_at text not null, path text not null, verified integer not null
+            );
+            """
+        )
+        conn.execute(
+            "insert into sessions values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            ("sess-legacy", "active", "t0", "t0", 1, 1, 0, 0, "tool-old", None, "raw", None),
+        )
+        conn.commit()
+        conn.close()
+
+        migrated = phase0.Phase0ControlPlane(root=legacy_root)
+        loaded = migrated.load_session("sess-legacy")
+        self.assertEqual(loaded.step_state, phase0.STEP_TOOL_PENDING)
+        # Writing back through the new code must not raise OperationalError.
+        migrated.recover_stale_step("sess-legacy")
+        self.assertEqual(migrated.load_session("sess-legacy").step_state, phase0.STEP_TOOL_FAILED)
 
 
 if __name__ == "__main__":

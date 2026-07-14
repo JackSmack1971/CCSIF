@@ -15,5 +15,9 @@ if command -v node >/dev/null 2>&1; then
   printf '%s' "$payload" | node "$script_dir/lib/trace-writer.js" >/dev/null 2>&1 || true
 fi
 
-printf '%s' "$payload" | python3 "$phase0_script" result >/dev/null
+# Phase 0 result tracking is telemetry, never a gate: a rejected or
+# duplicate result delivery must not fail the whole PostToolUse hook
+# (Hardening 03/13).
+printf '%s' "$payload" | python3 "$phase0_script" result >/dev/null \
+  || printf '%s\n' "phase0 tracking: result recording failed; continuing" >&2
 printf '%s' "$payload" | python3 "$lint_script" >/dev/null || true

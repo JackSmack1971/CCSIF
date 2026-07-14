@@ -28,4 +28,15 @@ else
   exit "$status"
 fi
 
-printf '%s' "$payload" | python3 "$phase0_script" request >/dev/null
+# Phase 0 tracking: a genuine safety block (exit 2, e.g. workspace escape)
+# still blocks the tool call; a tracking/state error (exit 1) must never
+# deadlock the session's tool use — warn and continue (Hardening 03/13).
+if printf '%s' "$payload" | python3 "$phase0_script" request >/dev/null; then
+  :
+else
+  status=$?
+  if [ "$status" -eq 2 ]; then
+    exit 2
+  fi
+  printf '%s\n' "phase0 tracking: request failed (exit $status); tool call proceeds untracked" >&2
+fi

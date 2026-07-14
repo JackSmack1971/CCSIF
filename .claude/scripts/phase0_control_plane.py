@@ -180,6 +180,21 @@ class Phase0Error(RuntimeError):
     pass
 
 
+class InvalidTransitionError(Phase0Error):
+    """A step-lifecycle transition was attempted from the wrong state. The
+    message always names the current state and the attempted transition so
+    the failure is diagnosable, unlike the former generic 'one verified step
+    at a time' message."""
+
+    def __init__(self, *, current: str, attempted: str, detail: str | None = None) -> None:
+        message = f"invalid step transition: cannot {attempted} while step_state is {current!r}"
+        if detail:
+            message = f"{message} ({detail})"
+        super().__init__(message)
+        self.current = current
+        self.attempted = attempted
+
+
 class UnsafeToolRequestError(Phase0Error):
     pass
 
@@ -253,6 +268,32 @@ def make_id(prefix: str) -> str:
     return f"{prefix}-{uuid.uuid4().hex[:12]}"
 
 
+# Explicit per-step lifecycle states (Hardening 03/13, #151). The nullable
+# pending_tool_call_id string is no longer the sole in-flight signal:
+#   no_step        -> tool_pending    (request_tool)
+#   tool_pending   -> tool_completed  (result_tool, success)
+#   tool_pending   -> tool_failed     (result_tool, failure / stale recovery)
+#   tool_completed -> verified        (verify, passed)
+#   tool_completed -> needs_attention (verify, failed)
+# A new request is legal from every state except tool_pending, so a
+# completed-but-not-yet-verified step never deadlocks the next tool call.
+STEP_NO_STEP = "no_step"
+STEP_TOOL_PENDING = "tool_pending"
+STEP_TOOL_COMPLETED = "tool_completed"
+STEP_TOOL_FAILED = "tool_failed"
+STEP_VERIFIED = "verified"
+STEP_NEEDS_ATTENTION = "needs_attention"
+
+STEP_STATES = {
+    STEP_NO_STEP,
+    STEP_TOOL_PENDING,
+    STEP_TOOL_COMPLETED,
+    STEP_TOOL_FAILED,
+    STEP_VERIFIED,
+    STEP_NEEDS_ATTENTION,
+}
+
+
 @dataclass
 class SessionRecord:
     session_id: str
@@ -267,6 +308,7 @@ class SessionRecord:
     last_checkpoint_id: str | None
     raw_export_path: str
     notes: str | None = None
+    step_state: str = STEP_NO_STEP
 
 
 @dataclass
@@ -326,7 +368,8 @@ class Phase0ControlPlane:
                     pending_tool_call_id text,
                     last_checkpoint_id text,
                     raw_export_path text not null,
-                    notes text
+                    notes text,
+                    step_state text not null default 'no_step'
                 );
 
                 create table if not exists events (
@@ -354,6 +397,25 @@ class Phase0ControlPlane:
                 );
                 """
             )
+            # Additive, backward-compatible migration for phase0.sqlite3
+            # files created before step_state existed (`create table if not
+            # exists` never alters an existing table). Back-fill from the
+            # legacy pending_tool_call_id/current_step_index signals so no
+            # on-disk session loses its position.
+            columns = {row[1] for row in conn.execute("pragma table_info(sessions)")}
+            if "step_state" not in columns:
+                conn.execute(
+                    "alter table sessions add column step_state text not null default 'no_step'"
+                )
+                conn.execute(
+                    """
+                    update sessions set step_state = case
+                        when pending_tool_call_id is not null then 'tool_pending'
+                        when current_step_index > 0 then 'tool_completed'
+                        else 'no_step'
+                    end
+                    """
+                )
 
     def _raw_export_path(self, session_id: str) -> Path:
         return self.raw_dir / session_id / RAW_EXPORT_NAME
@@ -376,8 +438,8 @@ class Phase0ControlPlane:
                     current_turn_index, current_step_index,
                     verified_turn_index, verified_step_index,
                     pending_tool_call_id, last_checkpoint_id,
-                    raw_export_path, notes
-                ) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    raw_export_path, notes, step_state
+                ) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """,
                 (
                     record.session_id,
@@ -392,6 +454,7 @@ class Phase0ControlPlane:
                     record.last_checkpoint_id,
                     record.raw_export_path,
                     record.notes,
+                    record.step_state,
                 ),
             )
 
@@ -480,7 +543,45 @@ class Phase0ControlPlane:
         self._write_structured_event(session_id, event)
         return event
 
+    def recover_stale_step(self, session_id: str, *, reason: str | None = None) -> SessionRecord:
+        """Safe recovery from an interrupted hook: a step stuck in
+        tool_pending with no delivered result (process killed
+        mid-PostToolUse) is explicitly transitioned to tool_failed with a
+        recorded reason, instead of remaining wedged with no reachable
+        transition."""
+        session = self.load_session(session_id)
+        if session.step_state != STEP_TOOL_PENDING:
+            return session
+        stale_call_id = session.pending_tool_call_id
+        session.pending_tool_call_id = None
+        session.step_state = STEP_TOOL_FAILED
+        self._update_session(session)
+        self._record_event(
+            session_id=session.session_id,
+            event_type="step.recover",
+            turn_index=session.current_turn_index,
+            step_index=session.current_step_index,
+            tool_call_id=stale_call_id,
+            status="recovered",
+            payload={
+                "reason": reason or "stale tool_pending step with no delivered result",
+                "stale_tool_call_id": stale_call_id,
+            },
+        )
+        return session
+
     def start(self, *, session_id: str | None = None, notes: str | None = None) -> SessionRecord:
+        # Preserve interruption evidence before (re)initializing: if this
+        # session_id already exists and is stuck mid-tool-call, record an
+        # explicit recovery transition first. (Full create-vs-resume
+        # decisioning is Hardening 04/13's scope.)
+        if session_id:
+            try:
+                existing = self.load_session(session_id)
+            except Phase0Error:
+                existing = None
+            if existing is not None and existing.step_state == STEP_TOOL_PENDING:
+                self.recover_stale_step(session_id, reason="stale tool_pending step at session start")
         session = SessionRecord(
             session_id=session_id or make_id("sess"),
             status="active",
@@ -537,6 +638,7 @@ class Phase0ControlPlane:
         session.verified_turn_index = checkpoint["turn_index"]
         session.verified_step_index = checkpoint["step_index"]
         session.pending_tool_call_id = None
+        session.step_state = STEP_VERIFIED
         session.last_checkpoint_id = checkpoint["checkpoint_id"]
         self._update_session(session)
         self._record_event(
@@ -620,14 +722,19 @@ class Phase0ControlPlane:
         if session.status != "active":
             raise Phase0Error(f"session is not active: {session.status}")
         self._validate_tool_request(payload)
-        if session.pending_tool_call_id is not None:
-            raise Phase0Error("one verified step at a time: previous step is still pending")
+        if session.step_state == STEP_TOOL_PENDING:
+            raise InvalidTransitionError(
+                current=session.step_state,
+                attempted="request a new tool call",
+                detail=f"tool call {session.pending_tool_call_id!r} is still in flight",
+            )
 
-        next_step = session.verified_step_index + 1
-        if session.current_step_index not in (0, next_step):
-            raise Phase0Error("step index is out of sequence")
-        session.current_step_index = next_step
+        if session.current_step_index == 0:
+            session.current_step_index = session.verified_step_index + 1
+        else:
+            session.current_step_index += 1
         session.pending_tool_call_id = str(payload.get("tool_use_id") or make_id("tool"))
+        session.step_state = STEP_TOOL_PENDING
         self._update_session(session)
 
         event = self._record_event(
@@ -656,19 +763,65 @@ class Phase0ControlPlane:
             "tool_input": redact_value(tool_input),
         }
 
+    def _fetch_last_tool_result(self, session_id: str, tool_call_id: str) -> sqlite3.Row | None:
+        with self._db() as conn:
+            return conn.execute(
+                """
+                select * from events
+                where session_id = ? and tool_call_id = ? and event_type = 'tool.result'
+                order by created_at desc, rowid desc
+                limit 1
+                """,
+                (session_id, tool_call_id),
+            ).fetchone()
+
+    @staticmethod
+    def _event_from_row(row: sqlite3.Row) -> EventRecord:
+        return EventRecord(
+            event_id=row["event_id"],
+            event_type=row["event_type"],
+            session_id=row["session_id"],
+            turn_index=row["turn_index"],
+            step_index=row["step_index"],
+            tool_call_id=row["tool_call_id"],
+            created_at=row["created_at"],
+            duration_ms=row["duration_ms"],
+            status=row["status"],
+            payload=json.loads(row["payload_json"]),
+            raw_payload=json.loads(row["raw_payload_json"]) if row["raw_payload_json"] else None,
+        )
+
     def result_tool(self, payload: dict[str, Any]) -> EventRecord:
         session_id = str(payload.get("session_id") or "")
         if not session_id:
             raise Phase0Error("tool result is missing session_id")
         session = self.load_session(session_id)
-        if session.pending_tool_call_id is None:
-            raise Phase0Error("tool result has no pending request")
-        tool_call_id = str(payload.get("tool_use_id") or session.pending_tool_call_id)
-        if tool_call_id != session.pending_tool_call_id:
+        status = str(payload.get("status") or "success")
+        tool_call_id = str(payload.get("tool_use_id") or session.pending_tool_call_id or "")
+
+        if session.step_state != STEP_TOOL_PENDING:
+            # Idempotent replay: a redelivered PostToolUse for an
+            # already-terminal tool call returns the previously recorded
+            # event instead of double-writing a second tool.result row.
+            if tool_call_id:
+                prior = self._fetch_last_tool_result(session_id, tool_call_id)
+                if prior is not None:
+                    if prior["status"] == status:
+                        return self._event_from_row(prior)
+                    raise InvalidTransitionError(
+                        current=session.step_state,
+                        attempted=f"re-deliver tool result for {tool_call_id!r} with a different outcome",
+                        detail=f"recorded {prior['status']!r}, redelivered {status!r}",
+                    )
+            raise InvalidTransitionError(
+                current=session.step_state,
+                attempted="record a tool result",
+                detail="no tool call is in flight",
+            )
+        if not tool_call_id or tool_call_id != session.pending_tool_call_id:
             raise Phase0Error("tool result does not match the pending tool call")
 
         duration_ms = int(payload.get("duration_ms") or 0) or None
-        status = str(payload.get("status") or "success")
         event = self._record_event(
             session_id=session_id,
             event_type="tool.result",
@@ -680,11 +833,15 @@ class Phase0ControlPlane:
             payload=self._normalize_tool_result(payload, session),
             raw_payload=payload,
         )
+        # Tool completion is now separated from task/checkpoint verification:
+        # a delivered result always clears the in-flight marker, and the
+        # step_state records whether the completed call succeeded or failed.
+        session.pending_tool_call_id = None
         if status == "success":
-            session.pending_tool_call_id = tool_call_id
+            session.step_state = STEP_TOOL_COMPLETED
         else:
+            session.step_state = STEP_TOOL_FAILED
             session.status = "failed" if payload.get("terminal") else session.status
-            session.pending_tool_call_id = None if payload.get("terminal") else tool_call_id
         self._update_session(session)
         return event
 
@@ -708,12 +865,21 @@ class Phase0ControlPlane:
         session = self.load_session(session_id)
         if session.current_step_index == 0:
             raise Phase0Error("no step is available to verify")
+        if session.step_state == STEP_TOOL_PENDING:
+            raise InvalidTransitionError(
+                current=session.step_state,
+                attempted="verify the step",
+                detail=f"tool call {session.pending_tool_call_id!r} has not delivered a result yet",
+            )
         if passed:
             session.verified_turn_index = session.current_turn_index
             session.verified_step_index = session.current_step_index
             session.current_turn_index += 1
             session.current_step_index = 0
             session.pending_tool_call_id = None
+            session.step_state = STEP_VERIFIED
+        else:
+            session.step_state = STEP_NEEDS_ATTENTION
         session.status = "active" if passed else "needs-attention"
         self._update_session(session)
         return self._record_event(
@@ -729,7 +895,29 @@ class Phase0ControlPlane:
     def compact(self, session_id: str, *, reason: str | None = None) -> dict[str, Any]:
         session = self.load_session(session_id)
         if session.verified_step_index <= 0:
-            raise VerifiedCheckpointError("cannot compact before a verified step exists")
+            # Verification is a manual/slash-command transition; nothing in
+            # the live hook chain calls `verify`, so a real PreCompact event
+            # can legitimately arrive before any verified step exists. That
+            # must degrade to an explicit, evidence-preserving skip — never a
+            # hard hook failure (Hardening 03/13, #151; documented in
+            # .claude/rules/dynamic-workflows.md).
+            skip = {
+                "checkpoint_id": None,
+                "session_id": session.session_id,
+                "skipped": True,
+                "reason": "cannot compact before a verified step exists",
+                "requested_reason": reason,
+            }
+            self._record_event(
+                session_id=session.session_id,
+                event_type="session.compact",
+                turn_index=session.current_turn_index,
+                step_index=session.current_step_index,
+                tool_call_id=None,
+                status="skipped",
+                payload=skip,
+            )
+            return skip
         checkpoint_id = make_id("chk")
         checkpoint = {
             "checkpoint_id": checkpoint_id,
@@ -995,6 +1183,15 @@ def command_result(args: argparse.Namespace) -> int:
     return 0
 
 
+def command_recover(args: argparse.Namespace) -> int:
+    control = Phase0ControlPlane()
+    payload = read_stdin_json()
+    session_id = args.session_id or str(payload.get("session_id") or payload.get("sessionId") or "")
+    session = control.recover_stale_step(session_id, reason=args.reason or payload.get("reason"))
+    print(stable_json(asdict(session)))
+    return 0
+
+
 def command_replay(args: argparse.Namespace) -> int:
     control = Phase0ControlPlane()
     print(stable_json(control.replay(args.session_id)))
@@ -1113,6 +1310,11 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--tool-result")
     p.add_argument("--error")
     p.set_defaults(func=command_result)
+
+    p = sub.add_parser("recover")
+    p.add_argument("session_id", nargs="?")
+    p.add_argument("--reason")
+    p.set_defaults(func=command_recover)
 
     p = sub.add_parser("replay")
     p.add_argument("session_id")
