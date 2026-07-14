@@ -128,6 +128,7 @@ The flow is simple:
 | [`CLAUDE.md`](./CLAUDE.md) | Primary repo instructions and constitution. |
 | [`CLAUDE.local.md`](./CLAUDE.local.md) | Local-only override file; ignored by git. |
 | [`.claude/settings.json`](./.claude/settings.json) | Shared project settings, permissions, and hooks. |
+| [`.claude/control-plane.json`](./.claude/control-plane.json) | Version marker and additive upgrade path for stale control-plane detection. |
 | [`.claude/settings.local.json`](./.claude/settings.local.json) | Personal overrides; ignored by git. |
 | [`.claude/agents/`](./.claude/agents/) | Agent definitions for implementation, review, and audit. |
 | [`.claude/commands/`](./.claude/commands/) | Slash-command docs for repo workflows. |
@@ -161,6 +162,7 @@ This repository is best treated as a command center for Claude Code work, not as
 | Key or file | Required | Default | Source | Description |
 |---|---:|---|---|---|
 | `CLAUDE.md` constitution block | Yes | N/A | [`CLAUDE.md`](./CLAUDE.md) | Repo-wide operating rules and protected areas. |
+| `control_plane_version` | Yes | `2` | [`.claude/control-plane.json`](./.claude/control-plane.json) | Explicit control-plane marker used to detect stale generated state; re-run `python .claude/scripts/bootstrap_control_plane.py run --target .` to migrate additively while preserving existing files. |
 | `permissions.defaultMode` | Yes | `default` | [`.claude/settings.json`](./.claude/settings.json) | Default permission posture for project actions (`default` is the documented config value for Manual mode, labeled "Manual" in the CLI/IDE; the file previously used an undocumented `permissions.mode` key, which is not a recognized Claude Code setting). |
 | `permissions.disableBypassPermissionsMode` | Yes | `disable` | [`.claude/settings.json`](./.claude/settings.json) | Blocks `--dangerously-skip-permissions`/`bypassPermissions` mode for this repository from any scope. |
 | `permissions.allow` | Yes | Allowlist entries in file | [`.claude/settings.json`](./.claude/settings.json) | Permitted shell commands include `git status`, `git diff`, `git log`, and the repo's control-plane verifier. |
@@ -243,6 +245,7 @@ npm run smoke:mcp
 Use the narrowest check that matches the change:
 
 - Edit docs or config: `git diff --check`
+- Bootstrap another repository: let `.claude/scripts/bootstrap_control_plane.py` detect Python, Node.js, shell, CI workflow, and Claude control-plane manifests so generated facts include matching prerequisite checks and verification guidance
 - Adjust hooks, settings, scripts, or CI: run the authoritative unittest command and the affected wrapper or validator directly
 - Change workflow or agent docs: re-read the file and compare against `CLAUDE.md`
 

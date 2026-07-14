@@ -38,6 +38,7 @@ from pathlib import Path
 from typing import Any
 
 SCRIPT_DIR = Path(__file__).resolve().parent
+CONTROL_PLANE_VERSION = 2
 
 
 # ---------------------------------------------------------------------------
@@ -74,6 +75,10 @@ class Facts:
     skippable_gates: list[str] = field(default_factory=lambda: ["brainstorm", "research", "grill"])
     memory_policy: str = "gitignored"
     platform: str = "auto"
+    runtimes: list[str] = field(default_factory=list)
+    manifests: list[str] = field(default_factory=list)
+    prerequisite_checks: list[str] = field(default_factory=list)
+    verification_guidance: list[str] = field(default_factory=list)
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -86,6 +91,10 @@ class Facts:
             "skippable_gates": self.skippable_gates,
             "memory_policy": self.memory_policy,
             "platform": self.platform,
+            "runtimes": self.runtimes,
+            "manifests": self.manifests,
+            "prerequisite_checks": self.prerequisite_checks,
+            "verification_guidance": self.verification_guidance,
         }
 
     @classmethod
@@ -97,44 +106,110 @@ class Facts:
         return base
 
 
-def detect_stack(target: Path) -> Facts:
-    """Non-interactive scan: infer verify commands from repo markers. This
-    is the "scan" half of "scan/interview"; the "interview" half is the
-    caller supplying a facts JSON (headless) or answering AskUserQuestion
-    prompts in an interactive session and passing the result the same way."""
-    facts = Facts()
+def _has_any(target: Path, patterns: tuple[str, ...]) -> bool:
+    return any(any(target.glob(pattern)) for pattern in patterns)
 
-    if (target / "package.json").is_file():
+
+def _add_unique(items: list[str], value: str) -> None:
+    if value not in items:
+        items.append(value)
+
+
+def detect_stack(target: Path) -> Facts:
+    """Statically infer runtimes, manifests, prerequisite checks, and
+    verification guidance from repository-local files.
+
+    Detection is intentionally additive for polyglot repositories: Python,
+    Node.js, shell, CI workflow, and Claude control-plane markers may all be
+    present at once. Missing manifests never fabricate a shell-checkable test
+    command; they only add rubric/citation guidance.
+    """
+    facts = Facts()
+    manifests: list[str] = []
+    runtimes: list[str] = []
+    prereqs: list[str] = []
+    guidance: list[str] = []
+
+    def note_manifest(rel: str) -> bool:
+        if (target / rel).exists():
+            _add_unique(manifests, rel)
+            return True
+        return False
+
+    package_json = note_manifest("package.json")
+    pyproject = note_manifest("pyproject.toml")
+    requirements = note_manifest("requirements.txt")
+    setup_py = note_manifest("setup.py")
+    if note_manifest(".python-version"):
+        pass
+    if note_manifest(".node-version"):
+        pass
+    if note_manifest(".nvmrc"):
+        pass
+    mcp = note_manifest(".mcp.json")
+    claude_md = note_manifest("CLAUDE.md")
+    claude_settings = note_manifest(".claude/settings.json")
+    control_marker = note_manifest(".claude/control-plane.json")
+    shell_scripts = _has_any(target, ("*.sh", ".claude/**/*.sh", "scripts/**/*.sh"))
+    ci_workflows = _has_any(target, (".github/workflows/*.yml", ".github/workflows/*.yaml"))
+    claude_tree = (target / ".claude").is_dir()
+
+    if pyproject or requirements or setup_py or (target / ".python-version").exists() or _has_any(target, ("*.py", "src/**/*.py", "tests/**/*.py")):
+        _add_unique(runtimes, "python")
+        _add_unique(prereqs, "python --version")
+        if (target / "tests").is_dir() or (target / "test").is_dir():
+            facts.test_command = "python -m pytest -q"
+        if pyproject:
+            facts.lint_command = "python -m ruff check ."
+        _add_unique(guidance, "Run Python tests/lint when Python manifests or tests are present.")
+
+    if package_json:
+        _add_unique(runtimes, "node")
+        _add_unique(prereqs, "node --version")
         try:
             pkg = json.loads((target / "package.json").read_text(encoding="utf-8"))
-        except Exception:  # noqa: BLE001 - a broken package.json just yields no npm facts
+        except Exception:  # noqa: BLE001 - a broken package.json just yields no npm scripts
             pkg = {}
         scripts = pkg.get("scripts", {}) if isinstance(pkg, dict) else {}
         if "test" in scripts:
-            facts.test_command = "npm test"
+            facts.test_command = "npm test" if not facts.test_command else facts.test_command
         if "lint" in scripts:
-            facts.lint_command = "npm run lint"
+            facts.lint_command = "npm run lint" if not facts.lint_command else facts.lint_command
         if "build" in scripts:
             facts.build_command = "npm run build"
-    elif (target / "pyproject.toml").is_file() or (target / "requirements.txt").is_file():
-        if (target / "tests").is_dir() or (target / "test").is_dir():
-            facts.test_command = "python -m pytest -q"
-        if (target / "pyproject.toml").is_file():
-            facts.lint_command = "python -m ruff check ."
-    elif list(target.glob("*.md")) and not any(
-        (target / marker).exists() for marker in ("package.json", "pyproject.toml", "go.mod", "Cargo.toml")
-    ):
-        # Docs-only / non-code pipeline: verification is rubric/citation
-        # based, not a shell toolchain. Never invent a fake test command.
-        facts.test_command = None
-        facts.lint_command = None
+        _add_unique(guidance, "Run npm script targets declared by package.json.")
+
+    if shell_scripts:
+        _add_unique(runtimes, "shell")
+        _add_unique(prereqs, "bash --version")
+        _add_unique(guidance, "Smoke shell wrappers on POSIX and Git Bash/PowerShell where applicable.")
+
+    if ci_workflows:
+        _add_unique(runtimes, "ci-workflows")
+        _add_unique(manifests, ".github/workflows/*")
+        _add_unique(guidance, "Keep verification aligned with CI workflow commands and runtime matrix.")
+
+    if claude_tree or claude_md or claude_settings or mcp or control_marker:
+        _add_unique(runtimes, "claude-control-plane")
+        _add_unique(prereqs, "python .claude/scripts/control_plane_check.py")
+        _add_unique(guidance, "Run control-plane validation after Claude config, hook, rule, or workflow edits.")
+        if mcp:
+            _add_unique(prereqs, "python .claude/scripts/prereq_check.py --mcp-smoke")
+
+    if not manifests and not runtimes:
+        _add_unique(guidance, "No runtime manifest detected; use rubric/citation/factcheck verification and add explicit commands after project setup.")
+    elif not any([facts.build_command, facts.test_command, facts.lint_command]):
+        _add_unique(guidance, "Runtime markers were detected without shell-checkable scripts; use smoke plus rubric/citation/factcheck guidance.")
 
     if (target / ".git").exists():
         facts.commit_convention = "conventional-commits"
 
     facts.platform = "windows" if os.name == "nt" else "posix"
+    facts.runtimes = runtimes
+    facts.manifests = manifests
+    facts.prerequisite_checks = prereqs
+    facts.verification_guidance = guidance
     return facts
-
 
 # ---------------------------------------------------------------------------
 # Templates (portable, stack-agnostic payload)
@@ -797,6 +872,7 @@ REPO_ROOT = SCRIPT_ROOT.parents[1]
 REQUIRED_PATHS = [
     "CLAUDE.md",
     ".claude/settings.json",
+    ".claude/control-plane.json",
     ".claude/verification.json",
     ".claude/rules/00-operating-doctrine.md",
     ".claude/rules/20-lifecycle-gates.md",
@@ -824,10 +900,13 @@ def check_required_paths(root: Path) -> None:
 
 
 def check_json(root: Path) -> None:
-    try:
-        json.loads((root / ".claude/settings.json").read_text(encoding="utf-8"))
-    except Exception as exc:  # noqa: BLE001
-        fail(f".claude/settings.json is not valid JSON: {exc}")
+    for rel in (".claude/settings.json", ".claude/control-plane.json"):
+        try:
+            data = json.loads((root / rel).read_text(encoding="utf-8"))
+        except Exception as exc:  # noqa: BLE001
+            fail(f"{rel} is not valid JSON: {exc}")
+        if rel.endswith("control-plane.json") and "control_plane_version" not in data:
+            fail(".claude/control-plane.json is missing control_plane_version")
 
 
 def check_verify_adapter(root: Path) -> None:
@@ -959,6 +1038,14 @@ GITIGNORE_ENTRIES = [
 # Scaffold
 # ---------------------------------------------------------------------------
 
+def control_plane_marker_content() -> str:
+    return stable_json({
+        "schema_version": 1,
+        "control_plane_version": CONTROL_PLANE_VERSION,
+        "installed_by": "/bootstrap-control-plane",
+        "upgrade_path": "Re-run `python .claude/scripts/bootstrap_control_plane.py run --target .`; existing files are preserved and this marker is migrated additively.",
+    }) + "\n"
+
 
 def _write_if_missing(path: Path, content: str, created: list[str], preserved: list[str]) -> None:
     if path.exists():
@@ -973,6 +1060,7 @@ def scaffold_tree(target: Path, *, dry_run: bool = False) -> dict[str, list[str]
     created: list[str] = []
     preserved: list[str] = []
     plan: dict[str, str] = {
+        ".claude/control-plane.json": control_plane_marker_content(),
         ".claude/rules/00-operating-doctrine.md": OPERATING_DOCTRINE,
         ".claude/rules/10-karpathy-guidelines.md": KARPATHY_GUIDELINES,
         ".claude/rules/20-lifecycle-gates.md": LIFECYCLE_GATES,
@@ -1009,6 +1097,45 @@ def scaffold_tree(target: Path, *, dry_run: bool = False) -> dict[str, list[str]
         _write_if_missing(target / rel, content, created, preserved)
     return {"created": created, "preserved": preserved}
 
+
+def bootstrap_control_plane_marker(target: Path) -> str:
+    """Create or migrate the explicit control-plane version marker.
+
+    The marker gives future bootstrap/control-plane checks a stable place to
+    detect stale config. Migration is additive and preserves unknown keys so a
+    future version can safely inspect prior state before changing behavior.
+    """
+    path = target / ".claude" / "control-plane.json"
+    desired = {
+        "schema_version": 1,
+        "control_plane_version": CONTROL_PLANE_VERSION,
+        "installed_by": "/bootstrap-control-plane",
+        "upgrade_path": "Re-run `python .claude/scripts/bootstrap_control_plane.py run --target .`; existing files are preserved and this marker is migrated additively.",
+    }
+    if not path.exists():
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(stable_json(desired) + "\n", encoding="utf-8")
+        return "created"
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as exc:
+        raise RuntimeError(f"{path} is not valid JSON, refusing to migrate: {exc}") from exc
+    if not isinstance(data, dict):
+        raise RuntimeError(f"{path} does not contain a JSON object, refusing to migrate")
+    current = data.get("control_plane_version")
+    changed = False
+    for key, value in desired.items():
+        if key not in data:
+            data[key] = value
+            changed = True
+    if current != CONTROL_PLANE_VERSION:
+        data["previous_control_plane_version"] = current
+        data["control_plane_version"] = CONTROL_PLANE_VERSION
+        changed = True
+    if changed:
+        path.write_text(stable_json(data) + "\n", encoding="utf-8")
+        return "upgraded"
+    return "current"
 
 def merge_verification_manifest(target: Path, facts: Facts) -> str:
     """Write the argv-array verification manifest that the scaffolded
@@ -1059,6 +1186,10 @@ def merge_claude_md(target: Path, facts: Facts) -> str:
             f"- Skippable gates: {', '.join(facts.skippable_gates)}",
             f"- Memory policy: {facts.memory_policy}",
             f"- Platform: {facts.platform}",
+            f"- Detected runtimes: {', '.join(facts.runtimes) if facts.runtimes else 'none'}",
+            f"- Detected manifests: {', '.join(facts.manifests) if facts.manifests else 'none'}",
+            f"- Prerequisite checks: {'; '.join(facts.prerequisite_checks) if facts.prerequisite_checks else 'none'}",
+            f"- Verification guidance: {'; '.join(facts.verification_guidance) if facts.verification_guidance else 'none'}",
             "",
         ]
     )
@@ -1239,6 +1370,7 @@ def command_run(args: argparse.Namespace) -> int:
     tree_result = scaffold_tree(target)
     claude_md_result = merge_claude_md(target, facts)
     add_smoke_target_to_claude_md(target)
+    marker_result = bootstrap_control_plane_marker(target)
     manifest_result = merge_verification_manifest(target, facts)
     settings_result = bootstrap_settings_json(target)
     local_settings_result = bootstrap_local_settings(target)
@@ -1251,6 +1383,7 @@ def command_run(args: argparse.Namespace) -> int:
                 "facts": facts.to_dict(),
                 "tree": tree_result,
                 "claude_md": claude_md_result,
+                "control_plane_marker": marker_result,
                 "verification_manifest": manifest_result,
                 "settings_json": settings_result,
                 "settings_local_json": local_settings_result,

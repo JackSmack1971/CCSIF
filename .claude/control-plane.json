@@ -1,0 +1,6 @@
+{
+  "control_plane_version": 2,
+  "installed_by": "/bootstrap-control-plane",
+  "schema_version": 1,
+  "upgrade_path": "Re-run `python .claude/scripts/bootstrap_control_plane.py run --target .`; existing files are preserved and this marker is migrated additively."
+}
