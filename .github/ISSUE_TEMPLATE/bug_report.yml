@@ -9,10 +9,10 @@ body:
       value: |
         Thanks for taking the time to file a bug report. Please include enough detail for a maintainer to reproduce the issue without guessing.
   - type: textarea
-    id: description
+    id: actual_expected
     attributes:
-      label: Description
-      description: What happened? What did you expect to happen instead?
+      label: Actual and expected behavior
+      description: What happened, what you expected, and why it matters.
       placeholder: A clear and concise description of the bug.
     validations:
       required: true
@@ -27,11 +27,19 @@ body:
         3. Observe '...'
     validations:
       required: true
+  - type: input
+    id: affected_paths
+    attributes:
+      label: Affected paths or components
+      description: Files, folders, modules, or UI areas involved.
+      placeholder: e.g. `.github/ISSUE_TEMPLATE/bug_report.yml`, `README.md`, CLI command
+    validations:
+      required: false
   - type: textarea
     id: evidence
     attributes:
       label: Evidence
-      description: Paste the relevant error output, logs, stack trace, or screenshot. Redact secrets and personal data.
+      description: Paste the relevant error output, logs, stack trace, screenshot, or attachment details. Redact secrets and personal data.
       render: text
     validations:
       required: true
@@ -41,6 +49,14 @@ body:
       label: Environment
       description: OS, runtime/tool versions, and any relevant configuration.
       placeholder: e.g. Windows 11, Node 20, Claude Code 1.x
+    validations:
+      required: false
+  - type: textarea
+    id: verification
+    attributes:
+      label: Verification expectation
+      description: How should a maintainer or agent confirm the fix?
+      placeholder: Describe the command, scenario, or expected result that proves the bug is resolved.
     validations:
       required: false
   - type: textarea

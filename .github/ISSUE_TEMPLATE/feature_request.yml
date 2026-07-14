@@ -22,11 +22,53 @@ body:
       description: Describe the change you would like to see, including scope boundaries.
     validations:
       required: true
+  - type: input
+    id: affected_paths
+    attributes:
+      label: Affected paths or components
+      description: Files, folders, modules, or UI areas this request touches.
+      placeholder: e.g. `.github/ISSUE_TEMPLATE`, `README.md`, CLI command
+    validations:
+      required: false
   - type: textarea
     id: alternatives
     attributes:
       label: Alternatives considered
       description: Other approaches you considered and why they were not chosen.
+    validations:
+      required: false
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      description: How urgent is this request?
+      options:
+        - low
+        - medium
+        - high
+    validations:
+      required: true
+  - type: checkboxes
+    id: search
+    attributes:
+      label: Existing issues checked
+      options:
+        - label: I searched existing issues and did not find an exact match.
+          required: true
+  - type: textarea
+    id: acceptance_criteria
+    attributes:
+      label: Acceptance criteria
+      description: What should be true when this request is complete?
+      placeholder: List the concrete outcomes that would make this issue done.
+    validations:
+      required: false
+  - type: textarea
+    id: verification
+    attributes:
+      label: Verification expectation
+      description: How should a maintainer or agent confirm the change?
+      placeholder: Describe the command, scenario, or expected result that proves the request is complete.
     validations:
       required: false
   - type: textarea
