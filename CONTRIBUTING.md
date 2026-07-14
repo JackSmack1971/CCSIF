@@ -117,6 +117,8 @@ Use the narrowest check that matches your change:
 
 - Changes to workflow or agent docs: re-read the file and compare it against [the repository constitution](./CLAUDE.md) for consistency.
 
+If a verification command fails, triage the failure before rerunning it. Classify the failure as exactly one of `implementation bug`, `flaky/environmental issue`, `missing dependency`, `test defect`, or `unclear`, then record a concrete reason and next action. The verify adapter blocks a blind retry of the same target until you pass a triage JSON file with `classification`, `reason`, and `next_action` through `--triage-file`.
+
 Update the relevant docs (`README.md`, [the repository constitution](./CLAUDE.md), or the specific agent/command/hook file) whenever you change the behavior they describe.
 
 ## Pull requests

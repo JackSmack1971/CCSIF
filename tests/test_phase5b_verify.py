@@ -288,6 +288,36 @@ class RunTargetTests(unittest.TestCase):
         untouched = pv._augment_argv(["python3", "-c", "print(1)"], pattern="foo")
         self.assertNotIn("-k", untouched)
 
+    def test_failed_target_requires_triage_before_retry(self) -> None:
+        first = pv.run_target("always-fails", manifest=self.manifest, cwd=ROOT)
+        self.assertEqual(first["status"], "fail")
+        with self.assertRaisesRegex(pv.VerifyAdapterError, "triage is required before retry"):
+            pv.run_target("always-fails", manifest=self.manifest, cwd=ROOT)
+
+    def test_triage_record_allows_concrete_retry(self) -> None:
+        first = pv.run_target("always-fails", manifest=self.manifest, cwd=ROOT)
+        self.assertEqual(first["status"], "fail")
+        triage = self.root / "triage.json"
+        triage.write_text(
+            json.dumps(
+                {
+                    "classification": "implementation bug",
+                    "reason": "the command intentionally exits 1 in this fixture",
+                    "next_action": "replace the failing fixture command before the next verification run",
+                }
+            ),
+            encoding="utf-8",
+        )
+        second = pv.run_target("always-fails", manifest=self.manifest, cwd=ROOT, triage_file=triage)
+        self.assertEqual(second["status"], "fail")
+        self.assertEqual(second["retry_triage"]["classification"], "implementation bug")
+
+    def test_triage_requires_classification_reason_and_next_action(self) -> None:
+        with self.assertRaises(pv.VerifyAdapterError):
+            pv.validate_triage_record({"classification": "implementation bug", "reason": "x"})
+        with self.assertRaises(pv.VerifyAdapterError):
+            pv.validate_triage_record({"classification": "other", "reason": "x", "next_action": "y"})
+
 
 class RealRepoIntegrationTests(unittest.TestCase):
     """Prove the adapter works against this repo's real manifest, not just a
