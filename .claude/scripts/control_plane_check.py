@@ -61,6 +61,10 @@ REQUIRED_PATHS = [
     ".claude/skills/session-takeover/SKILL.md",
     ".claude/skills/metric-gated-experiment/SKILL.md",
     ".claude/scripts/bootstrap_control_plane.py",
+    ".claude/scripts/prereq_check.py",
+    "package.json",
+    ".python-version",
+    ".node-version",
     ".claude/commands/bootstrap-control-plane.md",
     ".claude/scripts/phase5c_portability_proof.py",
     ".claude/scripts/phase5c_context_pressure.py",
@@ -287,6 +291,12 @@ def check_taxonomy() -> None:
         fail(f"taxonomy check failed: {exc}")
 
 
+def check_prerequisites() -> None:
+    proc = run([sys.executable, ".claude/scripts/prereq_check.py", "--mcp-smoke"])
+    if proc.returncode != 0:
+        fail(f"prerequisite check failed: stdout={proc.stdout.strip()} stderr={proc.stderr.strip()}")
+
+
 def check_verify_adapter() -> None:
     sys.path.insert(0, str(ROOT / ".claude" / "scripts"))
     import phase5b_verify  # noqa: E402
@@ -312,6 +322,7 @@ def main() -> int:
     check_git_visibility()
     check_state_privacy_ignore()
     check_shell_parse()
+    check_prerequisites()
     check_allowed_probes()
     check_guard_probes()
     check_fd_dup_redirects()

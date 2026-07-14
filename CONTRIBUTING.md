@@ -20,7 +20,7 @@ Thanks for your interest in CCSIF, a repository-local Claude Code scaffold that 
 
 - No `CODE_OF_CONDUCT` file, `LICENSE` file, or security policy file exists in this repository yet, so none of those processes are formalized. If your change should add one of these, open an issue first so the addition can be scoped and reviewed.
 - Read [the repository constitution](./CLAUDE.md) before making changes. It defines Protected Areas, tiered change rules, and the engineering rules every contribution must follow.
-- This repository has no package manager manifest, so there is no install step to run before you start.
+- This repository has a root `package.json` for discoverable verification scripts and runtime metadata, not for third-party Node dependencies.
 
 ## Find or propose work
 
@@ -52,7 +52,13 @@ Thanks for your interest in CCSIF, a repository-local Claude Code scaffold that 
    cd CCSIF
    ```
 
-2. No package manager manifest or install script was found, so there is no repository-defined install step.
+2. Confirm prerequisites and the repository-local MCP startup manifest:
+
+   ```bash
+   python .claude/scripts/prereq_check.py --mcp-smoke
+   ```
+
+   Use `python .claude/scripts/prereq_check.py --mcp-smoke --require-uv` when validating a workstation that must start the configured MCP server.
 3. Confirm your clone is clean:
 
    ```bash
@@ -95,12 +101,14 @@ Use the narrowest check that matches your change:
   ```bash
   git status --short
   git diff --check
+  python .claude/scripts/prereq_check.py --mcp-smoke
   python -m unittest discover -s tests -v
   ```
 
 - Changes to hooks, settings, scripts, or CI: run the affected wrapper or validator directly. For example:
 
   ```bash
+  python .claude/scripts/prereq_check.py --mcp-smoke
   python .claude/scripts/control_plane_check.py
   python .claude/scripts/rules_fidelity_check.py
   bash .claude/hooks/verify.sh run rules
@@ -127,7 +135,7 @@ Pre-flight checklist before opening a PR:
 
 - [ ] The change is scoped to a single issue and does not touch unrelated files.
 - [ ] Any Protected Area edit has explicit human approval.
-- [ ] `git status --short`, `git diff --check`, and `python -m unittest discover -s tests -v` were run and reviewed.
+- [ ] `git status --short`, `git diff --check`, `python .claude/scripts/prereq_check.py --mcp-smoke`, and `python -m unittest discover -s tests -v` were run and reviewed.
 - [ ] Relevant hook scripts or docs were re-verified if you changed them.
 - [ ] The PR description follows the PR Expectations in [the repository constitution](./CLAUDE.md) above.
 
