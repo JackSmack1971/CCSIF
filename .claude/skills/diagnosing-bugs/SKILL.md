@@ -21,6 +21,7 @@ When exploring the codebase, read `CONTEXT.md` (if it exists) to get a clear men
 - [Phase 5 — Fix + regression test](#phase-5--fix--regression-test)
 - [Phase 6 — Cleanup + post-mortem](#phase-6--cleanup--post-mortem)
 
+<a id="phase-1--build-a-feedback-loop"></a>
 ## Phase 1 — Build a feedback loop
 
 **This is the skill.** Everything else is mechanical. If you have a **tight** pass/fail signal for the bug — one that goes red on _this_ bug — you will find the cause; bisection, hypothesis-testing, and instrumentation all just consume it. If you don't have one, no amount of staring at code will save you.
@@ -71,6 +72,7 @@ Phase 1 is done when the loop is **tight** and **red-capable**: you can name **o
 
 If you catch yourself reading code to build a theory before this command exists, **stop — jumping straight to a hypothesis is the exact failure this skill prevents.** No red-capable command, no Phase 2.
 
+<a id="phase-2--reproduce--minimise"></a>
 ## Phase 2 — Reproduce + minimise
 
 Run the loop. Watch it go red — the bug appears.
@@ -91,6 +93,7 @@ Done when **every remaining element is load-bearing** — removing any one of th
 
 Do not proceed until you have reproduced **and** minimised.
 
+<a id="phase-3--hypothesise"></a>
 ## Phase 3 — Hypothesise
 
 Generate **3–5 ranked hypotheses** before testing any of them. Single-hypothesis generation anchors on the first plausible idea.
@@ -103,6 +106,7 @@ If you cannot state the prediction, the hypothesis is a vibe — discard or shar
 
 **Show the ranked list to the user before testing.** They often have domain knowledge that re-ranks instantly ("we just deployed a change to #3"), or know hypotheses they've already ruled out. Cheap checkpoint, big time saver. Don't block on it — proceed with your ranking if the user is AFK.
 
+<a id="phase-4--instrument"></a>
 ## Phase 4 — Instrument
 
 Each probe must map to a specific prediction from Phase 3. **Change one variable at a time.**
@@ -117,6 +121,7 @@ Tool preference:
 
 **Perf branch.** For performance regressions, logs are usually wrong. Instead: establish a baseline measurement (timing harness, `performance.now()`, profiler, query plan), then bisect. Measure first, fix second.
 
+<a id="phase-5--fix--regression-test"></a>
 ## Phase 5 — Fix + regression test
 
 Write the regression test **before the fix** — but only if there is a **correct seam** for it.
@@ -133,6 +138,7 @@ If a correct seam exists:
 4. Watch it pass.
 5. Re-run the Phase 1 feedback loop against the original (un-minimised) scenario.
 
+<a id="phase-6--cleanup--post-mortem"></a>
 ## Phase 6 — Cleanup + post-mortem
 
 **Stop condition:** diagnosis is NOT done while the root cause is unconfirmed by the Phase 1 loop or the fix is unverified against the original failure symptom. Required before declaring done:
