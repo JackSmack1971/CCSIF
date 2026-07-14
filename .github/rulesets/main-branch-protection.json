@@ -10,7 +10,9 @@
   ],
   "conditions": {
     "ref_name": {
-      "include": ["~DEFAULT_BRANCH"],
+      "include": [
+        "~DEFAULT_BRANCH"
+      ],
       "exclude": []
     }
   },
@@ -29,7 +31,53 @@
         "require_code_owner_review": false,
         "require_last_push_approval": false,
         "required_review_thread_resolution": true,
-        "allowed_merge_methods": ["squash"]
+        "allowed_merge_methods": [
+          "squash"
+        ]
+      }
+    },
+    {
+      "type": "required_status_checks",
+      "parameters": {
+        "strict_required_status_checks_policy": true,
+        "required_status_checks": [
+          {
+            "context": "ubuntu-latest / Python 3.11 / Node 20"
+          },
+          {
+            "context": "ubuntu-latest / Python 3.11 / Node 22"
+          },
+          {
+            "context": "ubuntu-latest / Python 3.12 / Node 20"
+          },
+          {
+            "context": "ubuntu-latest / Python 3.12 / Node 22"
+          },
+          {
+            "context": "macos-latest / Python 3.11 / Node 20"
+          },
+          {
+            "context": "macos-latest / Python 3.11 / Node 22"
+          },
+          {
+            "context": "macos-latest / Python 3.12 / Node 20"
+          },
+          {
+            "context": "macos-latest / Python 3.12 / Node 22"
+          },
+          {
+            "context": "windows-latest / Python 3.11 / Node 20"
+          },
+          {
+            "context": "windows-latest / Python 3.11 / Node 22"
+          },
+          {
+            "context": "windows-latest / Python 3.12 / Node 20"
+          },
+          {
+            "context": "windows-latest / Python 3.12 / Node 22"
+          }
+        ]
       }
     }
   ]
