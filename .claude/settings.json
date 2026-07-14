@@ -10,20 +10,83 @@
   "disableSkillShellExecution": true,
   "plansDirectory": "./.claude/plans",
   "permissions": {
-    "mode": "ask",
+    "defaultMode": "default",
+    "disableBypassPermissionsMode": "disable",
     "allow": [
-      "Bash(git status:*)",
-      "Bash(git diff:*)",
+      "Bash(git status)",
+      "Bash(git status *)",
+      "Bash(git diff)",
+      "Bash(git diff *)",
       "Bash(git log --oneline -20)",
       "Bash(python3 .claude/scripts/control_plane_check.py)"
+    ],
+    "ask": [
+      "Edit(**/package-lock.json)",
+      "Edit(**/yarn.lock)",
+      "Edit(**/pnpm-lock.yaml)",
+      "Edit(**/Cargo.lock)",
+      "Edit(**/poetry.lock)",
+      "Edit(**/Gemfile.lock)",
+      "Edit(**/composer.lock)",
+      "Write(**/package-lock.json)",
+      "Write(**/yarn.lock)",
+      "Write(**/pnpm-lock.yaml)",
+      "Write(**/Cargo.lock)",
+      "Write(**/poetry.lock)",
+      "Write(**/Gemfile.lock)",
+      "Write(**/composer.lock)"
     ],
     "deny": [
       "Bash(git push --force:*)",
       "Bash(git reset --hard:*)",
       "Bash(rm -rf:*)",
       "Bash(terraform destroy:*)",
-      "Bash(kubectl delete:*)"
+      "Bash(kubectl delete:*)",
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Read(**/*.pem)",
+      "Read(**/*.key)",
+      "Read(**/*credentials*)",
+      "Read(**/*service-account*)",
+      "Edit(./.env)",
+      "Edit(./.env.*)",
+      "Edit(**/*.pem)",
+      "Edit(**/*.key)",
+      "Edit(**/*credentials*)",
+      "Edit(**/*service-account*)",
+      "Write(./.env)",
+      "Write(./.env.*)",
+      "Write(**/*.pem)",
+      "Write(**/*.key)",
+      "Write(**/*credentials*)",
+      "Write(**/*service-account*)",
+      "Edit(.github/workflows/**)",
+      "Write(.github/workflows/**)",
+      "Edit(**/migrations/**)",
+      "Write(**/migrations/**)",
+      "Edit(.claude/state/ledger.md)",
+      "Write(.claude/state/ledger.md)"
     ]
+  },
+  "sandbox": {
+    "enabled": false,
+    "failIfUnavailable": false,
+    "filesystem": {
+      "denyRead": ["~/.ssh", "~/.aws/credentials", "~/.config/gh"]
+    },
+    "credentials": {
+      "files": ["~/.aws/credentials", "~/.ssh/*", "**/.env", "**/.env.*"]
+    },
+    "network": {
+      "allowedDomains": [
+        "github.com",
+        "api.github.com",
+        "raw.githubusercontent.com",
+        "registry.npmjs.org",
+        "pypi.org",
+        "files.pythonhosted.org"
+      ]
+    }
   },
   "hooks": {
     "SessionStart": [
