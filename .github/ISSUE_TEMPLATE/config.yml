@@ -1,3 +1,4 @@
+# Keep the blank-issue path disabled so users must choose a structured form.
 blank_issues_enabled: false
 contact_links:
   - name: Security vulnerability report
