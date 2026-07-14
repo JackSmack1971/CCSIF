@@ -8,7 +8,8 @@ set -euo pipefail
 
 script_path="${BASH_SOURCE[0]//\\//}"
 script_dir="${script_path%/*}"
-if [[ "$script_dir" != /* && "$script_dir" != [A-Za-z]:/* ]]; then
-  script_dir="$(pwd)/$script_dir"
+if [ "$script_dir" = "$script_path" ]; then
+  script_dir="."
 fi
+script_dir="$(cd -- "${script_dir:-.}" && pwd)"
 exec python3 "$script_dir/../scripts/phase5b_verify.py" "$@"

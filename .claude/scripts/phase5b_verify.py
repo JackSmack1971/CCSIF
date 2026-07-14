@@ -9,20 +9,40 @@ from pathlib import Path
 
 from verification_manifest import (  # noqa: E402
     VerifyAdapterError,
-    list_targets,
+    list_targets as _list_targets,
     manifest_digest,
     manifest_path,
     parse_manifest,
     resolve_targets,
-    run_target,
+    run_target as _run_target,
     slugify,
 )
+
+
+def run_target(
+    target: str,
+    *,
+    manifest: Path | None = None,
+    claude_md: Path | None = None,
+    pattern: str | None = None,
+    cwd: Path | None = None,
+) -> dict[str, object]:
+    return _run_target(
+        target,
+        manifest=manifest or claude_md,
+        pattern=pattern,
+        cwd=cwd,
+    )
+
+
+def list_targets(*, manifest: Path | None = None, claude_md: Path | None = None) -> dict[str, object]:
+    return _list_targets(manifest=manifest or claude_md)
 
 
 def command_run(args: argparse.Namespace) -> int:
     result = run_target(
         args.target,
-        manifest=Path(args.manifest) if args.manifest else None,
+        manifest=Path(args.manifest or args.claude_md) if (args.manifest or args.claude_md) else None,
         pattern=args.pattern,
         cwd=Path(args.cwd) if args.cwd else None,
     )
@@ -32,7 +52,7 @@ def command_run(args: argparse.Namespace) -> int:
 
 def command_list_targets(args: argparse.Namespace) -> int:
     try:
-        payload = list_targets(manifest=Path(args.manifest) if args.manifest else None)
+        payload = list_targets(manifest=Path(args.manifest or args.claude_md) if (args.manifest or args.claude_md) else None)
     except VerifyAdapterError as exc:
         print(f"Blocked: {exc}", file=sys.stderr)
         return 2
@@ -48,11 +68,13 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("target")
     p.add_argument("--pattern", help="focused-test filter appended as -k <pattern> to unittest discover commands")
     p.add_argument("--manifest")
+    p.add_argument("--claude-md", dest="claude_md")
     p.add_argument("--cwd")
     p.set_defaults(func=command_run)
 
     p = sub.add_parser("list-targets")
     p.add_argument("--manifest")
+    p.add_argument("--claude-md", dest="claude_md")
     p.set_defaults(func=command_list_targets)
 
     return parser

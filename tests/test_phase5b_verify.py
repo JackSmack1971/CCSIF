@@ -201,6 +201,41 @@ class RunTargetTests(unittest.TestCase):
         with self.assertRaises(pv.VerifyAdapterError):
             pv.run_target("full", manifest=missing, cwd=self.root)
 
+    def test_manifest_root_is_used_when_cwd_is_omitted(self) -> None:
+        manifest_root = Path(self.tmp.name) / "manifest-root"
+        manifest_root.mkdir()
+        manifest = manifest_root / ".claude" / "verification-manifest.json"
+        marker = manifest_root / "marker.txt"
+        marker.write_text("manifest cwd ok\n", encoding="utf-8")
+        check_script = manifest_root / "check.py"
+        check_script.write_text(
+            "from pathlib import Path\n"
+            "import sys\n"
+            "sys.exit(0 if Path('marker.txt').read_text(encoding='utf-8').strip() == 'manifest cwd ok' else 1)\n",
+            encoding="utf-8",
+        )
+        manifest.parent.mkdir(parents=True, exist_ok=True)
+        manifest.write_text(
+            json.dumps(
+                {
+                    "schema_version": 1,
+                    "targets": [
+                        {
+                            "id": "manifest-root-check",
+                            "label": "manifest root check",
+                            "command": ["python3", "check.py"],
+                        }
+                    ],
+                },
+                indent=2,
+            ),
+            encoding="utf-8",
+        )
+
+        result = pv.run_target("manifest-root-check", manifest=manifest)
+        self.assertEqual(result["exit_code"], 0)
+        self.assertEqual(result["status"], "pass")
+
 
 class RealRepoIntegrationTests(unittest.TestCase):
     """Prove the adapter works against this repo's real manifest."""

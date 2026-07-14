@@ -2,7 +2,12 @@
 set -euo pipefail
 
 payload="$(cat)"
-script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+script_path="${BASH_SOURCE[0]//\\//}"
+script_dir="${script_path%/*}"
+if [ "$script_dir" = "$script_path" ]; then
+  script_dir="."
+fi
+script_dir="$(cd -- "${script_dir:-.}" && pwd)"
 phase0_script="$script_dir/../scripts/phase0_control_plane.py"
 node_bin="$(command -v node 2>/dev/null || command -v node.exe 2>/dev/null || true)"
 script_path="$script_dir/lib/pre-tool-use-guard.js"

@@ -239,7 +239,8 @@ def run_target(
             "commands": [entry["slug"] for entry in entries],
         }
 
-    runtime_cwd = _normalize_cwd(cwd, root=_manifest_root(manifest))
+    manifest_root = _manifest_root(manifest)
+    runtime_cwd = _normalize_cwd(cwd or manifest_root, root=manifest_root)
     results = []
     overall = 0
     for entry in selected:
