@@ -34,12 +34,12 @@ class CiPlatformContractTests(unittest.TestCase):
             scripts_dir = target / ".claude" / "scripts"
             hooks_dir.mkdir(parents=True)
             scripts_dir.mkdir(parents=True)
-            (hooks_dir / "verify.sh").write_text((ROOT / ".claude" / "hooks" / "verify.sh").read_text(encoding="utf-8"), encoding="utf-8")
+            (hooks_dir / "verify.sh").write_bytes((ROOT / ".claude" / "hooks" / "verify.sh").read_bytes())
             sentinel = "import sys\nprint('adapter:' + sys.argv[1])\nsys.exit(0)\n"
             (scripts_dir / "phase5b_verify.py").write_text(sentinel, encoding="utf-8")
 
             proc = subprocess.run(
-                ["bash", str(hooks_dir / "verify.sh"), "smoke"],
+                ["bash", ".claude/hooks/verify.sh", "smoke"],
                 cwd=target,
                 text=True,
                 capture_output=True,

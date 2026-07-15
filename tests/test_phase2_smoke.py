@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import os
+import shlex
 import shutil
 import subprocess
 import sys
@@ -23,6 +24,22 @@ def _bash() -> str | None:
     return shutil.which("bash")
 
 
+def _shell_path(path: Path) -> str:
+    if os.name != "nt":
+        return str(path)
+    proc = subprocess.run(
+        ["bash", "-lc", f"wslpath -a {shlex.quote(str(path))}"],
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    if proc.returncode == 0:
+        translated = proc.stdout.strip()
+        if translated:
+            return translated
+    return str(path)
+
+
 @unittest.skipUnless(_bash(), "bash is required for hook-level smoke coverage")
 class Phase2HookSmokeTests(unittest.TestCase):
     def setUp(self) -> None:
@@ -36,6 +53,13 @@ class Phase2HookSmokeTests(unittest.TestCase):
             {
                 "PHASE0_STATE_ROOT": str(self.state_root),
                 "PHASE0_WORKSPACE_ROOT": str(self.workspace),
+            }
+        )
+        self.shell_env = self.env.copy()
+        self.shell_env.update(
+            {
+                "PHASE0_STATE_ROOT": _shell_path(self.state_root),
+                "PHASE0_WORKSPACE_ROOT": _shell_path(self.workspace),
             }
         )
 
@@ -54,8 +78,14 @@ class Phase2HookSmokeTests(unittest.TestCase):
         )
 
     def _run_hook(self, hook: Path, payload: dict[str, object]) -> subprocess.CompletedProcess[str]:
+        hook_path = hook.relative_to(ROOT).as_posix()
+        command = (
+            f"PHASE0_STATE_ROOT={shlex.quote(_shell_path(self.state_root))} "
+            f"PHASE0_WORKSPACE_ROOT={shlex.quote(_shell_path(self.workspace))} "
+            f"{shlex.quote(hook_path)}"
+        )
         return subprocess.run(
-            [_bash(), str(hook)],
+            [_bash(), "-lc", command],
             input=json.dumps(payload),
             text=True,
             capture_output=True,
@@ -70,13 +100,18 @@ class Phase2HookSmokeTests(unittest.TestCase):
 
         proc = self._run_hook(
             SESSION_START_HOOK,
-            {"session_id": "sess-smoke-1", "cwd": str(self.workspace), "source": "startup"},
+            {
+                "hook_event_name": "SessionStart",
+                "session_id": "sess-smoke-1",
+                "cwd": str(self.workspace),
+                "source": "startup",
+            },
         )
 
         self.assertEqual(proc.returncode, 0, proc.stderr)
         self.assertTrue(settings_local.exists(), "SessionStart hook must bootstrap settings.local.json on a fresh clone")
         data = json.loads(settings_local.read_text(encoding="utf-8"))
-        self.assertTrue(Path(data["autoMemoryDirectory"]).is_absolute())
+        self.assertTrue(Path(data["autoMemoryDirectory"]).is_absolute() or str(data["autoMemoryDirectory"]).startswith("/"))
 
     def test_session_start_hook_is_safe_when_settings_local_already_exists(self) -> None:
         settings_local = self.workspace / ".claude" / "settings.local.json"
@@ -85,17 +120,27 @@ class Phase2HookSmokeTests(unittest.TestCase):
 
         proc = self._run_hook(
             SESSION_START_HOOK,
-            {"session_id": "sess-smoke-2", "cwd": str(self.workspace), "source": "startup"},
+            {
+                "hook_event_name": "SessionStart",
+                "session_id": "sess-smoke-2",
+                "cwd": str(self.workspace),
+                "source": "startup",
+            },
         )
 
         self.assertEqual(proc.returncode, 0, proc.stderr)
         data = json.loads(settings_local.read_text(encoding="utf-8"))
         self.assertEqual(data["env"], {"KEEP": "me"})
-        self.assertTrue(Path(data["autoMemoryDirectory"]).is_absolute())
+        self.assertTrue(Path(data["autoMemoryDirectory"]).is_absolute() or str(data["autoMemoryDirectory"]).startswith("/"))
 
     def test_precompact_then_postcompact_then_session_start_restore_end_to_end(self) -> None:
         session_id = "sess-smoke-3"
-        start_payload = {"session_id": session_id, "cwd": str(self.workspace), "source": "startup"}
+        start_payload = {
+            "hook_event_name": "SessionStart",
+            "session_id": session_id,
+            "cwd": str(self.workspace),
+            "source": "startup",
+        }
         self.assertEqual(self._run_hook(SESSION_START_HOOK, start_payload).returncode, 0)
 
         request = subprocess.run(
@@ -157,7 +202,15 @@ class Phase2HookSmokeTests(unittest.TestCase):
         )
         self.assertEqual(postcompact.returncode, 0, postcompact.stderr)
 
-        restore_proc = self._run_hook(SESSION_START_HOOK, {"session_id": session_id, "cwd": str(self.workspace), "source": "compact"})
+        restore_proc = self._run_hook(
+            SESSION_START_HOOK,
+            {
+                "hook_event_name": "SessionStart",
+                "session_id": session_id,
+                "cwd": str(self.workspace),
+                "source": "compact",
+            },
+        )
         self.assertEqual(restore_proc.returncode, 0, restore_proc.stderr)
         hook_output = json.loads(restore_proc.stdout.strip())
         self.assertIn("Restored project memory", hook_output["hookSpecificOutput"]["additionalContext"])
