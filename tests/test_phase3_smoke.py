@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import os
+import shlex
 import shutil
 import subprocess
 import sys
@@ -20,6 +21,22 @@ def _bash() -> str | None:
     return shutil.which("bash")
 
 
+def _shell_path(path: Path) -> str:
+    if os.name != "nt":
+        return str(path)
+    proc = subprocess.run(
+        ["bash", "-lc", f"wslpath -a {shlex.quote(str(path))}"],
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    if proc.returncode == 0:
+        translated = proc.stdout.strip()
+        if translated:
+            return translated
+    return str(path)
+
+
 @unittest.skipUnless(_bash(), "bash is required for hook-level smoke coverage")
 class Phase3HookSmokeTests(unittest.TestCase):
     def setUp(self) -> None:
@@ -36,13 +53,26 @@ class Phase3HookSmokeTests(unittest.TestCase):
                 "PHASE0_WORKSPACE_ROOT": str(ROOT),
             }
         )
+        self.shell_env = self.env.copy()
+        self.shell_env.update(
+            {
+                "PHASE0_STATE_ROOT": _shell_path(self.state_root),
+                "PHASE0_WORKSPACE_ROOT": _shell_path(ROOT),
+            }
+        )
 
     def tearDown(self) -> None:
         self.tmp.cleanup()
 
     def _run_hook(self, hook: Path, payload: dict[str, object]) -> subprocess.CompletedProcess[str]:
+        hook_path = hook.relative_to(ROOT).as_posix()
+        command = (
+            f"PHASE0_STATE_ROOT={shlex.quote(_shell_path(self.state_root))} "
+            f"PHASE0_WORKSPACE_ROOT={shlex.quote(_shell_path(ROOT))} "
+            f"{shlex.quote(hook_path)}"
+        )
         return subprocess.run(
-            [_bash(), hook.relative_to(ROOT).as_posix()],
+            [_bash(), "-lc", command],
             input=json.dumps(payload),
             text=True,
             capture_output=True,
