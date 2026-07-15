@@ -48,7 +48,7 @@ pwsh ./.claude/hooks/verify.ps1 run rules
 ```
 
 Supported CI platforms and runtimes are Linux, macOS, and Windows on Python 3.11/3.12 with Node.js 20/22. The repository advertises minimum local runtimes through `.python-version`, `.node-version`, and `package.json`; the MCP server startup contract is declared in `.mcp.json` and `.claude/memory/pyproject.toml`. Keep Claude control-plane scripts portable across those environments, including path separators, shell dispatch, and filesystem semantics.
-When planning or building the Claude Code control plane, always read and update claude-code-control-plane-roadmap.md using the documented agentic loop, Task tool, CLAUDE.md hierarchy, 
+When planning or building the Claude Code control plane, always read and update `docs/claude-code-control-plane-roadmap-v2.md` using the documented agentic loop, Task tool, CLAUDE.md hierarchy,
 and compaction patterns.
 
 ## Read First
