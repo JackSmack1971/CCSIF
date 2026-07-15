@@ -55,7 +55,7 @@ class Phase2HookSmokeTests(unittest.TestCase):
 
     def _run_hook(self, hook: Path, payload: dict[str, object]) -> subprocess.CompletedProcess[str]:
         return subprocess.run(
-            [_bash(), str(hook)],
+            [_bash(), hook.relative_to(ROOT).as_posix()],
             input=json.dumps(payload),
             text=True,
             capture_output=True,

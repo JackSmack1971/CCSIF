@@ -39,7 +39,7 @@ class CiPlatformContractTests(unittest.TestCase):
             (scripts_dir / "phase5b_verify.py").write_text(sentinel, encoding="utf-8")
 
             proc = subprocess.run(
-                ["bash", str(hooks_dir / "verify.sh"), "smoke"],
+                ["bash", ".claude/hooks/verify.sh", "smoke"],
                 cwd=target,
                 text=True,
                 capture_output=True,
