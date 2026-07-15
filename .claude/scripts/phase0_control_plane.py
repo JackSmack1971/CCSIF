@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 import argparse
-import fcntl
 import json
 import os
 import re
@@ -16,6 +15,11 @@ from datetime import datetime, timezone
 from contextlib import contextmanager
 from pathlib import Path
 from typing import Any, Callable
+
+if os.name == "nt":
+    import msvcrt
+else:
+    import fcntl
 
 ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_STATE_ROOT = ROOT / ".claude" / "state"
@@ -122,6 +126,21 @@ def _rotate_if_oversized(path: Path, max_bytes: int = DEFAULT_MAX_FILE_BYTES) ->
             if rotated.exists():
                 rotated.unlink()
             path.rename(rotated)
+    except OSError:
+        pass
+
+
+def _fsync_directory(path: Path) -> None:
+    """Best-effort directory fsync on platforms that expose O_DIRECTORY."""
+    dir_flag = getattr(os, "O_DIRECTORY", None)
+    if dir_flag is None:
+        return
+    try:
+        dir_fd = os.open(str(path), dir_flag)
+        try:
+            os.fsync(dir_fd)
+        finally:
+            os.close(dir_fd)
     except OSError:
         pass
 
@@ -276,11 +295,19 @@ def file_lock(path: Path):
     path.parent.mkdir(parents=True, exist_ok=True)
     lock_path = _lock_path_for(path)
     with lock_path.open("a+", encoding="utf-8") as lock_fh:
-        fcntl.flock(lock_fh.fileno(), fcntl.LOCK_EX)
+        if os.name == "nt":
+            lock_fh.seek(0)
+            msvcrt.locking(lock_fh.fileno(), msvcrt.LK_LOCK, 1)
+        else:
+            fcntl.flock(lock_fh.fileno(), fcntl.LOCK_EX)
         try:
             yield
         finally:
-            fcntl.flock(lock_fh.fileno(), fcntl.LOCK_UN)
+            if os.name == "nt":
+                lock_fh.seek(0)
+                msvcrt.locking(lock_fh.fileno(), msvcrt.LK_UNLCK, 1)
+            else:
+                fcntl.flock(lock_fh.fileno(), fcntl.LOCK_UN)
 
 
 def atomic_write_text(path: Path, text: str, *, encoding: str = "utf-8") -> None:
@@ -294,14 +321,7 @@ def atomic_write_text(path: Path, text: str, *, encoding: str = "utf-8") -> None
                 fh.flush()
                 os.fsync(fh.fileno())
             os.replace(tmp, path)
-            try:
-                dir_fd = os.open(str(path.parent), os.O_DIRECTORY)
-                try:
-                    os.fsync(dir_fd)
-                finally:
-                    os.close(dir_fd)
-            except OSError:
-                pass
+            _fsync_directory(path.parent)
         finally:
             try:
                 tmp.unlink()
@@ -323,14 +343,7 @@ def update_json_file_locked(path: Path, updater: Callable[[dict[str, Any] | None
                 fh.flush()
                 os.fsync(fh.fileno())
             os.replace(tmp, path)
-            try:
-                dir_fd = os.open(str(path.parent), os.O_DIRECTORY)
-                try:
-                    os.fsync(dir_fd)
-                finally:
-                    os.close(dir_fd)
-            except OSError:
-                pass
+            _fsync_directory(path.parent)
         finally:
             try:
                 tmp.unlink()
